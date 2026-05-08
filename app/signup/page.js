@@ -24,7 +24,12 @@ password
 
 if(error){
 
-alert(error.message);
+console.log(error);
+
+alert(
+error?.message ||
+"Signup Failed"
+);
 return;
 
 }
