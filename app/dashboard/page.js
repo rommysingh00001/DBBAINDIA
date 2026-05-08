@@ -794,7 +794,8 @@ to right,
 );
 font-weight:700;
 font-size:16px;
-}`.walletActions{
+}
+.walletActions{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:20px;
