@@ -167,7 +167,40 @@ await supabase
 number:finalNumber
 }
 ]);
+const winners =
+bets.filter(
+(bet)=>
+String(bet.number)
+.padStart(2,"0")
+=== finalNumber
+);
 
+for(const win of winners){
+
+const { data:userData } =
+await supabase
+.from("users")
+.select("*")
+.eq("email",win.name)
+.single();
+
+if(userData){
+
+const reward =
+Number(win.amount) * 10;
+
+await supabase
+.from("users")
+.update({
+wallet:
+Number(userData.wallet || 0)
++ reward
+})
+.eq("email",win.name);
+
+}
+
+}
 alert("Result Declared");
 
 setWinningNumber("");
