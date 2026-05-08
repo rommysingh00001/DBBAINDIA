@@ -1,164 +1,117 @@
-'use client'
+"use client";
 
-import { useEffect,useState } from 'react'
-import '../globals.css'
-import { supabase } from '../../lib/supabase'
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 
-export default function AdminPage(){
+export default function AdminPage() {
 
-const [users,setUsers] = useState([])
-const [bets,setBets] = useState([])
-const [results,setResults] = useState([])
-const [transactions,setTransactions] = useState([])
-const [winningNumber,setWinningNumber] = useState('')
-const [liveUsers,setLiveUsers] = useState(0)
+const [users,setUsers] = useState([]);
+const [bets,setBets] = useState([]);
+const [results,setResults] = useState([]);
+const [requests,setRequests] = useState([]);
+const [winningNumber,setWinningNumber] = useState("");
+const [liveUsers,setLiveUsers] = useState(0);
 
 useEffect(()=>{
 
-fetchAllData()
+fetchAllData();
 
-setInterval(()=>{
+const interval = setInterval(()=>{
+fetchAllData();
+},5000);
 
-setLiveUsers(
-Math.floor(Math.random()*500)+500
-)
+return ()=> clearInterval(interval);
 
-},3000)
-
-},[])
+},[]);
 
 async function fetchAllData(){
 
-const { data:userData } =
+const { data:usersData } =
 await supabase
-.from('users')
-.select('*')
+.from("users")
+.select("*");
 
-if(userData){
-setUsers(userData)
-}
-
-const { data:betData } =
+const { data:betsData } =
 await supabase
-.from('bets')
-.select('*')
-.order('id',{ ascending:false })
+.from("bets")
+.select("*")
+.order("created_at",{ascending:false});
 
-if(betData){
-setBets(betData)
-}
-
-const { data:resultData } =
+const { data:resultsData } =
 await supabase
-.from('results')
-.select('*')
-.order('id',{ ascending:false })
-.limit(20)
+.from("results")
+.select("*")
+.order("created_at",{ascending:false});
 
-if(resultData){
-setResults(resultData)
-}
-
-const { data:transactionData } =
+const { data:requestsData } =
 await supabase
-.from('transactions')
-.select('*')
-.order('id',{ ascending:false })
+.from("requests")
+.select("*")
+.order("created_at",{ascending:false});
 
-if(transactionData){
-setTransactions(transactionData)
-}
+setUsers(usersData || []);
+setBets(betsData || []);
+setResults(resultsData || []);
+setRequests(requestsData || []);
+
+setLiveUsers(
+Math.floor(Math.random()*900)+100
+);
 
 }
 
 async function declareResult(){
 
-const validNumbers =
-Array.from(
-{ length:100 },
-(_,i)=>
-i.toString().padStart(2,'0')
-)
-
-if(
-!validNumbers.includes(
-winningNumber
-)
-){
-alert('Only 00-99 Allowed')
-return
-}
+if(winningNumber === "") return;
 
 await supabase
-.from('results')
+.from("results")
 .insert([
 {
-winning_number:winningNumber
+number: winningNumber
 }
-])
+]);
 
-alert(
-`Result ${winningNumber} Declared`
-)
+alert("Result Declared");
 
-setWinningNumber('')
+setWinningNumber("");
 
-fetchAllData()
+fetchAllData();
 
 }
 
-async function approveRequest(item){
-
-const { data:user } =
-await supabase
-.from('users')
-.select('*')
-.eq('id',item.user_id)
-.single()
-
-if(!user) return
-
-let updatedWallet =
-Number(user.wallet)
-
-if(item.type === 'deposit'){
-
-updatedWallet +=
-Number(item.amount)
-
-}else{
-
-updatedWallet -=
-Number(item.amount)
-
-}
+async function approveRequest(id){
 
 await supabase
-.from('users')
+.from("requests")
 .update({
-wallet:updatedWallet
+status:"approved"
 })
-.eq('id',user.id)
+.eq("id",id);
 
-await supabase
-.from('transactions')
-.update({
-status:'approved'
-})
-.eq('id',item.id)
-
-alert('Approved')
-
-fetchAllData()
+fetchAllData();
 
 }
 
-return(
+async function rejectRequest(id){
 
-<main className="adminMain">
+await supabase
+.from("requests")
+.update({
+status:"rejected"
+})
+.eq("id",id);
+
+fetchAllData();
+
+}
+
+return (
+
+<div className="adminMain">
 
 <h1 className="adminTitle">
-DBBA INDIA ADMIN
+DBBA INDIA ADMIN PANEL
 </h1>
 
 <div className="liveTicker">
@@ -173,51 +126,29 @@ LIVE USERS :
 <div className="adminStats">
 
 <div className="statCard">
-
-<h3>
-TOTAL USERS
-</h3>
-
-<h1>
-{users.length}
-</h1>
-
+<h3>TOTAL USERS</h3>
+<h1>{users.length}</h1>
 </div>
 
 <div className="statCard">
-
-<h3>
-TOTAL BETS
-</h3>
-
-<h1>
-{bets.length}
-</h1>
-
+<h3>TOTAL BETS</h3>
+<h1>{bets.length}</h1>
 </div>
 
 <div className="statCard">
-
-<h3>
-RESULTS
-</h3>
-
-<h1>
-{results.length}
-</h1>
-
+<h3>RESULTS</h3>
+<h1>{results.length}</h1>
 </div>
 
 <div className="statCard">
-
-<h3>
-REQUESTS
-</h3>
-
+<h3>PENDING REQUESTS</h3>
 <h1>
-{transactions.length}
+{
+requests.filter(
+x=>x.status==="pending"
+).length
+}
 </h1>
-
 </div>
 
 </div>
@@ -228,48 +159,37 @@ REQUESTS
 
 <div className="adminCard">
 
-<h2>
-Declare Result
-</h2>
+<h2>Declare Result</h2>
 
 <input
-placeholder="00-99"
+type="number"
+placeholder="00 - 99"
 value={winningNumber}
 onChange={(e)=>
-setWinningNumber(
-e.target.value
-)
+setWinningNumber(e.target.value)
 }
 />
 
-<button
-onClick={declareResult}
->
-
-Declare Result
-
+<button onClick={declareResult}>
+Declare Winning Number
 </button>
 
 </div>
 
 <div className="adminCard">
 
-<h2>
-Recent Results
-</h2>
+<h2>Recent Results</h2>
 
 <div className="resultsWrap">
 
 {
-results.map((r)=>(
+results.slice(0,12).map((item,index)=>(
 
 <div
 className="resultBall"
-key={r.id}
+key={index}
 >
-
-{r.winning_number}
-
+{item.number}
 </div>
 
 ))
@@ -281,43 +201,60 @@ key={r.id}
 
 <div className="adminCard">
 
-<h2>
-Deposit / Withdraw
-</h2>
+<h2>Deposit / Withdraw Requests</h2>
 
 {
-transactions.map((t)=>(
+requests.map((item,index)=>(
 
 <div
 className="transactionRow"
-key={t.id}
+key={index}
 >
 
 <div>
 
 <h3>
-{t.type}
+{item.name}
 </h3>
 
 <p>
-₹ {t.amount}
+₹ {item.amount}
 </p>
 
 <p>
-{t.status}
+{item.type}
 </p>
 
 </div>
 
-<button
-onClick={()=>
-approveRequest(t)
-}
+<div
+style={{
+display:"flex",
+gap:"10px"
+}}
 >
 
+<button
+onClick={()=>
+approveRequest(item.id)
+}
+>
 Approve
-
 </button>
+
+<button
+style={{
+background:"#ff1744",
+color:"white"
+}}
+onClick={()=>
+rejectRequest(item.id)
+}
+>
+Reject
+</button>
+
+</div>
 
 </div>
 
@@ -332,33 +269,33 @@ Approve
 
 <div className="adminCard">
 
-<h2>
-All Users Wallet
-</h2>
+<h2>Users Wallet Data</h2>
 
 {
-users.map((u)=>(
+users.map((user,index)=>(
 
 <div
 className="userRow"
-key={u.id}
+key={index}
 >
 
 <div>
 
 <h3>
-{u.name}
+{user.name}
 </h3>
 
 <p>
-{u.email}
+{user.email}
 </p>
 
 </div>
 
-<h2>
-₹ {u.wallet}
-</h2>
+<div className="winStatus">
+
+₹ {user.wallet}
+
+</div>
 
 </div>
 
@@ -369,45 +306,51 @@ key={u.id}
 
 <div className="adminCard">
 
-<h2>
-All Bets Record
-</h2>
+<h2>All User Bets</h2>
 
 {
-bets.map((bet)=>(
+bets.map((bet,index)=>(
 
 <div
 className="betRowAdmin"
-key={bet.id}
+key={index}
 >
 
 <div>
 
 <h3>
-Number :
-{bet.number}
+{bet.name}
 </h3>
 
 <p>
-₹ {bet.amount}
+Number : {bet.number}
 </p>
 
+</div>
+
+<div>
+
 <p>
-User :
-{bet.user_id}
+Bet Amount
 </p>
+
+<h3>
+₹ {bet.amount}
+</h3>
 
 </div>
 
 <div
 className={
-bet.status === 'won'
-? 'winStatus'
+bet.status === "win"
+?
+"winStatus"
 :
-bet.status === 'lost'
-? 'lossStatus'
+bet.status === "loss"
+?
+"lossStatus"
 :
-'pendingStatus'
+"pendingStatus"
 }
 >
 
@@ -426,8 +369,8 @@ bet.status === 'lost'
 
 </div>
 
-</main>
+</div>
 
-)
+);
 
 }
