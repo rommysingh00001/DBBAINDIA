@@ -35,6 +35,7 @@ async function login() {
     'dbbaUser',
     JSON.stringify(foundUser)
   )
-
+document.cookie =
+'dbba-auth=true; path=/'
   router.push('/dashboard')
 }
