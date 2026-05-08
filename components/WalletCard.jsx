@@ -12,5 +12,5 @@ export default function WalletCard({
       <h1>{value}</h1>
 
     </div>
-  );
+  )
 }
