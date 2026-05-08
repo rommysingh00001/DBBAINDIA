@@ -20,6 +20,7 @@ const [user,setUser] = useState(null);
 const [wallet,setWallet] = useState(0);
 const [number,setNumber] = useState("");
 const [amount,setAmount] = useState("");
+const [betLocked,setBetLocked] = useState(false);
 const [results,setResults] = useState([]);
 const [bets,setBets] = useState([]);
 const [depositAmount,setDepositAmount] = useState("");
@@ -31,7 +32,20 @@ getUser();
 loadResults();
 
 loadBets();
+const now = new Date();
 
+const currentMinute =
+now.getMinutes();
+
+if(currentMinute >= 55){
+
+setBetLocked(true);
+
+}else{
+
+setBetLocked(false);
+
+}
 const betsChannel =
 supabase
 .channel("bets-live")
@@ -138,7 +152,13 @@ setBets(data || []);
 }
 
 async function placeBet(){
+if(betLocked){
 
+alert("Betting Closed");
+
+return;
+
+}
 if(!number || !amount){
 
 alert("Fill all fields");
@@ -503,8 +523,15 @@ setAmount(e.target.value)
 }
 />
 
-<button onClick={placeBet}>
-Place Bet
+<button
+onClick={placeBet}
+disabled={betLocked}
+>
+
+{betLocked
+? "Betting Closed"
+: "Place Bet"}
+
 </button>
 
 </div>
