@@ -23,6 +23,8 @@ export default function Home() {
   const [showPopup, setShowPopup] = useState(false);
 
   const [history, setHistory] = useState([]);
+  const [results, setResults] = useState([]);
+  const [latestResult, setLatestResult] = useState(null);
 
   useEffect(() => {
 
@@ -36,7 +38,7 @@ export default function Home() {
       setWallet(parsed.wallet);
 
       fetchHistory(parsed.mobile);
-
+      fetchResults();
     }
 
   }, []);
@@ -106,6 +108,18 @@ export default function Home() {
       return;
     }
 
+    const { data: existingBet } = await supabase
+      .from('bets')
+      .select('*')
+      .eq('user_mobile', user.mobile)
+      .eq('selected_number', selectedNumber)
+      .eq('status', 'Pending');
+
+    if (existingBet.length > 0) {
+      alert('You already placed bet on this number');
+      return;
+    }
+
     const newWallet = wallet - amount;
 
     await supabase
@@ -120,6 +134,7 @@ export default function Home() {
           user_mobile: user.mobile,
           selected_number: selectedNumber,
           amount,
+          status: 'Pending'
         },
       ]);
 
@@ -143,6 +158,37 @@ export default function Home() {
 
   };
 
+  const cutBet = async (bet) => {
+
+    const refundWallet = wallet + bet.amount;
+
+    await supabase
+      .from('bets')
+      .delete()
+      .eq('id', bet.id);
+
+    await supabase
+      .from('users')
+      .update({ wallet: refundWallet })
+      .eq('mobile', user.mobile);
+
+    const updatedUser = {
+      ...user,
+      wallet: refundWallet,
+    };
+
+    localStorage.setItem(
+      'dbbaUser',
+      JSON.stringify(updatedUser)
+    );
+
+    setWallet(refundWallet);
+    setUser(updatedUser);
+
+    fetchHistory(user.mobile);
+
+  };
+
   const fetchHistory = async (mobile) => {
 
     const { data } = await supabase
@@ -152,6 +198,21 @@ export default function Home() {
       .order('id', { ascending: false });
 
     setHistory(data || []);
+
+  };
+
+  const fetchResults = async () => {
+
+    const { data } = await supabase
+      .from('results')
+      .select('*')
+      .order('id', { ascending: false });
+
+    setResults(data || []);
+
+    if (data && data.length > 0) {
+      setLatestResult(data[0]);
+    }
 
   };
 
@@ -206,7 +267,7 @@ export default function Home() {
 
   return (
 
-    <main>
+    <main className="mainDashboard">
 
       <header className="header">
 
@@ -222,79 +283,102 @@ export default function Home() {
 
       </header>
 
-      <section className="hero">
+      <div className="topCards">
 
-        <h2>
-          Select Your Lucky Number
-          <br />
-          <span>Win Massive Rewards</span>
-        </h2>
-
-      </section>
-
-      <section className="numbersSection">
-
-        <div className="topTitle">
-          <h3>Choose Number</h3>
-          <p>00 - 99</p>
+        <div className="infoCard">
+          <span>Latest Result</span>
+          <h2>
+            {latestResult
+              ? latestResult.winning_number
+              : 'No Result'}
+          </h2>
         </div>
 
-        <div className="grid">
-
-          {numbers.map((num) => (
-
-            <button
-              key={num}
-              className="numberBtn"
-              onClick={() =>
-                selectNumber(num)
-              }
-            >
-              {num}
-            </button>
-
-          ))}
-
+        <div className="infoCard">
+          <span>Total Bets</span>
+          <h2>{history.length}</h2>
         </div>
+
+      </div>
+
+      <section className="numberGrid">
+
+        {numbers.map((num) => (
+
+          <button
+            key={num}
+            className="numberBox"
+            onClick={() => selectNumber(num)}
+          >
+            {num}
+          </button>
+
+        ))}
 
       </section>
 
       <section className="historySection">
 
-        <h3>Bet History</h3>
+        <h2>Bet History</h2>
 
-        <div className="historyGrid">
+        {history.map((bet) => (
 
-          {history.map((bet) => (
+          <div className="historyCard" key={bet.id}>
 
-            <div
-              className="historyCard"
-              key={bet.id}
-            >
-
-              <h4>{bet.selected_number}</h4>
-
+            <div>
+              <h3>{bet.selected_number}</h3>
               <p>₹{bet.amount}</p>
+            </div>
+
+            <div>
+              <span>{bet.status}</span>
+
+              {bet.status === 'Pending' && (
+                <button
+                  className="cutBtn"
+                  onClick={() => cutBet(bet)}
+                >
+                  Cut Bet
+                </button>
+              )}
 
             </div>
 
-          ))}
+          </div>
 
-        </div>
+        ))}
+
+      </section>
+
+      <section className="historySection">
+
+        <h2>Result History</h2>
+
+        {results.map((item) => (
+
+          <div className="historyCard" key={item.id}>
+
+            <div>
+              <h3>{item.winning_number}</h3>
+              <p>
+                {new Date(item.created_at)
+                  .toLocaleString()}
+              </p>
+            </div>
+
+          </div>
+
+        ))}
 
       </section>
 
       {showPopup && (
 
-        <div className="popupOverlay">
+        <div className="popup">
 
-          <div className="popupCard">
+          <div className="popupBox">
 
-            <h2>
-              Selected Number:
-              {' '}
-              {selectedNumber}
-            </h2>
+            <h2>Bet on {selectedNumber}</h2>
 
             <input
               type="number"
@@ -306,7 +390,14 @@ export default function Home() {
             />
 
             <button onClick={placeBet}>
-              Place Bet
+              Confirm Bet
+            </button>
+
+            <button
+              className="cancelBtn"
+              onClick={() => setShowPopup(false)}
+            >
+              Cancel
             </button>
 
           </div>
@@ -316,6 +407,5 @@ export default function Home() {
       )}
 
     </main>
-
   );
 }
