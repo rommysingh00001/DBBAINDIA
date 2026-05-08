@@ -10,18 +10,8 @@ const [users,setUsers] = useState([])
 const [bets,setBets] = useState([])
 const [results,setResults] = useState([])
 const [transactions,setTransactions] = useState([])
-
-const [winningNumber,setWinningNumber] =
-useState('')
-
-const [totalCollection,setTotalCollection] =
-useState(0)
-
-const [totalPayout,setTotalPayout] =
-useState(0)
-
-const [liveUsers,setLiveUsers] =
-useState(0)
+const [winningNumber,setWinningNumber] = useState('')
+const [liveUsers,setLiveUsers] = useState(0)
 
 useEffect(()=>{
 
@@ -45,9 +35,7 @@ await supabase
 .select('*')
 
 if(userData){
-
 setUsers(userData)
-
 }
 
 const { data:betData } =
@@ -57,18 +45,7 @@ await supabase
 .order('id',{ ascending:false })
 
 if(betData){
-
 setBets(betData)
-
-const collection =
-betData.reduce(
-(total,item)=>
-total + Number(item.amount),
-0
-)
-
-setTotalCollection(collection)
-
 }
 
 const { data:resultData } =
@@ -76,11 +53,10 @@ await supabase
 .from('results')
 .select('*')
 .order('id',{ ascending:false })
+.limit(20)
 
 if(resultData){
-
 setResults(resultData)
-
 }
 
 const { data:transactionData } =
@@ -90,9 +66,7 @@ await supabase
 .order('id',{ ascending:false })
 
 if(transactionData){
-
 setTransactions(transactionData)
-
 }
 
 }
@@ -111,13 +85,8 @@ if(
 winningNumber
 )
 ){
-
-alert(
-'Only 00 to 99 allowed'
-)
-
+alert('Only 00-99 Allowed')
 return
-
 }
 
 await supabase
@@ -127,66 +96,6 @@ await supabase
 winning_number:winningNumber
 }
 ])
-
-let payout = 0
-
-for(const bet of bets){
-
-if(bet.status === 'pending'){
-
-if(
-bet.number === winningNumber
-){
-
-const user =
-users.find(
-(u)=>
-u.id === bet.user_id
-)
-
-if(user){
-
-const reward =
-Number(bet.amount) * 90
-
-payout += reward
-
-const updatedWallet =
-Number(user.wallet)
-+ reward
-
-await supabase
-.from('users')
-.update({
-wallet:updatedWallet
-})
-.eq('id',user.id)
-
-await supabase
-.from('bets')
-.update({
-status:'won'
-})
-.eq('id',bet.id)
-
-}
-
-}else{
-
-await supabase
-.from('bets')
-.update({
-status:'lost'
-})
-.eq('id',bet.id)
-
-}
-
-}
-
-}
-
-setTotalPayout(payout)
 
 alert(
 `Result ${winningNumber} Declared`
@@ -199,14 +108,6 @@ fetchAllData()
 }
 
 async function approveRequest(item){
-
-if(item.status !== 'pending'){
-
-alert('Already Approved')
-
-return
-
-}
 
 const { data:user } =
 await supabase
@@ -246,44 +147,7 @@ status:'approved'
 })
 .eq('id',item.id)
 
-alert('Request Approved')
-
-fetchAllData()
-
-}
-
-async function rejectRequest(item){
-
-await supabase
-.from('transactions')
-.update({
-status:'rejected'
-})
-.eq('id',item.id)
-
-alert('Request Rejected')
-
-fetchAllData()
-
-}
-
-async function resetUserWallet(userId){
-
-const amount =
-prompt(
-'Enter New Wallet Amount'
-)
-
-if(!amount) return
-
-await supabase
-.from('users')
-.update({
-wallet:Number(amount)
-})
-.eq('id',userId)
-
-alert('Wallet Updated')
+alert('Approved')
 
 fetchAllData()
 
@@ -294,7 +158,7 @@ return(
 <main className="adminMain">
 
 <h1 className="adminTitle">
-DBBA INDIA ADMIN PANEL
+DBBA INDIA ADMIN
 </h1>
 
 <div className="liveTicker">
@@ -311,7 +175,7 @@ LIVE USERS :
 <div className="statCard">
 
 <h3>
-Total Users
+TOTAL USERS
 </h3>
 
 <h1>
@@ -323,35 +187,35 @@ Total Users
 <div className="statCard">
 
 <h3>
-Total Collection
-</h3>
-
-<h1>
-₹ {totalCollection}
-</h1>
-
-</div>
-
-<div className="statCard">
-
-<h3>
-Total Payout
-</h3>
-
-<h1>
-₹ {totalPayout}
-</h1>
-
-</div>
-
-<div className="statCard">
-
-<h3>
-Total Bets
+TOTAL BETS
 </h3>
 
 <h1>
 {bets.length}
+</h1>
+
+</div>
+
+<div className="statCard">
+
+<h3>
+RESULTS
+</h3>
+
+<h1>
+{results.length}
+</h1>
+
+</div>
+
+<div className="statCard">
+
+<h3>
+REQUESTS
+</h3>
+
+<h1>
+{transactions.length}
 </h1>
 
 </div>
@@ -369,7 +233,7 @@ Declare Result
 </h2>
 
 <input
-placeholder="00 to 99"
+placeholder="00-99"
 value={winningNumber}
 onChange={(e)=>
 setWinningNumber(
@@ -418,7 +282,7 @@ key={r.id}
 <div className="adminCard">
 
 <h2>
-Deposit / Withdraw Requests
+Deposit / Withdraw
 </h2>
 
 {
@@ -445,13 +309,6 @@ key={t.id}
 
 </div>
 
-<div
-style={{
-display:'flex',
-gap:'10px'
-}}
->
-
 <button
 onClick={()=>
 approveRequest(t)
@@ -461,22 +318,6 @@ approveRequest(t)
 Approve
 
 </button>
-
-<button
-onClick={()=>
-rejectRequest(t)
-}
-style={{
-background:'red',
-color:'white'
-}}
->
-
-Reject
-
-</button>
-
-</div>
 
 </div>
 
@@ -492,7 +333,7 @@ Reject
 <div className="adminCard">
 
 <h2>
-All Users Wallet Control
+All Users Wallet
 </h2>
 
 {
@@ -515,29 +356,9 @@ key={u.id}
 
 </div>
 
-<div
-style={{
-display:'flex',
-alignItems:'center',
-gap:'10px'
-}}
->
-
 <h2>
 ₹ {u.wallet}
 </h2>
-
-<button
-onClick={()=>
-resetUserWallet(u.id)
-}
->
-
-Edit
-
-</button>
-
-</div>
 
 </div>
 
@@ -556,7 +377,7 @@ All Bets Record
 bets.map((bet)=>(
 
 <div
-className="betRow"
+className="betRowAdmin"
 key={bet.id}
 >
 
@@ -582,9 +403,11 @@ User :
 className={
 bet.status === 'won'
 ? 'winStatus'
-: bet.status === 'lost'
+:
+bet.status === 'lost'
 ? 'lossStatus'
-: 'pendingStatus'
+:
+'pendingStatus'
 }
 >
 
@@ -595,55 +418,6 @@ bet.status === 'won'
 </div>
 
 ))
-}
-
-</div>
-
-<div className="adminCard">
-
-<h2>
-Number Wise Report
-</h2>
-
-{
-Array.from(
-{ length:100 },
-(_,i)=>
-i.toString().padStart(2,'0')
-).map((num)=>{
-
-const total =
-bets
-.filter(
-(b)=>
-b.number === num
-)
-.reduce(
-(sum,b)=>
-sum + Number(b.amount),
-0
-)
-
-return(
-
-<div
-className="betRow"
-key={num}
->
-
-<h3>
-Number {num}
-</h3>
-
-<h2>
-₹ {total}
-</h2>
-
-</div>
-
-)
-
-})
 }
 
 </div>
