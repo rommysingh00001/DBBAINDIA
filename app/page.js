@@ -1,41 +1,108 @@
-async function login() {
+'use client'
 
-  const { data, error } =
-    await supabase
+import { useState }
+from 'react'
+
+import { useRouter }
+from 'next/navigation'
+
+import './globals.css'
+
+import { supabase }
+from '../lib/supabase'
+
+export default function HomePage(){
+
+  const router =
+    useRouter()
+
+  const [email,setEmail] =
+    useState('')
+
+  const [password,setPassword] =
+    useState('')
+
+  async function login(){
+
+    const { data } =
+      await supabase
       .from('users')
       .select('*')
+      .eq('email',email)
+      .eq('password',password)
+      .single()
 
-  console.log(data)
+    if(!data){
 
-  if (error) {
+      alert('Invalid Login')
 
-    console.log(error)
+      return
+    }
 
-    alert('Database Error')
-
-    return
-  }
-
-  const foundUser =
-    data.find(
-      (item) =>
-        item.email?.trim() === email.trim()
-        &&
-        item.password?.trim() === password.trim()
+    localStorage.setItem(
+      'dbbaUser',
+      JSON.stringify(data)
     )
 
-  if (!foundUser) {
+    document.cookie =
+    'dbba-auth=true; path=/'
 
-    alert('Invalid Login')
-
-    return
+    router.push('/dashboard')
   }
 
-  localStorage.setItem(
-    'dbbaUser',
-    JSON.stringify(foundUser)
+  return(
+
+    <main className="authPage">
+
+      <div className="authBox">
+
+        <h1>
+          DBBA INDIA
+        </h1>
+
+        <p>
+          Login To Continue
+        </p>
+
+        <input
+          type="email"
+          placeholder="Email"
+
+          value={email}
+
+          onChange={(e)=>
+            setEmail(e.target.value)
+          }
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+
+          value={password}
+
+          onChange={(e)=>
+            setPassword(e.target.value)
+          }
+        />
+
+        <button
+          onClick={login}
+        >
+          Login
+        </button>
+
+        <button
+          onClick={()=>
+            router.push('/signup')
+          }
+          className="secondaryBtn"
+        >
+          Create Account
+        </button>
+
+      </div>
+
+    </main>
   )
-document.cookie =
-'dbba-auth=true; path=/'
-  router.push('/dashboard')
 }
