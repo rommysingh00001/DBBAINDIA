@@ -18,7 +18,7 @@ XAxis,
 YAxis,
 Tooltip
 } from "recharts";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../../lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function AdminPage(){
