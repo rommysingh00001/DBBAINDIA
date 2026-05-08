@@ -1,65 +1,143 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState }
+from 'react'
 
 import '../globals.css'
 
-import Navbar from '../../components/Navbar.jsx'
-import WalletCard from '../../components/WalletCard.jsx'
-import NumberGrid from '../../components/NumberGrid.jsx'
-import BetPopup from '../../components/BetPopup.jsx'
-
 export default function Dashboard() {
 
-  const numbers =
-    Array.from(
-      { length: 100 },
-      (_, i) =>
-        i.toString().padStart(2, '0')
-    )
+  const [user, setUser] =
+    useState(null)
 
   const [selected, setSelected] =
     useState('')
+
+  const [amount, setAmount] =
+    useState('')
+
+  useEffect(()=>{
+
+    const data =
+      localStorage.getItem(
+        'dbbaUser'
+      )
+
+    if(data){
+
+      setUser(
+        JSON.parse(data)
+      )
+    }
+
+  },[])
+
+  const numbers =
+    Array.from(
+      { length:100 },
+      (_,i)=>
+        i.toString()
+        .padStart(2,'0')
+    )
+
+  function placeBet(){
+
+    if(!selected){
+
+      alert('Select Number')
+
+      return
+    }
+
+    if(!amount){
+
+      alert('Enter Amount')
+
+      return
+    }
+
+    alert(
+      `Bet Placed On ${selected}`
+    )
+  }
 
   return (
 
     <main className="dashboard">
 
-      <Navbar />
+      <div className="navbar">
 
-      <section className="hero">
+        <h1>DBBA INDIA</h1>
 
-        <h1>
-          Select Your Lucky Number
-        </h1>
+        <div className="wallet">
 
-        <h2>
-          Win Up To 90x Rewards
-        </h2>
+          ₹ {user?.wallet || 0}
 
-      </section>
-
-      <div className="topCards">
-
-        <WalletCard
-          title="Wallet"
-          value="₹1000"
-        />
-
-        <WalletCard
-          title="Latest Result"
-          value="47"
-        />
+        </div>
 
       </div>
 
-      <NumberGrid
-        numbers={numbers}
-        selected={selected}
-        onSelect={setSelected}
-      />
+      <div className="hero">
 
-      <BetPopup selected={selected} />
+        <h1>
+          Win 90x Rewards
+        </h1>
+
+      </div>
+
+      <div className="selectedBox">
+
+        Selected Number:
+        {selected || '--'}
+
+      </div>
+
+      <div className="numberGrid">
+
+        {
+          numbers.map((num)=>(
+
+            <button
+              key={num}
+
+              className={
+                selected === num
+                ? 'active'
+                : ''
+              }
+
+              onClick={()=>
+                setSelected(num)
+              }
+            >
+              {num}
+            </button>
+
+          ))
+        }
+
+      </div>
+
+      <div className="betBox">
+
+        <input
+          type="number"
+          placeholder="Bet Amount"
+
+          value={amount}
+
+          onChange={(e)=>
+            setAmount(e.target.value)
+          }
+        />
+
+        <button
+          onClick={placeBet}
+        >
+          Place Bet
+        </button>
+
+      </div>
 
     </main>
   )
