@@ -1,97 +1,39 @@
-'use client';
+'use client'
 
-import {
-  useState
-} from 'react';
-
-import {
-  useRouter
-} from 'next/navigation';
-
-import {
-  supabase
-} from '../../lib/supabase';
-
-import '../globals.css';
+import '../globals.css'
+import { useRouter } from 'next/navigation'
 
 export default function Signup() {
 
-  const router =
-    useRouter();
-
-  const [name,setName] =
-    useState('');
-
-  const [mobile,setMobile] =
-    useState('');
-
-  const [password,setPassword] =
-    useState('');
-
-  const signup = async ()=>{
-
-    await supabase
-      .from('users')
-      .insert([
-        {
-          name,
-          mobile,
-          password,
-          wallet:0
-        }
-      ]);
-
-    alert('Signup Success');
-
-    router.push('/');
-  };
+  const router = useRouter()
 
   return (
 
-    <main className="authPage">
+    <main className="loginPage">
 
-      <div className="authCard">
+      <div className="loginBox">
 
-        <h1>SIGNUP</h1>
+        <h1>Create Account</h1>
 
-        <input
-          placeholder="Name"
+        <input placeholder="Name" />
 
-          value={name}
-
-          onChange={(e)=>
-            setName(e.target.value)
-          }
-        />
+        <input placeholder="Mobile" />
 
         <input
-          placeholder="Mobile"
-
-          value={mobile}
-
-          onChange={(e)=>
-            setMobile(e.target.value)
-          }
-        />
-
-        <input
-          type="password"
-
           placeholder="Password"
-
-          value={password}
-
-          onChange={(e)=>
-            setPassword(e.target.value)
-          }
+          type="password"
         />
 
-        <button onClick={signup}>
-          SIGNUP
+        <button
+          onClick={() =>
+            router.push('/')
+          }
+        >
+          Signup
         </button>
 
       </div>
 
     </main>
-  );
+  )
 }
