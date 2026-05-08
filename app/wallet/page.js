@@ -1,13 +1,68 @@
-import '../../app/globals.css';
+'use client'
 
-export default function Wallet() {
+import { useEffect,useState }
+from 'react'
 
-  return (
+import '../../app/globals.css'
 
-    <main className="dashboard">
+import Navbar
+from '../../components/Navbar'
 
-      <h1>Wallet History</h1>
+export default function Wallet(){
+
+  const [user,setUser] =
+    useState(null)
+
+  useEffect(()=>{
+
+    const localUser =
+      localStorage.getItem(
+        'dbbaUser'
+      )
+
+    if(localUser){
+
+      setUser(
+        JSON.parse(localUser)
+      )
+    }
+
+  },[])
+
+  return(
+
+    <main className="pageContainer">
+
+      <h1 className="pageTitle">
+        Wallet
+      </h1>
+
+      <div className="walletBigCard">
+
+        <h2>
+          ₹ {user?.wallet || 0}
+        </h2>
+
+        <p>
+          Available Balance
+        </p>
+
+      </div>
+
+      <div className="walletBtns">
+
+        <button>
+          Deposit
+        </button>
+
+        <button>
+          Withdraw
+        </button>
+
+      </div>
+
+      <Navbar/>
 
     </main>
-  );
+  )
 }
