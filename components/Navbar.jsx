@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
+import Link from 'next/link'
 
 export default function Navbar() {
 
@@ -8,30 +8,32 @@ export default function Navbar() {
 
     <div className="navbar">
 
-      <Link href="/dashboard">
-        Home
-      </Link>
+      <div>
 
-      <Link href="/mybets">
-        My Bets
-      </Link>
+        <h1 className="logo">
+          DBBA INDIA
+        </h1>
 
-      <Link href="/wallet">
-        Wallet
-      </Link>
+        <p className="subLogo">
+          Virtual Number Selection Platform
+        </p>
 
-      <Link href="/results">
-        Results
-      </Link>
+      </div>
 
-      <Link href="/howtoplay">
-        How To Play
-      </Link>
+      <div className="navRight">
 
-      <Link href="/contact">
-        Contact
-      </Link>
+        <div className="walletBox">
+          ₹ 25,000
+        </div>
+
+        <Link href="/">
+          <button className="loginBtn">
+            Login
+          </button>
+        </Link>
+
+      </div>
 
     </div>
-  );
+  )
 }
