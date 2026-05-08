@@ -13,10 +13,28 @@ const [password,setPassword] = useState("");
 
 async function login(){
 
-router.push("/dashboard");
+const { data,error } =
+await supabase
+.from("users")
+.select("*")
+.eq("email",email)
+.single();
+
+if(error || !data){
+
+alert("User not found");
+return;
 
 }
 
+localStorage.setItem(
+"user",
+JSON.stringify(data)
+);
+
+router.push("/dashboard");
+
+}
 if(error){
 
 alert(error.message);
