@@ -10,7 +10,14 @@ TrendingUp,
 ShieldCheck,
 RefreshCw
 } from "lucide-react";
-
+import {
+ResponsiveContainer,
+LineChart,
+Line,
+XAxis,
+YAxis,
+Tooltip
+} from "recharts";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -22,7 +29,23 @@ const [bets,setBets] = useState([]);
 const [results,setResults] = useState([]);
 const [requests,setRequests] = useState([]);
 const [winningNumber,setWinningNumber] = useState("");
+const chartData = [
 
+{ day:"Mon", bets:4000 },
+
+{ day:"Tue", bets:3000 },
+
+{ day:"Wed", bets:5000 },
+
+{ day:"Thu", bets:2780 },
+
+{ day:"Fri", bets:1890 },
+
+{ day:"Sat", bets:6390 },
+
+{ day:"Sun", bets:3490 }
+
+];
 useEffect(()=>{
 checkAdmin();
   async function checkAdmin(){
@@ -490,7 +513,36 @@ LIVE
 </div>
 
 <div className="gridTwo">
+<div className="card">
 
+<h2>Live Betting Analytics</h2>
+
+<div style={{width:"100%",height:"350px"}}>
+
+<ResponsiveContainer>
+
+<LineChart data={chartData}>
+
+<XAxis dataKey="day"/>
+
+<YAxis/>
+
+<Tooltip/>
+
+<Line
+type="monotone"
+dataKey="bets"
+stroke="#06b6d4"
+strokeWidth={4}
+/>
+
+</LineChart>
+
+</ResponsiveContainer>
+
+</div>
+
+</div>
 <div className="card">
 
 <h2>Declare Result</h2>
