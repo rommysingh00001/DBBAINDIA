@@ -1,77 +1,828 @@
-"use client"
-import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import { PlusCircle, Trash2, LayoutDashboard } from 'lucide-react'
+"use client";
 
-export default function AdminPanel() {
-  const [title, setTitle] = useState('')
-  const [desc, setDesc] = useState('')
-  const [loading, setLoading] = useState(false)
+import { useEffect, useMemo, useState } from "react";
+import {
+Users,
+Wallet,
+BarChart3,
+CircleDollarSign,
+TrendingUp,
+ShieldCheck,
+RefreshCw
+} from "lucide-react";
 
-  const addCourse = async () => {
-    if (!title || !desc) return alert("Please fill all fields")
-    setLoading(true)
-    
-    const { error } = await supabase
-      .from('courses')
-      .insert([{ title: title, description: desc }])
+import { supabase } from "@/lib/supabase";
 
-    if (error) {
-      alert("Error: " + error.message)
-    } else {
-      alert("Course added successfully!")
-      setTitle('')
-      setDesc('')
-    }
-    setLoading(false)
-  }
+export default function AdminPage(){
 
-  return (
-    <div className="min-h-screen bg-[#0d1117] text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <LayoutDashboard className="text-blue-500" size={32} />
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        </div>
+const [users,setUsers] = useState([]);
+const [bets,setBets] = useState([]);
+const [results,setResults] = useState([]);
+const [requests,setRequests] = useState([]);
+const [winningNumber,setWinningNumber] = useState("");
 
-        <div className="bg-[#161b22] border border-gray-800 p-8 rounded-2xl shadow-xl">
-          <h2 className="text-xl font-semibold mb-6">Add New Course</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Course Title</label>
-              <input 
-                className="w-full bg-[#0d1117] border border-gray-700 p-3 rounded-lg focus:border-blue-500 outline-none"
-                placeholder="e.g. Full Stack Web Development"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
+useEffect(()=>{
 
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">Description</label>
-              <textarea 
-                className="w-full bg-[#0d1117] border border-gray-700 p-3 rounded-lg focus:border-blue-500 outline-none h-32"
-                placeholder="Enter course details..."
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-              />
-            </div>
+loadData();
 
-            <button 
-              onClick={addCourse}
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2"
-            >
-              {loading ? "Adding..." : <><PlusCircle size={20} /> Add Course</>}
-            </button>
-          </div>
-        </div>
+const interval = setInterval(()=>{
+loadData();
+},5000);
 
-        <div className="mt-8 text-center">
-          <a href="/" className="text-blue-500 hover:underline">← Back to Main Website</a>
-        </div>
-      </div>
-    </div>
-  )
+return ()=> clearInterval(interval);
+
+},[]);
+
+async function loadData(){
+
+const { data:userData } =
+await supabase
+.from("users")
+.select("*");
+
+const { data:betsData } =
+await supabase
+.from("bets")
+.select("*")
+.order("created_at",{ascending:false});
+
+const { data:resultsData } =
+await supabase
+.from("results")
+.select("*")
+.order("created_at",{ascending:false});
+
+const { data:requestsData } =
+await supabase
+.from("requests")
+.select("*")
+.order("created_at",{ascending:false});
+
+setUsers(userData || []);
+setBets(betsData || []);
+setResults(resultsData || []);
+setRequests(requestsData || []);
+
+}
+
+const totalAmount = useMemo(()=>{
+
+return bets.reduce(
+(acc,item)=>
+acc + Number(item.amount || 0),
+0
+);
+
+},[bets]);
+
+const lowestBetNumber = useMemo(()=>{
+
+let report = {};
+
+for(let i=0;i<=99;i++){
+
+const num =
+String(i).padStart(2,"0");
+
+report[num] = 0;
+
+}
+
+bets.forEach((bet)=>{
+
+const num =
+String(bet.number)
+.padStart(2,"0");
+
+report[num] +=
+Number(bet.amount || 0);
+
+});
+
+const sorted =
+Object.entries(report)
+.sort((a,b)=>a[1]-b[1]);
+
+return sorted[0]?.[0] || "00";
+
+},[bets]);
+
+async function declareResult(){
+
+const finalNumber =
+String(winningNumber)
+.padStart(2,"0");
+
+if(Number(finalNumber) > 99){
+
+alert("Only 00-99 Allowed");
+return;
+
+}
+
+await supabase
+.from("results")
+.insert([
+{
+number:finalNumber
+}
+]);
+
+alert("Result Declared");
+
+setWinningNumber("");
+
+loadData();
+
+}
+
+async function autoResult(){
+
+await supabase
+.from("results")
+.insert([
+{
+number:lowestBetNumber
+}
+]);
+
+alert(
+`Auto Result : ${lowestBetNumber}`
+);
+
+loadData();
+
+}
+
+async function updateWallet(
+id,
+wallet,
+amount
+){
+
+const newWallet =
+Number(wallet) + Number(amount);
+
+await supabase
+.from("users")
+.update({
+wallet:newWallet
+})
+.eq("id",id);
+
+loadData();
+
+}
+
+async function approveRequest(req){
+
+await supabase
+.from("requests")
+.update({
+status:"approved"
+})
+.eq("id",req.id);
+
+loadData();
+
+}
+
+async function rejectRequest(req){
+
+await supabase
+.from("requests")
+.update({
+status:"rejected"
+})
+.eq("id",req.id);
+
+loadData();
+
+}
+
+return(
+
+<div className="adminWrap">
+
+<div className="sidebar">
+
+<h1>DBBA INDIA</h1>
+
+<div className="menu">
+
+<div className="menuItem active">
+Dashboard
+</div>
+
+<div className="menuItem">
+Users
+</div>
+
+<div className="menuItem">
+Wallet
+</div>
+
+<div className="menuItem">
+Results
+</div>
+
+<div className="menuItem">
+Analytics
+</div>
+
+</div>
+
+</div>
+
+<div className="mainPanel">
+
+<div className="topBar">
+
+<div>
+
+<h2>
+Premium Admin Panel
+</h2>
+
+<p>
+Realtime betting analytics dashboard
+</p>
+
+</div>
+
+<div className="liveTag">
+
+<RefreshCw size={18}/>
+
+LIVE
+
+</div>
+
+</div>
+
+<div className="statsGrid">
+
+<div className="statsCard">
+
+<div className="iconBox">
+<Users size={24}/>
+</div>
+
+<div>
+<p>Total Users</p>
+<h1>{users.length}</h1>
+</div>
+
+</div>
+
+<div className="statsCard">
+
+<div className="iconBox">
+<BarChart3 size={24}/>
+</div>
+
+<div>
+<p>Total Bets</p>
+<h1>{bets.length}</h1>
+</div>
+
+</div>
+
+<div className="statsCard">
+
+<div className="iconBox">
+<CircleDollarSign size={24}/>
+</div>
+
+<div>
+<p>Total Amount</p>
+<h1>₹ {totalAmount}</h1>
+</div>
+
+</div>
+
+<div className="statsCard">
+
+<div className="iconBox">
+<TrendingUp size={24}/>
+</div>
+
+<div>
+<p>Lowest Liability</p>
+<h1>{lowestBetNumber}</h1>
+</div>
+
+</div>
+
+</div>
+
+<div className="gridTwo">
+
+<div className="card">
+
+<h2>Declare Result</h2>
+
+<input
+type="number"
+placeholder="00-99"
+value={winningNumber}
+onChange={(e)=>
+setWinningNumber(e.target.value)
+}
+/>
+
+<button onClick={declareResult}>
+Declare Result
+</button>
+
+<button
+className="greenBtn"
+onClick={autoResult}
+>
+Auto Lowest Bet Result
+</button>
+
+</div>
+
+<div className="card">
+
+<h2>Latest Results</h2>
+
+<div className="resultWrap">
+
+{
+results.slice(0,10)
+.map((item,index)=>(
+
+<div
+className="resultBall"
+key={index}
+>
+
+{item.number}
+
+</div>
+
+))
+}
+
+</div>
+
+</div>
+
+</div>
+
+<div className="card">
+
+<h2>
+Deposit & Withdraw Requests
+</h2>
+
+{
+requests.map((req,index)=>(
+
+<div
+className="tableRow"
+key={index}
+>
+
+<div>
+
+<h4>{req.name}</h4>
+
+<p>
+{req.type} • ₹ {req.amount}
+</p>
+
+</div>
+
+<div className="actions">
+
+<button
+onClick={()=>
+approveRequest(req)
+}
+>
+
+Approve
+
+</button>
+
+<button
+className="redBtn"
+onClick={()=>
+rejectRequest(req)
+}
+>
+
+Reject
+
+</button>
+
+</div>
+
+</div>
+
+))
+}
+
+</div>
+
+<div className="card">
+
+<h2>
+Users Wallet Manager
+</h2>
+
+{
+users.map((user,index)=>(
+
+<div
+className="tableRow"
+key={index}
+>
+
+<div>
+
+<h4>{user.name}</h4>
+
+<p>{user.email}</p>
+
+</div>
+
+<div className="actions">
+
+<span className="walletTag">
+
+₹ {user.wallet || 0}
+
+</span>
+
+<button
+onClick={()=>
+updateWallet(
+user.id,
+user.wallet || 0,
+100
+)
+}
+>
+
++100
+
+</button>
+
+<button
+className="redBtn"
+onClick={()=>
+updateWallet(
+user.id,
+user.wallet || 0,
+-100
+)
+}
+>
+
+-100
+
+</button>
+
+</div>
+
+</div>
+
+))
+}
+
+</div>
+
+<div className="card">
+
+<h2>
+All Bets
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>User</th>
+<th>Number</th>
+<th>Amount</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{
+bets.map((bet,index)=>(
+
+<tr key={index}>
+
+<td>{bet.name}</td>
+
+<td>{bet.number}</td>
+
+<td>
+₹ {bet.amount}
+</td>
+
+<td>
+{bet.status}
+</td>
+
+</tr>
+
+))
+}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<style jsx>{`
+
+.adminWrap{
+display:flex;
+min-height:100vh;
+background:
+linear-gradient(
+135deg,
+#050816,
+#0f172a
+);
+color:white;
+}
+
+.sidebar{
+width:260px;
+background:rgba(255,255,255,0.05);
+border-right:
+1px solid rgba(255,255,255,0.08);
+padding:30px;
+}
+
+.sidebar h1{
+font-size:30px;
+font-weight:900;
+margin-bottom:40px;
+background:
+linear-gradient(
+to right,
+#00ffe0,
+#00a2ff
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.menuItem{
+padding:16px;
+border-radius:16px;
+background:rgba(255,255,255,0.04);
+cursor:pointer;
+}
+
+.active{
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+}
+
+.mainPanel{
+flex:1;
+padding:30px;
+}
+
+.topBar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.topBar h2{
+font-size:38px;
+font-weight:800;
+}
+
+.topBar p{
+margin-top:6px;
+color:#94a3b8;
+}
+
+.liveTag{
+display:flex;
+align-items:center;
+gap:10px;
+padding:14px 22px;
+border-radius:18px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+font-weight:700;
+}
+
+.statsGrid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.statsCard{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:25px;
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.iconBox{
+width:65px;
+height:65px;
+border-radius:20px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.statsCard p{
+color:#94a3b8;
+margin-bottom:8px;
+}
+
+.statsCard h1{
+font-size:28px;
+}
+
+.gridTwo{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:25px;
+margin-bottom:20px;
+}
+
+.card h2{
+margin-bottom:20px;
+}
+
+.card input{
+width:100%;
+padding:18px;
+border:none;
+outline:none;
+border-radius:16px;
+background:rgba(255,255,255,0.05);
+color:white;
+margin-bottom:15px;
+}
+
+.card button{
+padding:14px 20px;
+border:none;
+border-radius:14px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+color:white;
+font-weight:700;
+cursor:pointer;
+margin-right:10px;
+}
+
+.greenBtn{
+background:#10b981 !important;
+}
+
+.redBtn{
+background:#ef4444 !important;
+}
+
+.resultWrap{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.resultBall{
+width:70px;
+height:70px;
+border-radius:50%;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+font-weight:900;
+}
+
+.tableRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px;
+border-radius:18px;
+background:rgba(255,255,255,0.04);
+margin-bottom:15px;
+}
+
+.actions{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.walletTag{
+padding:12px 18px;
+border-radius:14px;
+background:#10b981;
+font-weight:700;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,
+td{
+padding:16px;
+text-align:left;
+border-bottom:
+1px solid rgba(255,255,255,0.08);
+}
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+.gridTwo{
+grid-template-columns:1fr;
+}
+
+.topBar{
+flex-direction:column;
+align-items:flex-start;
+gap:20px;
+}
+
+}
+
+`}</style>
+
+</div>
+
+</div>
+
+)
+
 }
