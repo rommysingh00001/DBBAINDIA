@@ -8,7 +8,7 @@ export default function LoginPage(){
 
 const router = useRouter();
 
-const [email,setEmail] = useState("");
+const [phone,setPhone] = useState("");
 
 async function login(){
 
@@ -16,7 +16,7 @@ const { data,error } =
 await supabase
 .from("users")
 .select("*")
-.eq("email",email)
+.eq("phone",phone)
 .single();
 
 if(error || !data){
@@ -63,10 +63,10 @@ Login
 </h1>
 
 <input
-placeholder="Email"
-value={email}
+placeholder="Phone Number"
+value={phone}
 onChange={(e)=>
-setEmail(e.target.value)
+setPhone(e.target.value)
 }
 style={{
 padding:"14px",
