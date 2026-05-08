@@ -18,6 +18,7 @@ const router = useRouter();
 
 const [user,setUser] = useState(null);
 const [wallet,setWallet] = useState(0);
+const [profile,setProfile] = useState(null);
 const [number,setNumber] = useState("");
 const [amount,setAmount] = useState("");
 const [betLocked,setBetLocked] = useState(false);
@@ -128,6 +129,8 @@ const { data } = await supabase
 if(data){
 
 setWallet(data.wallet || 0);
+
+setProfile(data);
 
 }
 
@@ -364,7 +367,55 @@ Premium Gaming Dashboard
 </div>
 
 </div>
+<div className="profileCard">
 
+<h2>User Profile</h2>
+
+<div className="profileInfo">
+
+<div>
+
+<p>Name</p>
+
+<h3>
+{profile?.name || "--"}
+</h3>
+
+</div>
+
+<div>
+
+<p>Email</p>
+
+<h3>
+{profile?.email || "--"}
+</h3>
+
+</div>
+
+<div>
+
+<p>Phone</p>
+
+<h3>
+{profile?.phone || "--"}
+</h3>
+
+</div>
+
+<div>
+
+<p>Wallet</p>
+
+<h3>
+₹ {wallet}
+</h3>
+
+</div>
+
+</div>
+
+</div>
 <div className="cardsGrid">
 <div className="walletActions">
 
@@ -627,7 +678,33 @@ bets.map((bet,index)=>(
 
 </div>
 
-<style jsx>{.liveClock{
+<style jsx>{.profileCard{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:25px;
+margin-bottom:25px;
+}
+
+.profileCard h2{
+margin-bottom:20px;
+}
+
+.profileInfo{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+}
+
+.profileInfo p{
+color:#94a3b8;
+margin-bottom:8px;
+}
+
+.profileInfo h3{
+font-size:20px;
+}.liveClock{
 margin-top:12px;
 display:inline-block;
 padding:12px 18px;
