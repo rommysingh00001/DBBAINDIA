@@ -61,36 +61,6 @@ export default function Home() {
           <button className="betBtn">Place Bet</button>
         </div>
       </section>
-
-      <section className="features">
-        <h3>Platform Features</h3>
-
-        <div className="cards">
-          <div className="card">
-            <div className="icon">🎯</div>
-            <h4>Easy Number Selection</h4>
-            <p>Mobile-friendly number selection system.</p>
-          </div>
-
-          <div className="card">
-            <div className="icon">💰</div>
-            <h4>90x Reward Logic</h4>
-            <p>Winning numbers receive up to 90x rewards.</p>
-          </div>
-
-          <div className="card">
-            <div className="icon">⚡</div>
-            <h4>Realtime Updates</h4>
-            <p>Daily result announcements and wallet updates.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="winner">
-        <h3>Today's Winning Number</h3>
-        <div className="winnerNumber">47</div>
-        <p>Results Updated Daily at 09:15 AM</p>
-      </section>
     </main>
   );
 }
