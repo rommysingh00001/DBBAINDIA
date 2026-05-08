@@ -1,28 +1,22 @@
 'use client';
 
-import {
-  useState
-} from 'react';
+import { useState } from 'react';
 
 import '../globals.css';
 
 import Navbar from '../../components/Navbar.jsx';
-
 import NumberGrid from '../../components/NumberGrid.jsx';
-
 import WalletCard from '../../components/WalletCard.jsx';
 
 export default function Dashboard() {
 
-  const numbers =
-    Array.from(
-      { length:100 },
-      (_,i)=>
-        i.toString()
-        .padStart(2,'0')
-    );
+  const numbers = Array.from(
+    { length: 100 },
+    (_, i) =>
+      i.toString().padStart(2, '0')
+  );
 
-  const [selected,setSelected] =
+  const [selected, setSelected] =
     useState('');
 
   return (
