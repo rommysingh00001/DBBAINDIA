@@ -1,3 +1,5 @@
+'use client'
+
 export default function NumberGrid({
   numbers,
   selected,
@@ -8,20 +10,16 @@ export default function NumberGrid({
 
     <div className="numberGrid">
 
-      {numbers.map((num)=>(
+      {numbers.map((num) => (
 
         <button
           key={num}
-
           className={
             selected === num
             ? 'numberBtn active'
             : 'numberBtn'
           }
-
-          onClick={()=>
-            onSelect(num)
-          }
+          onClick={() => onSelect(num)}
         >
           {num}
         </button>
@@ -29,5 +27,5 @@ export default function NumberGrid({
       ))}
 
     </div>
-  );
+  )
 }
