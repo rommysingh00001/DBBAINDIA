@@ -16,6 +16,9 @@ export default function Dashboard() {
   const [amount, setAmount] =
     useState('')
 
+  const [time, setTime] =
+    useState('')
+
   useEffect(()=>{
 
     const data =
@@ -30,7 +33,21 @@ export default function Dashboard() {
       )
     }
 
+    updateClock()
+
+    setInterval(updateClock,1000)
+
   },[])
+
+  function updateClock(){
+
+    const now =
+      new Date()
+
+    setTime(
+      now.toLocaleTimeString()
+    )
+  }
 
   const numbers =
     Array.from(
@@ -57,84 +74,183 @@ export default function Dashboard() {
     }
 
     alert(
-      `Bet Placed On ${selected}`
+      `Bet placed on ${selected}`
     )
   }
 
   return (
 
-    <main className="dashboard">
+    <main className="mainDashboard">
 
-      <div className="navbar">
+      <div className="topbar">
 
-        <h1>DBBA INDIA</h1>
+        <div>
 
-        <div className="wallet">
+          <h1 className="logo">
+            DBBA INDIA
+          </h1>
 
-          ₹ {user?.wallet || 0}
+          <p className="welcome">
+            Welcome,
+            {user?.name}
+          </p>
+
+        </div>
+
+        <div className="walletBox">
+
+          <span>
+            Wallet
+          </span>
+
+          <h2>
+            ₹ {user?.wallet || 0}
+          </h2>
 
         </div>
 
       </div>
 
-      <div className="hero">
+      <div className="heroBanner">
 
-        <h1>
-          Win 90x Rewards
-        </h1>
+        <div>
 
-      </div>
+          <h1>
+            WIN 90X
+          </h1>
 
-      <div className="selectedBox">
+          <p>
+            India’s Premium
+            Virtual Betting Platform
+          </p>
 
-        Selected Number:
-        {selected || '--'}
+        </div>
 
-      </div>
+        <div className="liveTime">
 
-      <div className="numberGrid">
+          {time}
 
-        {
-          numbers.map((num)=>(
-
-            <button
-              key={num}
-
-              className={
-                selected === num
-                ? 'active'
-                : ''
-              }
-
-              onClick={()=>
-                setSelected(num)
-              }
-            >
-              {num}
-            </button>
-
-          ))
-        }
+        </div>
 
       </div>
 
-      <div className="betBox">
+      <div className="dashboardCards">
 
-        <input
-          type="number"
-          placeholder="Bet Amount"
+        <div className="dashCard">
 
-          value={amount}
+          <h3>
+            Today's Result
+          </h3>
 
-          onChange={(e)=>
-            setAmount(e.target.value)
+          <h1>
+            58
+          </h1>
+
+        </div>
+
+        <div className="dashCard">
+
+          <h3>
+            Your Bets
+          </h3>
+
+          <h1>
+            12
+          </h1>
+
+        </div>
+
+        <div className="dashCard">
+
+          <h3>
+            Winning Chance
+          </h3>
+
+          <h1>
+            90X
+          </h1>
+
+        </div>
+
+      </div>
+
+      <div className="betSection">
+
+        <h2>
+          Select Number
+        </h2>
+
+        <div className="selectedNumber">
+
+          {selected || '--'}
+
+        </div>
+
+        <div className="numberGrid">
+
+          {
+            numbers.map((num)=>(
+
+              <button
+                key={num}
+
+                className={
+                  selected === num
+                  ? 'activeNumber'
+                  : ''
+                }
+
+                onClick={()=>
+                  setSelected(num)
+                }
+              >
+                {num}
+              </button>
+
+            ))
           }
-        />
 
-        <button
-          onClick={placeBet}
-        >
-          Place Bet
+        </div>
+
+        <div className="betControls">
+
+          <input
+            type="number"
+            placeholder="Enter Bet Amount"
+
+            value={amount}
+
+            onChange={(e)=>
+              setAmount(e.target.value)
+            }
+          />
+
+          <button
+            onClick={placeBet}
+          >
+            Place Bet
+          </button>
+
+        </div>
+
+      </div>
+
+      <div className="bottomMenu">
+
+        <button>
+          Home
+        </button>
+
+        <button>
+          Wallet
+        </button>
+
+        <button>
+          Results
+        </button>
+
+        <button>
+          My Bets
         </button>
 
       </div>
