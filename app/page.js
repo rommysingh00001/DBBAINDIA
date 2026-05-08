@@ -1,28 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabase';
+import {
+  useState
+} from 'react';
+
+import {
+  useRouter
+} from 'next/navigation';
+
+import {
+  supabase
+} from '../lib/supabase';
+
 import './globals.css';
 
-export default function Home() {
+export default function Login() {
 
-  const router = useRouter();
+  const router =
+    useRouter();
 
-  const [mobile, setMobile] = useState('');
-  const [password, setPassword] = useState('');
+  const [mobile,setMobile] =
+    useState('');
 
-  const login = async () => {
+  const [password,setPassword] =
+    useState('');
 
-    const { data } = await supabase
+  const login = async ()=>{
+
+    const { data } =
+      await supabase
       .from('users')
       .select('*')
-      .eq('mobile', mobile)
-      .eq('password', password)
+      .eq('mobile',mobile)
+      .eq('password',password)
       .single();
 
-    if (!data) {
+    if(!data){
+
       alert('Invalid Login');
+
       return;
     }
 
@@ -36,17 +52,17 @@ export default function Home() {
 
   return (
 
-    <main className="loginPage">
+    <main className="authPage">
 
-      <div className="loginCard">
+      <div className="authCard">
 
         <h1>DBBA INDIA</h1>
 
-        <p>Login To Continue</p>
-
         <input
-          placeholder="Mobile Number"
+          placeholder="Mobile"
+
           value={mobile}
+
           onChange={(e)=>
             setMobile(e.target.value)
           }
@@ -54,8 +70,11 @@ export default function Home() {
 
         <input
           type="password"
+
           placeholder="Password"
+
           value={password}
+
           onChange={(e)=>
             setPassword(e.target.value)
           }
