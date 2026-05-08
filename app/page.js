@@ -7,15 +7,15 @@ export default function Home() {
   const [input, setInput] = useState('')
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    async function getMessages() {
       const { data } = await supabase.from('messages').select('*').order('created_at', { ascending: true })
       if (data) setMessages(data)
     }
-    fetchMessages()
+    getMessages()
   }, [])
 
-  const handleSend = async () => {
-    if (!input.trim()) return
+  const send = async () => {
+    if (!input) return
     const { error } = await supabase.from('messages').insert([{ content: input }])
     if (!error) {
       setMessages([...messages, { content: input }])
@@ -24,24 +24,22 @@ export default function Home() {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#0d1117', color: 'white', fontFamily: 'sans-serif' }}>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', maxWidth: '800px', margin: '0 auto' }}>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-          {messages.map((m, i) => (
-            <div key={i} style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#161b22', borderRadius: '8px' }}>
-              {m.content}
-            </div>
-          ))}
-        </div>
-        <div style={{ padding: '20px', display: 'flex', gap: '10px' }}>
-          <input 
-            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #30363d', backgroundColor: '#0d1117', color: 'white' }}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message..."
-          />
-          <button onClick={handleSend} style={{ padding: '10px 20px', backgroundColor: '#238636', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Send</button>
-        </div>
+    <div style={{ color: 'white', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px', maxWidth: '700px', margin: '0 auto', width: '100%' }}>
+        {messages.map((m, i) => (
+          <div key={i} style={{ background: '#161b22', padding: '15px', borderRadius: '10px', marginBottom: '10px', border: '1px solid #30363d' }}>
+            {m.content}
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: '20px', borderTop: '1px solid #30363d', display: 'flex', gap: '10px', maxWidth: '700px', margin: '0 auto', width: '100%' }}>
+        <input 
+          style={{ flex: 1, padding: '12px', background: '#0d1117', border: '1px solid #30363d', color: 'white', borderRadius: '5px' }}
+          value={input} 
+          onChange={(e) => setInput(e.target.value)} 
+          placeholder="Type here..."
+        />
+        <button onClick={send} style={{ padding: '10px 20px', background: '#238636', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Send</button>
       </div>
     </div>
   )
