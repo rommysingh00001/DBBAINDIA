@@ -5,48 +5,81 @@ from 'react'
 
 import '../globals.css'
 
-export default function Dashboard() {
+import { supabase }
+from '../../lib/supabase'
 
-  const [user, setUser] =
+export default function Dashboard(){
+
+  const [user,setUser] =
     useState(null)
 
-  const [selected, setSelected] =
+  const [selected,setSelected] =
     useState('')
 
-  const [amount, setAmount] =
+  const [amount,setAmount] =
     useState('')
 
-  const [time, setTime] =
-    useState('')
+  const [loading,setLoading] =
+    useState(false)
+
+  const [myBets,setMyBets] =
+    useState([])
 
   useEffect(()=>{
 
-    const data =
+    const localUser =
       localStorage.getItem(
         'dbbaUser'
       )
 
-    if(data){
+    if(localUser){
 
-      setUser(
-        JSON.parse(data)
-      )
+      const parsed =
+        JSON.parse(localUser)
+
+      setUser(parsed)
+
+      fetchMyBets(parsed.id)
+
+      refreshWallet(parsed.id)
     }
-
-    updateClock()
-
-    setInterval(updateClock,1000)
 
   },[])
 
-  function updateClock(){
+  async function refreshWallet(id){
 
-    const now =
-      new Date()
+    const { data } =
+      await supabase
+      .from('users')
+      .select('*')
+      .eq('id',id)
+      .single()
 
-    setTime(
-      now.toLocaleTimeString()
-    )
+    if(data){
+
+      setUser(data)
+
+      localStorage.setItem(
+        'dbbaUser',
+        JSON.stringify(data)
+      )
+    }
+  }
+
+  async function fetchMyBets(id){
+
+    const { data } =
+      await supabase
+      .from('bets')
+      .select('*')
+      .eq('user_id',id)
+      .order('id',
+        { ascending:false })
+
+    if(data){
+
+      setMyBets(data)
+    }
   }
 
   const numbers =
@@ -57,7 +90,7 @@ export default function Dashboard() {
         .padStart(2,'0')
     )
 
-  function placeBet(){
+  async function placeBet(){
 
     if(!selected){
 
@@ -73,12 +106,100 @@ export default function Dashboard() {
       return
     }
 
+    if(Number(amount) <= 0){
+
+      alert('Invalid Amount')
+
+      return
+    }
+
+    if(
+      Number(amount)
+      >
+      Number(user.wallet)
+    ){
+
+      alert(
+        'Insufficient Wallet Balance'
+      )
+
+      return
+    }
+
+    setLoading(true)
+
+    const newWallet =
+      Number(user.wallet)
+      - Number(amount)
+
+    await supabase
+    .from('users')
+    .update({
+      wallet:newWallet
+    })
+    .eq('id',user.id)
+
+    await supabase
+    .from('bets')
+    .insert([
+      {
+        user_id:user.id,
+        number:selected,
+        amount:Number(amount),
+        status:'pending'
+      }
+    ])
+
     alert(
       `Bet placed on ${selected}`
     )
+
+    setAmount('')
+
+    refreshWallet(user.id)
+
+    fetchMyBets(user.id)
+
+    setLoading(false)
   }
 
-  return (
+  async function cancelBet(bet){
+
+    if(
+      bet.status !== 'pending'
+    ){
+
+      alert(
+        'Cannot cancel'
+      )
+
+      return
+    }
+
+    const updatedWallet =
+      Number(user.wallet)
+      + Number(bet.amount)
+
+    await supabase
+    .from('users')
+    .update({
+      wallet:updatedWallet
+    })
+    .eq('id',user.id)
+
+    await supabase
+    .from('bets')
+    .delete()
+    .eq('id',bet.id)
+
+    refreshWallet(user.id)
+
+    fetchMyBets(user.id)
+
+    alert('Bet Cancelled')
+  }
+
+  return(
 
     <main className="mainDashboard">
 
@@ -106,69 +227,6 @@ export default function Dashboard() {
           <h2>
             ₹ {user?.wallet || 0}
           </h2>
-
-        </div>
-
-      </div>
-
-      <div className="heroBanner">
-
-        <div>
-
-          <h1>
-            WIN 90X
-          </h1>
-
-          <p>
-            India’s Premium
-            Virtual Betting Platform
-          </p>
-
-        </div>
-
-        <div className="liveTime">
-
-          {time}
-
-        </div>
-
-      </div>
-
-      <div className="dashboardCards">
-
-        <div className="dashCard">
-
-          <h3>
-            Today's Result
-          </h3>
-
-          <h1>
-            58
-          </h1>
-
-        </div>
-
-        <div className="dashCard">
-
-          <h3>
-            Your Bets
-          </h3>
-
-          <h1>
-            12
-          </h1>
-
-        </div>
-
-        <div className="dashCard">
-
-          <h3>
-            Winning Chance
-          </h3>
-
-          <h1>
-            90X
-          </h1>
 
         </div>
 
@@ -228,30 +286,62 @@ export default function Dashboard() {
           <button
             onClick={placeBet}
           >
-            Place Bet
+            {
+              loading
+              ? 'Processing...'
+              : 'Place Bet'
+            }
           </button>
 
         </div>
 
       </div>
 
-      <div className="bottomMenu">
+      <div className="myBets">
 
-        <button>
-          Home
-        </button>
-
-        <button>
-          Wallet
-        </button>
-
-        <button>
-          Results
-        </button>
-
-        <button>
+        <h2>
           My Bets
-        </button>
+        </h2>
+
+        {
+          myBets.map((bet)=>(
+
+            <div
+              className="betCard"
+              key={bet.id}
+            >
+
+              <div>
+
+                <h3>
+                  Number :
+                  {bet.number}
+                </h3>
+
+                <p>
+                  Amount :
+                  ₹ {bet.amount}
+                </p>
+
+                <p>
+                  Status :
+                  {bet.status}
+                </p>
+
+              </div>
+
+              <button
+                onClick={()=>
+                  cancelBet(bet)
+                }
+              >
+                Cancel
+              </button>
+
+            </div>
+
+          ))
+        }
 
       </div>
 
