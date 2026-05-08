@@ -1,69 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import {
-ArrowRight,
-Wallet,
-Shield,
-BarChart3,
-Users
-} from "lucide-react";
 
 export default function HomePage(){
 
 return(
 
-<div className="homeWrapper">
+<div className="homePage">
 
-<div className="heroSection">
+<div className="overlay"/>
 
-<div className="overlay"></div>
-
-<nav className="navbar">
+<div className="content">
 
 <h1>
 DBBA INDIA
 </h1>
 
-<div className="navBtns">
+<p>
+Premium Color Prediction Platform
+</p>
+
+<div className="buttons">
 
 <Link href="/login">
-<button className="loginBtn">
+
+<button>
 Login
 </button>
+
 </Link>
 
 <Link href="/signup">
+
 <button className="signupBtn">
-Sign Up
-</button>
-</Link>
-
-</div>
-
-</nav>
-
-<div className="heroContent">
-
-<h2>
-PREMIUM BETTING PLATFORM
-</h2>
-
-<p>
-India's modern realtime gaming platform with
-premium dashboard, instant results and secure wallet system.
-</p>
-
-<div className="heroButtons">
-
-<Link href="/signup">
-
-<button className="startBtn">
-
-Start Playing
-
-<ArrowRight size={20}/>
-
+Signup
 </button>
 
 </Link>
@@ -72,67 +42,111 @@ Start Playing
 
 </div>
 
-</div>
+<style jsx>{`
 
-<div className="featuresSection">
+.homePage{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:
+linear-gradient(
+135deg,
+#020617,
+#0f172a,
+#111827
+);
+position:relative;
+overflow:hidden;
+}
 
-<div className="featureCard">
+.overlay{
+position:absolute;
+width:600px;
+height:600px;
+background:#06b6d4;
+filter:blur(180px);
+opacity:0.15;
+border-radius:50%;
+}
 
-<div className="featureIcon">
-<Wallet size={28}/>
-</div>
+.content{
+position:relative;
+z-index:2;
+text-align:center;
+color:white;
+}
 
-<h3>Realtime Wallet</h3>
+.content h1{
+font-size:72px;
+font-weight:900;
+margin-bottom:15px;
+background:
+linear-gradient(
+to right,
+#00ffe0,
+#00a2ff
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
 
-<p>
-Instant deposit and withdrawal system with admin approval.
-</p>
+.content p{
+font-size:22px;
+color:#94a3b8;
+margin-bottom:40px;
+}
 
-</div>
+.buttons{
+display:flex;
+gap:20px;
+justify-content:center;
+flex-wrap:wrap;
+}
 
-<div className="featureCard">
+button{
+padding:16px 40px;
+border:none;
+border-radius:16px;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+color:white;
+transition:0.3s;
+}
 
-<div className="featureIcon">
-<Shield size={28}/>
-</div>
+button:hover{
+transform:translateY(-3px);
+}
 
-<h3>Secure Platform</h3>
+.signupBtn{
+background:
+linear-gradient(
+to right,
+#7c3aed,
+#c026d3
+);
+}
 
-<p>
-Protected betting system powered by Supabase security.
-</p>
+@media(max-width:768px){
 
-</div>
+.content h1{
+font-size:46px;
+}
 
-<div className="featureCard">
+.content p{
+font-size:18px;
+}
 
-<div className="featureIcon">
-<BarChart3 size={28}/>
-</div>
+}
 
-<h3>Live Analytics</h3>
-
-<p>
-Track betting activity, results and wallet stats in realtime.
-</p>
-
-</div>
-
-<div className="featureCard">
-
-<div className="featureIcon">
-<Users size={28}/>
-</div>
-
-<h3>Admin Controls</h3>
-
-<p>
-Complete betting and user management from premium admin panel.
-</p>
-
-</div>
-
-</div>
+`}</style>
 
 </div>
 
