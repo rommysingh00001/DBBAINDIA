@@ -1,48 +1,69 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '../lib/supabase';
 import './globals.css';
 
 export default function Home() {
 
-  const numbers = Array.from(
-    { length: 100 },
-    (_, i) => i.toString().padStart(2, '0')
-  );
+  const router = useRouter();
+
+  const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
+
+  const login = async () => {
+
+    const { data } = await supabase
+      .from('users')
+      .select('*')
+      .eq('mobile', mobile)
+      .eq('password', password)
+      .single();
+
+    if (!data) {
+      alert('Invalid Login');
+      return;
+    }
+
+    localStorage.setItem(
+      'dbbaUser',
+      JSON.stringify(data)
+    );
+
+    router.push('/dashboard');
+  };
 
   return (
 
-    <main className="main">
+    <main className="loginPage">
 
-      <div className="topBar">
+      <div className="loginCard">
 
-        <div className="walletCard">
-          <h3>Wallet</h3>
-          <h1>₹1000</h1>
-        </div>
+        <h1>DBBA INDIA</h1>
 
-        <div className="resultCard">
-          <h3>Latest Result</h3>
-          <h1>--</h1>
-        </div>
+        <p>Login To Continue</p>
 
-      </div>
+        <input
+          placeholder="Mobile Number"
+          value={mobile}
+          onChange={(e)=>
+            setMobile(e.target.value)
+          }
+        />
 
-      <h2 className="title">
-        Place Your Bet
-      </h2>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e)=>
+            setPassword(e.target.value)
+          }
+        />
 
-      <div className="numberGrid">
-
-        {numbers.map((num) => (
-
-          <button
-            className="numberBtn"
-            key={num}
-          >
-            {num}
-          </button>
-
-        ))}
+        <button onClick={login}>
+          LOGIN
+        </button>
 
       </div>
 
