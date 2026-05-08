@@ -1,54 +1,45 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation'
+import './globals.css'
 
-import '../globals.css';
+export default function Home() {
 
-import Navbar from '../../components/Navbar.jsx';
-import NumberGrid from '../../components/NumberGrid.jsx';
-import WalletCard from '../../components/WalletCard.jsx';
-
-export default function Dashboard() {
-
-  const numbers = Array.from(
-    { length: 100 },
-    (_, i) =>
-      i.toString().padStart(2, '0')
-  );
-
-  const [selected, setSelected] =
-    useState('');
+  const router = useRouter()
 
   return (
 
-    <main className="dashboard">
+    <main className="loginPage">
 
-      <Navbar />
+      <div className="loginBox">
 
-      <div className="topBar">
+        <h1>DBBA INDIA</h1>
 
-        <WalletCard
-          title="Wallet"
-          value="₹1000"
+        <input placeholder="Mobile" />
+
+        <input
+          placeholder="Password"
+          type="password"
         />
 
-        <WalletCard
-          title="Latest Result"
-          value="54"
-        />
+        <button
+          onClick={() =>
+            router.push('/dashboard')
+          }
+        >
+          Login
+        </button>
+
+        <button
+          onClick={() =>
+            router.push('/signup')
+          }
+        >
+          Signup
+        </button>
 
       </div>
 
-      <h2 className="title">
-        Select Number
-      </h2>
-
-      <NumberGrid
-        numbers={numbers}
-        selected={selected}
-        onSelect={setSelected}
-      />
-
     </main>
-  );
+  )
 }
