@@ -2,37 +2,27 @@
 
 import Link from 'next/link'
 
-export default function Navbar() {
+export default function Navbar(){
 
-  return (
+  return(
 
-    <div className="navbar">
+    <div className="bottomNav">
 
-      <div>
+      <Link href="/dashboard">
+        Home
+      </Link>
 
-        <h1 className="logo">
-          DBBA INDIA
-        </h1>
+      <Link href="/results">
+        Results
+      </Link>
 
-        <p className="subLogo">
-          Virtual Number Selection Platform
-        </p>
+      <Link href="/wallet">
+        Wallet
+      </Link>
 
-      </div>
-
-      <div className="navRight">
-
-        <div className="walletBox">
-          ₹ 25,000
-        </div>
-
-        <Link href="/">
-          <button className="loginBtn">
-            Login
-          </button>
-        </Link>
-
-      </div>
+      <Link href="/profile">
+        Profile
+      </Link>
 
     </div>
   )
