@@ -3,6 +3,7 @@ export default function AdminPanel() {
     <main className="adminLayout">
 
       <aside className="adminSide">
+
         <div className="logoArea">
           <h1>DBBA ADMIN</h1>
           <p>Premium Control Panel</p>
@@ -16,6 +17,7 @@ export default function AdminPanel() {
           <button>Results</button>
           <button>Users</button>
         </nav>
+
       </aside>
 
       <section className="adminMain">
@@ -79,6 +81,7 @@ export default function AdminPanel() {
             </div>
 
             <div className="quickStats">
+
               <div>
                 <span>Active Users</span>
                 <h4>845</h4>
@@ -93,6 +96,7 @@ export default function AdminPanel() {
                 <span>Total Winners</span>
                 <h4>126</h4>
               </div>
+
             </div>
 
           </div>
