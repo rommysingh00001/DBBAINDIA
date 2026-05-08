@@ -38,7 +38,7 @@ await supabase.from("users").insert([
 name,
 email,
 phone,
-wallet:10
+wallet:0
 }
 ]);
 
