@@ -1,89 +1,52 @@
-.mainDashboard {
-  padding: 20px;
-  background: #0f172a;
+body {
+  margin: 0;
+  background: #081018;
+  font-family: Arial;
+}
+
+.main {
   min-height: 100vh;
+  padding: 20px;
   color: white;
 }
 
-.topCards {
+.topBar {
   display: flex;
   gap: 20px;
-  margin: 20px 0;
 }
 
-.infoCard {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 15px;
+.walletCard,
+.resultCard {
   flex: 1;
+  background: linear-gradient(
+    135deg,
+    #f59e0b,
+    #d97706
+  );
+
+  padding: 20px;
+  border-radius: 20px;
+  color: black;
+}
+
+.title {
+  margin-top: 30px;
 }
 
 .numberGrid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  gap: 12px;
   margin-top: 20px;
 }
 
-.numberBox {
-  padding: 15px;
+.numberBtn {
+  padding: 18px;
   border: none;
-  border-radius: 12px;
-  background: #2563eb;
+  border-radius: 14px;
+  background: #1e293b;
   color: white;
   font-size: 18px;
-  cursor: pointer;
-}
-
-.historySection {
-  margin-top: 40px;
-}
-
-.historyCard {
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cutBtn {
-  background: red;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-.popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.popupBox {
-  background: #1e293b;
-  padding: 30px;
-  border-radius: 20px;
-  width: 300px;
-}
-
-.popupBox input {
-  width: 100%;
-  padding: 12px;
-  margin: 15px 0;
-}
-
-.popupBox button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 10px;
 }
