@@ -1,46 +1,141 @@
-"use client"
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+"use client";
 
-export default function Home() {
-  const [messages, setMessages] = useState([])
-  const [input, setInput] = useState('')
+import Link from "next/link";
+import {
+ArrowRight,
+Wallet,
+Shield,
+BarChart3,
+Users
+} from "lucide-react";
 
-  useEffect(() => {
-    async function getMessages() {
-      const { data } = await supabase.from('messages').select('*').order('created_at', { ascending: true })
-      if (data) setMessages(data)
-    }
-    getMessages()
-  }, [])
+export default function HomePage(){
 
-  const send = async () => {
-    if (!input) return
-    const { error } = await supabase.from('messages').insert([{ content: input }])
-    if (!error) {
-      setMessages([...messages, { content: input }])
-      setInput('')
-    }
-  }
+return(
 
-  return (
-    <div style={{ color: 'white', fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px', maxWidth: '700px', margin: '0 auto', width: '100%' }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{ background: '#161b22', padding: '15px', borderRadius: '10px', marginBottom: '10px', border: '1px solid #30363d' }}>
-            {m.content}
-          </div>
-        ))}
-      </div>
-      <div style={{ padding: '20px', borderTop: '1px solid #30363d', display: 'flex', gap: '10px', maxWidth: '700px', margin: '0 auto', width: '100%' }}>
-        <input 
-          style={{ flex: 1, padding: '12px', background: '#0d1117', border: '1px solid #30363d', color: 'white', borderRadius: '5px' }}
-          value={input} 
-          onChange={(e) => setInput(e.target.value)} 
-          placeholder="Type here..."
-        />
-        <button onClick={send} style={{ padding: '10px 20px', background: '#238636', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Send</button>
-      </div>
-    </div>
-  )
+<div className="homeWrapper">
+
+<div className="heroSection">
+
+<div className="overlay"></div>
+
+<nav className="navbar">
+
+<h1>
+DBBA INDIA
+</h1>
+
+<div className="navBtns">
+
+<Link href="/login">
+<button className="loginBtn">
+Login
+</button>
+</Link>
+
+<Link href="/signup">
+<button className="signupBtn">
+Sign Up
+</button>
+</Link>
+
+</div>
+
+</nav>
+
+<div className="heroContent">
+
+<h2>
+PREMIUM BETTING PLATFORM
+</h2>
+
+<p>
+India's modern realtime gaming platform with
+premium dashboard, instant results and secure wallet system.
+</p>
+
+<div className="heroButtons">
+
+<Link href="/signup">
+
+<button className="startBtn">
+
+Start Playing
+
+<ArrowRight size={20}/>
+
+</button>
+
+</Link>
+
+</div>
+
+</div>
+
+</div>
+
+<div className="featuresSection">
+
+<div className="featureCard">
+
+<div className="featureIcon">
+<Wallet size={28}/>
+</div>
+
+<h3>Realtime Wallet</h3>
+
+<p>
+Instant deposit and withdrawal system with admin approval.
+</p>
+
+</div>
+
+<div className="featureCard">
+
+<div className="featureIcon">
+<Shield size={28}/>
+</div>
+
+<h3>Secure Platform</h3>
+
+<p>
+Protected betting system powered by Supabase security.
+</p>
+
+</div>
+
+<div className="featureCard">
+
+<div className="featureIcon">
+<BarChart3 size={28}/>
+</div>
+
+<h3>Live Analytics</h3>
+
+<p>
+Track betting activity, results and wallet stats in realtime.
+</p>
+
+</div>
+
+<div className="featureCard">
+
+<div className="featureIcon">
+<Users size={28}/>
+</div>
+
+<h3>Admin Controls</h3>
+
+<p>
+Complete betting and user management from premium admin panel.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+)
+
 }
