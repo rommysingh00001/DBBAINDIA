@@ -1,161 +1,155 @@
-import '../globals.css'
+"use client";
 
-export default function Admin() {
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
+export default function AdminPage() {
+  const [winningNumber, setWinningNumber] = useState("");
+  const [bets, setBets] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchUsers();
+    fetchBets();
+  }, []);
+
+  async function fetchUsers() {
+    const { data } = await supabase.from("users").select("*");
+    if (data) setUsers(data);
+  }
+
+  async function fetchBets() {
+    const { data } = await supabase
+      .from("bets")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (data) setBets(data);
+  }
+
+  async function declareResult() {
+    if (!winningNumber) return;
+
+    setLoading(true);
+
+    await supabase.from("results").insert([
+      {
+        number: winningNumber,
+      },
+    ]);
+
+    const { data: allBets } = await supabase
+      .from("bets")
+      .select("*");
+
+    for (const bet of allBets) {
+      const isWinner = bet.number == winningNumber;
+
+      if (isWinner) {
+        const winAmount = bet.amount * 90;
+
+        const { data: userData } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", bet.user_id)
+          .single();
+
+        if (userData) {
+          await supabase
+            .from("users")
+            .update({
+              wallet: userData.wallet + winAmount,
+            })
+            .eq("id", bet.user_id);
+        }
+      }
+    }
+
+    alert("Winning Number Declared");
+    setWinningNumber("");
+    fetchUsers();
+    fetchBets();
+    setLoading(false);
+  }
+
+  const totalBetAmount = bets.reduce(
+    (sum, bet) => sum + bet.amount,
+    0
+  );
 
   return (
+    <div className="adminPage">
+      <h1 className="adminTitle">ADMIN PANEL</h1>
 
-    <main className="page">
+      <div className="adminCard">
+        <h2>Declare Winning Number</h2>
 
-      <h1>Admin Panel</h1>
+        <input
+          className="adminInput"
+          type="number"
+          placeholder="Enter Winning Number"
+          value={winningNumber}
+          onChange={(e) => setWinningNumber(e.target.value)}
+        />
 
-      <input
-        placeholder="Winning Number"
-      />
+        <button
+          className="adminBtn"
+          onClick={declareResult}
+        >
+          {loading ? "Processing..." : "Declare Result"}
+        </button>
+      </div>
 
-      <button>
-        Declare Result
-      </button>
+      <div className="adminGrid">
+        <div className="adminBox">
+          <h3>Total Users</h3>
+          <p>{users.length}</p>
+        </div>
 
-    </main>
-  )
-}
-.adminPage{
-padding:40px;
-background:#050505;
-min-height:100vh;
-color:white;
-}
+        <div className="adminBox">
+          <h3>Total Bets</h3>
+          <p>{bets.length}</p>
+        </div>
 
-.adminTitle{
-font-size:50px;
-color:gold;
-margin-bottom:30px;
-text-align:center;
-font-weight:900;
-}
+        <div className="adminBox">
+          <h3>Total Bet Amount</h3>
+          <p>₹ {totalBetAmount}</p>
+        </div>
+      </div>
 
-.statsGrid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
-margin-bottom:40px;
-}
+      <div className="adminCard">
+        <h2>User Wallet Balances</h2>
 
-.statsCard{
-background:#111;
-padding:30px;
-border-radius:25px;
-border:1px solid #222;
-text-align:center;
-}
+        {users.map((user) => (
+          <div key={user.id} className="listItem">
+            <span>{user.email}</span>
+            <span>₹ {user.wallet}</span>
+          </div>
+        ))}
+      </div>
 
-.statsCard h3{
-color:#aaa;
-margin-bottom:10px;
-}
+      <div className="adminCard">
+        <h2>All Bets Record</h2>
 
-.statsCard h1{
-font-size:40px;
-color:#00ff66;
-}
+        {bets.map((bet) => (
+          <div key={bet.id} className="listItem">
+            <span>
+              {bet.number}
+            </span>
 
-.resultBox{
-background:#111;
-padding:30px;
-border-radius:25px;
-margin-bottom:40px;
-display:flex;
-gap:20px;
-align-items:center;
-justify-content:center;
-flex-wrap:wrap;
-}
+            <span>
+              ₹ {bet.amount}
+            </span>
 
-.resultBox input{
-padding:16px;
-width:300px;
-border:none;
-border-radius:12px;
-background:#1a1a1a;
-color:white;
-font-size:18px;
-}
-
-.resultBox button{
-padding:16px 30px;
-background:gold;
-border:none;
-border-radius:12px;
-font-weight:bold;
-cursor:pointer;
-font-size:18px;
-}
-
-.adminSection{
-margin-top:40px;
-background:#111;
-padding:30px;
-border-radius:25px;
-overflow:auto;
-}
-
-.adminSection h2{
-margin-bottom:25px;
-font-size:32px;
-color:gold;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-table th{
-background:#1f1f1f;
-padding:18px;
-text-align:left;
-font-size:18px;
-}
-
-table td{
-padding:18px;
-border-top:1px solid #222;
-font-size:17px;
-}
-
-.numberReport{
-display:grid;
-grid-template-columns:repeat(6,1fr);
-gap:20px;
-}
-
-.numberCard{
-background:#1a1a1a;
-padding:25px;
-border-radius:20px;
-text-align:center;
-border:1px solid #2b2b2b;
-}
-
-.numberCard h1{
-font-size:38px;
-color:gold;
-margin-bottom:10px;
-}
-
-.numberCard p{
-font-size:22px;
-color:#00ff66;
-}
-
-@media(max-width:900px){
-
-.statsGrid{
-grid-template-columns:1fr;
-}
-
-.numberReport{
-grid-template-columns:repeat(2,1fr);
-}
-
+            <span>
+              {new Date(
+                bet.created_at
+              ).toLocaleString()}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
