@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState }
+import { useEffect,useState }
 from 'react'
 
 import '../globals.css'
@@ -13,433 +13,460 @@ from '../../components/Navbar'
 
 export default function Dashboard(){
 
-  const [user,setUser] =
-    useState(null)
+const [user,setUser] =
+useState(null)
 
-  const [selected,setSelected] =
-    useState('')
+const [selected,setSelected] =
+useState('')
 
-  const [amount,setAmount] =
-    useState('')
+const [amount,setAmount] =
+useState('')
 
-  const [loading,setLoading] =
-    useState(false)
+const [myBets,setMyBets] =
+useState([])
 
-  const [myBets,setMyBets] =
-    useState([])
+const [results,setResults] =
+useState([])
 
-  useEffect(()=>{
+const [loading,setLoading] =
+useState(false)
 
-    const localUser =
-      localStorage.getItem(
-        'dbbaUser'
-      )
+const numbers =
+Array.from(
+{ length:100 },
+(_,i)=>
+i.toString()
+.padStart(2,'0')
+)
 
-    if(localUser){
+useEffect(()=>{
 
-      const parsed =
-        JSON.parse(localUser)
+const localUser =
+localStorage.getItem(
+'dbbaUser'
+)
 
-      setUser(parsed)
+if(localUser){
 
-      fetchMyBets(parsed.id)
+const parsed =
+JSON.parse(localUser)
 
-      refreshWallet(parsed.id)
-    }
+setUser(parsed)
 
-    const walletChannel =
-    supabase
-    .channel('wallet-live')
+refreshWallet(parsed.id)
 
-    walletChannel.on(
-    'postgres_changes',
-    {
-    event:'UPDATE',
-    schema:'public',
-    table:'users'
-    },
-    (payload)=>{
+fetchMyBets(parsed.id)
 
-    if(
-    payload.new.id === user?.id
-    ){
+fetchResults()
+}
 
-    setUser(payload.new)
+const walletChannel =
+supabase.channel(
+'wallet-realtime'
+)
 
-    localStorage.setItem(
-    'dbbaUser',
-    JSON.stringify(payload.new)
-    )
-    }
-    }
-    )
+walletChannel.on(
+'postgres_changes',
+{
+event:'UPDATE',
+schema:'public',
+table:'users'
+},
+(payload)=>{
 
-    .subscribe()
+if(
+payload.new.id === user?.id
+){
 
-    const resultChannel =
-    supabase
-    .channel('results-live')
+setUser(payload.new)
 
-    resultChannel.on(
-    'postgres_changes',
-    {
-    event:'INSERT',
-    schema:'public',
-    table:'results'
-    },
-    (payload)=>{
+localStorage.setItem(
+'dbbaUser',
+JSON.stringify(payload.new)
+)
+}
+}
+)
 
-    alert(
-    `New Result : ${payload.new.winning_number}`
-    )
+.subscribe()
 
-    }
-    )
+let seconds = 59
 
-    .subscribe()
+setInterval(()=>{
 
-    let seconds = 59
+const timer =
+document.getElementById(
+'timer'
+)
 
-    setInterval(()=>{
+if(timer){
 
-    const timer =
-    document.getElementById(
-    'timer'
-    )
+if(seconds < 10){
 
-    if(timer){
+timer.innerText =
+`00:0${seconds}`
 
-    if(seconds < 10){
+}else{
 
-    timer.innerText =
-    `00:0${seconds}`
+timer.innerText =
+`00:${seconds}`
+}
 
-    }else{
+seconds--
 
-    timer.innerText =
-    `00:${seconds}`
-    }
+if(seconds < 0){
 
-    seconds--
+seconds = 59
+}
+}
 
-    if(seconds < 0){
+},1000)
 
-    seconds = 59
-    }
-    }
+},[])
 
-    },1000)
+async function refreshWallet(id){
 
-  },[])
+const { data } =
+await supabase
+.from('users')
+.select('*')
+.eq('id',id)
+.single()
 
-  async function refreshWallet(id){
+if(data){
 
-    const { data } =
-      await supabase
-      .from('users')
-      .select('*')
-      .eq('id',id)
-      .single()
+setUser(data)
 
-    if(data){
+localStorage.setItem(
+'dbbaUser',
+JSON.stringify(data)
+)
+}
+}
 
-      setUser(data)
+async function fetchMyBets(id){
 
-      localStorage.setItem(
-        'dbbaUser',
-        JSON.stringify(data)
-      )
-    }
-  }
+const { data } =
+await supabase
+.from('bets')
+.select('*')
+.eq('user_id',id)
+.order('id',
+{ ascending:false })
 
-  async function fetchMyBets(id){
+if(data){
 
-    const { data } =
-      await supabase
-      .from('bets')
-      .select('*')
-      .eq('user_id',id)
-      .order('id',
-        { ascending:false })
+setMyBets(data)
+}
+}
 
-    if(data){
+async function fetchResults(){
 
-      setMyBets(data)
-    }
-  }
+const { data } =
+await supabase
+.from('results')
+.select('*')
+.order('id',
+{ ascending:false })
+.limit(20)
 
-  const numbers =
-    Array.from(
-      { length:100 },
-      (_,i)=>
-        i.toString()
-        .padStart(2,'0')
-    )
+if(data){
 
-  async function placeBet(){
+setResults(data)
+}
+}
 
-    if(!selected){
+async function placeBet(){
 
-      alert('Select Number')
+if(!selected){
 
-      return
-    }
+alert(
+'Select Number'
+)
 
-    if(!amount){
+return
+}
 
-      alert('Enter Amount')
+if(!amount){
 
-      return
-    }
+alert(
+'Enter Amount'
+)
 
-    if(Number(amount) <= 0){
+return
+}
 
-      alert('Invalid Amount')
+if(
+Number(amount)
+>
+Number(user.wallet)
+){
 
-      return
-    }
+alert(
+'Low Wallet Balance'
+)
 
-    if(
-      Number(amount)
-      >
-      Number(user.wallet)
-    ){
+return
+}
 
-      alert(
-        'Insufficient Wallet Balance'
-      )
+setLoading(true)
 
-      return
-    }
+const updatedWallet =
+Number(user.wallet)
+- Number(amount)
 
-    setLoading(true)
+await supabase
+.from('users')
+.update({
+wallet:updatedWallet
+})
+.eq('id',user.id)
 
-    const newWallet =
-      Number(user.wallet)
-      - Number(amount)
+await supabase
+.from('bets')
+.insert([
+{
+user_id:user.id,
+number:selected,
+amount:Number(amount),
+status:'pending'
+}
+])
 
-    await supabase
-    .from('users')
-    .update({
-      wallet:newWallet
-    })
-    .eq('id',user.id)
+setLoading(false)
 
-    await supabase
-    .from('bets')
-    .insert([
-      {
-        user_id:user.id,
-        number:selected,
-        amount:Number(amount),
-        status:'pending'
-      }
-    ])
+alert(
+`Bet placed on ${selected}`
+)
 
-    alert(
-      `Bet placed on ${selected}`
-    )
+setAmount('')
 
-    setAmount('')
+refreshWallet(user.id)
 
-    refreshWallet(user.id)
+fetchMyBets(user.id)
+}
 
-    fetchMyBets(user.id)
+return(
 
-    setLoading(false)
-  }
+<main className="premiumDashboard">
 
-  
+<div className="topHeader">
 
-    const updatedWallet =
-      Number(user.wallet)
-      + Number(bet.amount)
+<div>
 
-    await supabase
-    .from('users')
-    .update({
-      wallet:updatedWallet
-    })
-    .eq('id',user.id)
+<h1 className="mainLogo">
+DBBA INDIA
+</h1>
 
-    await supabase
-    .from('bets')
-    .delete()
-    .eq('id',bet.id)
+<p className="tagline">
+India's Premium Virtual Platform
+</p>
 
-    refreshWallet(user.id)
+</div>
 
-    fetchMyBets(user.id)
+<div className="walletCard">
 
-    alert('Bet Cancelled')
-  }
+<span>
+Wallet Balance
+</span>
 
-  return(
+<h1>
+₹ {user?.wallet || 0}
+</h1>
 
-    <main className="mainDashboard">
+</div>
 
-      <div className="topbar">
+</div>
 
-        <div>
+<div className="liveTicker">
 
-          <h1 className="logo">
-            DBBA INDIA
-          </h1>
+<div className="liveDot"></div>
 
-          <p className="welcome">
-            Welcome,
-            {user?.name}
-          </p>
+LIVE PLAYERS :
+{
+Math.floor(
+Math.random() * 500
+)
++ 500
+}
 
-        </div>
+</div>
 
-        <div className="walletBox">
+<div className="dashboardGrid">
 
-          <span>
-            Wallet
-          </span>
+<div className="leftPanel">
 
-          <h2>
-            ₹ {user?.wallet || 0}
-          </h2>
+<div className="timerCard">
 
-        </div>
+<h2>
+NEXT RESULT
+</h2>
 
-      </div>
+<h1 id="timer">
+00:59
+</h1>
 
-      <div className="liveStrip">
+</div>
 
-        <div className="liveDot"></div>
+<div className="bettingCard">
 
-        LIVE USERS :
-        {
-        Math.floor(
-        Math.random() * 500
-        )
-        + 100
-        }
+<h2>
+Select Number
+</h2>
 
-      </div>
+<div className="selectedBox">
 
-      <div className="countdownCard">
+{selected || '--'}
 
-        <h2>
-          Next Result In
-        </h2>
+</div>
 
-        <h1 id="timer">
-          00:59
-        </h1>
+<div className="numberGrid">
 
-      </div>
+{
+numbers.map((num)=>(
 
-      <div className="betSection">
+<button
+key={num}
 
-        <h2>
-          Select Number
-        </h2>
+className={
+selected === num
+? 'activeNumber'
+: ''
+}
 
-        <div className="selectedNumber">
+onClick={()=>
+setSelected(num)
+}
+>
 
-          {selected || '--'}
+{num}
 
-        </div>
+</button>
 
-        <div className="numberGrid">
+))
+}
 
-          {
-            numbers.map((num)=>(
+</div>
 
-              <button
-                key={num}
+<div className="amountBox">
 
-                className={
-                  selected === num
-                  ? 'activeNumber'
-                  : ''
-                }
+<input
+type="number"
+placeholder="Enter Amount"
 
-                onClick={()=>
-                  setSelected(num)
-                }
-              >
-                {num}
-              </button>
+value={amount}
 
-            ))
-          }
+onChange={(e)=>
+setAmount(
+e.target.value
+)
+}
+/>
 
-        </div>
+<button
+onClick={placeBet}
+>
 
-        <div className="betControls">
+{
+loading
+? 'Processing...'
+: 'Place Bet'
+}
 
-          <input
-            type="number"
-            placeholder="Enter Bet Amount"
+</button>
 
-            value={amount}
+</div>
 
-            onChange={(e)=>
-              setAmount(e.target.value)
-            }
-          />
+</div>
 
-          <button
-            onClick={placeBet}
-          >
-            {
-              loading
-              ? 'Processing...'
-              : 'Place Bet'
-            }
-          </button>
+</div>
 
-        </div>
+<div className="rightPanel">
 
-      </div>
+<div className="historyCard">
 
-      <div className="myBets">
+<h2>
+Recent Results
+</h2>
 
-        <h2>
-          My Bets
-        </h2>
+<div className="resultList">
 
-        {
-          myBets.map((bet)=>(
+{
+results.map((r)=>(
 
-            <div
-              className="betCard"
-              key={bet.id}
-            >
+<div
+className="resultBall"
+key={r.id}
+>
 
-              <div>
+{r.winning_number}
 
-                <h3>
-                  Number :
-                  {bet.number}
-                </h3>
+</div>
 
-                <p>
-                  Amount :
-                  ₹ {bet.amount}
-                </p>
+))
+}
 
-                <p>
-                  Status :
-                  {bet.status}
-                </p>
+</div>
 
-              </div>
+</div>
 
-            </div>
+<div className="betsCard">
 
-          ))
-        }
+<h2>
+My Bets
+</h2>
 
-      </div>
+{
+myBets.map((bet)=>(
 
-      <Navbar/>
+<div
+className="betRow"
+key={bet.id}
+>
 
-    </main>
-  )
+<div>
+
+<h3>
+{bet.number}
+</h3>
+
+<p>
+₹ {bet.amount}
+</p>
+
+</div>
+
+<div
+className={
+bet.status === 'won'
+? 'winStatus'
+:
+bet.status === 'lost'
+? 'lossStatus'
+:
+'pendingStatus'
+}
+>
+
+{bet.status}
+
+</div>
+
+</div>
+
+))
+}
+
+</div>
+
+</div>
+
+</div>
+
+<Navbar/>
+
+</main>
+
+)
+
 }
