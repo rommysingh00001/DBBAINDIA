@@ -21,6 +21,7 @@ const [wallet,setWallet] = useState(0);
 const [number,setNumber] = useState("");
 const [amount,setAmount] = useState("");
 const [betLocked,setBetLocked] = useState(false);
+const [time,setTime] = useState("");
 const [results,setResults] = useState([]);
 const [bets,setBets] = useState([]);
 const [depositAmount,setDepositAmount] = useState("");
@@ -32,6 +33,15 @@ getUser();
 loadResults();
 
 loadBets();
+const timer = setInterval(()=>{
+
+const now = new Date();
+
+setTime(
+now.toLocaleTimeString()
+);
+
+},1000);
 const now = new Date();
 
 const currentMinute =
