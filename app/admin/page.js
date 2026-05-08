@@ -29,6 +29,7 @@ const [bets,setBets] = useState([]);
 const [results,setResults] = useState([]);
 const [requests,setRequests] = useState([]);
 const [winningNumber,setWinningNumber] = useState("");
+const [activeTab,setActiveTab] = useState("dashboard");
 const chartData = [
 
 { day:"Mon", bets:4000 },
@@ -406,28 +407,72 @@ return(
 
 <div className="menu">
 
-<div className="menuItem active">
+<div
+className={
+activeTab==="dashboard"
+? "menuItem active"
+: "menuItem"
+}
+onClick={()=>
+setActiveTab("dashboard")
+}
+>
 Dashboard
 </div>
 
-<div className="menuItem">
+<div
+className={
+activeTab==="users"
+? "menuItem active"
+: "menuItem"
+}
+onClick={()=>
+setActiveTab("users")
+}
+>
 Users
 </div>
 
-<div className="menuItem">
+<div
+className={
+activeTab==="wallet"
+? "menuItem active"
+: "menuItem"
+}
+onClick={()=>
+setActiveTab("wallet")
+}
+>
 Wallet
 </div>
 
-<div className="menuItem">
+<div
+className={
+activeTab==="results"
+? "menuItem active"
+: "menuItem"
+}
+onClick={()=>
+setActiveTab("results")
+}
+>
 Results
 </div>
 
-<div className="menuItem">
+<div
+className={
+activeTab==="analytics"
+? "menuItem active"
+: "menuItem"
+}
+onClick={()=>
+setActiveTab("analytics")
+}
+>
 Analytics
 </div>
 
 </div>
-
 </div>
 
 <div className="mainPanel">
