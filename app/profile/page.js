@@ -36,12 +36,15 @@ export default function Profile(){
 
   function logout(){
 
-    localStorage.removeItem(
-      'dbbaUser'
-    )
+  localStorage.removeItem(
+    'dbbaUser'
+  )
 
-    router.push('/')
-  }
+  document.cookie =
+  'dbba-auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+
+  router.push('/')
+}
 
   return(
 
