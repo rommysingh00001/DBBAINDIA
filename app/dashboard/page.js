@@ -8,6 +8,9 @@ import '../globals.css'
 import { supabase }
 from '../../lib/supabase'
 
+import Navbar
+from '../../components/Navbar'
+
 export default function Dashboard(){
 
   const [user,setUser] =
@@ -43,6 +46,89 @@ export default function Dashboard(){
 
       refreshWallet(parsed.id)
     }
+
+    const walletChannel =
+    supabase
+    .channel('wallet-live')
+
+    walletChannel.on(
+    'postgres_changes',
+    {
+    event:'UPDATE',
+    schema:'public',
+    table:'users'
+    },
+    (payload)=>{
+
+    if(
+    payload.new.id === user?.id
+    ){
+
+    setUser(payload.new)
+
+    localStorage.setItem(
+    'dbbaUser',
+    JSON.stringify(payload.new)
+    )
+    }
+    }
+    )
+
+    .subscribe()
+
+    const resultChannel =
+    supabase
+    .channel('results-live')
+
+    resultChannel.on(
+    'postgres_changes',
+    {
+    event:'INSERT',
+    schema:'public',
+    table:'results'
+    },
+    (payload)=>{
+
+    alert(
+    `New Result : ${payload.new.winning_number}`
+    )
+
+    }
+    )
+
+    .subscribe()
+
+    let seconds = 59
+
+    setInterval(()=>{
+
+    const timer =
+    document.getElementById(
+    'timer'
+    )
+
+    if(timer){
+
+    if(seconds < 10){
+
+    timer.innerText =
+    `00:0${seconds}`
+
+    }else{
+
+    timer.innerText =
+    `00:${seconds}`
+    }
+
+    seconds--
+
+    if(seconds < 0){
+
+    seconds = 59
+    }
+    }
+
+    },1000)
 
   },[])
 
@@ -232,6 +318,32 @@ export default function Dashboard(){
 
       </div>
 
+      <div className="liveStrip">
+
+        <div className="liveDot"></div>
+
+        LIVE USERS :
+        {
+        Math.floor(
+        Math.random() * 500
+        )
+        + 100
+        }
+
+      </div>
+
+      <div className="countdownCard">
+
+        <h2>
+          Next Result In
+        </h2>
+
+        <h1 id="timer">
+          00:59
+        </h1>
+
+      </div>
+
       <div className="betSection">
 
         <h2>
@@ -344,6 +456,8 @@ export default function Dashboard(){
         }
 
       </div>
+
+      <Navbar/>
 
     </main>
   )
