@@ -316,3 +316,21 @@ export default function AdminPage(){
     </main>
   )
 }
+const [transactions,
+setTransactions] =
+useState([])
+
+async function fetchTransactions(){
+
+const { data } =
+await supabase
+.from('transactions')
+.select('*')
+.order('id',
+{ ascending:false })
+
+if(data){
+
+setTransactions(data)
+}
+}
