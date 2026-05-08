@@ -6,7 +6,10 @@ Wallet,
 Clock3,
 Trophy,
 CircleDollarSign,
-LogOut
+LogOut,
+Home,
+BarChart,
+User
 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -677,8 +680,81 @@ bets.map((bet,index)=>(
 </div>
 
 </div>
+<div className="mobileNav">
 
-<style jsx>{.profileCard{
+<div className="mobileItem active">
+
+<Home size={22}/>
+
+<p>Home</p>
+
+</div>
+
+<div className="mobileItem">
+
+<BarChart size={22}/>
+
+<p>Results</p>
+
+</div>
+
+<div className="mobileItem">
+
+<Wallet size={22}/>
+
+<p>Wallet</p>
+
+</div>
+
+<div className="mobileItem">
+
+<User size={22}/>
+
+<p>Profile</p>
+
+</div>
+
+</div>
+<style jsx>{.mobileNav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:80px;
+background:rgba(5,8,22,0.95);
+backdrop-filter:blur(20px);
+border-top:
+1px solid rgba(255,255,255,0.08);
+display:none;
+align-items:center;
+justify-content:space-around;
+z-index:999;
+}
+
+.mobileItem{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+color:#94a3b8;
+font-size:13px;
+}
+
+.mobileItem.active{
+color:#06b6d4;
+}
+
+@media(max-width:900px){
+
+.mobileNav{
+display:flex;
+}
+
+.mainDash{
+padding-bottom:110px;
+}
+
+}.profileCard{
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(255,255,255,0.08);
 border-radius:24px;
