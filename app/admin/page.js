@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState }
+import { useEffect,useState }
 from 'react'
 
 import '../globals.css'
@@ -10,68 +10,74 @@ from '../../lib/supabase'
 
 export default function AdminPage(){
 
-  const [winningNumber,
-    setWinningNumber] =
-    useState('')
+  const [users,setUsers] =
+    useState([])
 
   const [bets,setBets] =
     useState([])
 
-  const [users,setUsers] =
-    useState([])
+  const [search,setSearch] =
+    useState('')
+
+  const [walletAmount,
+  setWalletAmount] =
+    useState('')
+
+  const [selectedUser,
+  setSelectedUser] =
+    useState(null)
 
   const [results,setResults] =
     useState([])
 
-  const [loading,setLoading] =
-    useState(false)
+  const [winningNumber,
+  setWinningNumber] =
+    useState('')
 
   useEffect(()=>{
 
-    fetchTransactions()
-    
-    fetchData()
+    fetchAllData()
 
   },[])
 
-  async function fetchData(){
+  async function fetchAllData(){
 
-    const {
-      data:betData
-    } = await supabase
-    .from('bets')
-    .select('*')
-    .order('id',
-      { ascending:false })
-
-    if(betData){
-
-      setBets(betData)
-    }
-
-    const {
-      data:userData
-    } = await supabase
-    .from('users')
-    .select('*')
+    const { data:userData } =
+      await supabase
+      .from('users')
+      .select('*')
+      .order('id',
+        { ascending:false })
 
     if(userData){
 
       setUsers(userData)
     }
 
-    const {
-      data:resultData
-    } = await supabase
-    .from('results')
-    .select('*')
-    .order('id',
-      { ascending:false })
+    const { data:betData } =
+      await supabase
+      .from('bets')
+      .select('*')
+      .order('id',
+        { ascending:false })
+
+    if(betData){
+
+      setBets(betData)
+    }
+
+    const { data:resultData } =
+      await supabase
+      .from('results')
+      .select('*')
+      .order('id',
+        { ascending:false })
 
     if(resultData){
 
       setResults(resultData)
     }
+
   }
 
   async function declareResult(){
@@ -85,8 +91,6 @@ export default function AdminPage(){
       return
     }
 
-    setLoading(true)
-
     await supabase
     .from('results')
     .insert([
@@ -96,179 +100,387 @@ export default function AdminPage(){
       }
     ])
 
-    const pendingBets =
-      bets.filter(
-        (bet)=>
-        bet.status === 'pending'
-      )
-
-    for(const bet of pendingBets){
+    for(const bet of bets){
 
       if(
-        bet.number === winningNumber
+        bet.status === 'pending'
       ){
 
-        const user =
-          users.find(
-            (u)=>
-            u.id === bet.user_id
-          )
+        if(
+          bet.number ===
+          winningNumber
+        ){
 
-        if(user){
+          const user =
+            users.find(
+              (u)=>
+              u.id === bet.user_id
+            )
 
-          const reward =
-            Number(bet.amount) * 90
+          if(user){
 
-          const updatedWallet =
-            Number(user.wallet)
-            + reward
+            const reward =
+              Number(bet.amount)
+              * 90
 
-          await supabase
-          .from('users')
-          .update({
-            wallet:updatedWallet
-          })
-          .eq('id',user.id)
+            const updatedWallet =
+              Number(user.wallet)
+              + reward
+
+            await supabase
+            .from('users')
+            .update({
+              wallet:updatedWallet
+            })
+            .eq('id',user.id)
+
+            await supabase
+            .from('bets')
+            .update({
+              status:'won'
+            })
+            .eq('id',bet.id)
+
+          }
+
+        }else{
 
           await supabase
           .from('bets')
           .update({
-            status:'won'
+            status:'lost'
           })
           .eq('id',bet.id)
 
         }
-
-      }else{
-
-        await supabase
-        .from('bets')
-        .update({
-          status:'lost'
-        })
-        .eq('id',bet.id)
 
       }
 
     }
 
     alert(
-      `Winning Number ${winningNumber} Declared`
+      `Result ${winningNumber} Declared`
     )
 
     setWinningNumber('')
 
-    fetchData()
-
-    setLoading(false)
+    fetchAllData()
   }
 
-  const totalBetAmount =
+  async function updateWallet(){
+
+    if(!selectedUser){
+
+      alert('Select User')
+
+      return
+    }
+
+    const updatedWallet =
+      Number(selectedUser.wallet)
+      + Number(walletAmount)
+
+    await supabase
+    .from('users')
+    .update({
+      wallet:updatedWallet
+    })
+    .eq('id',selectedUser.id)
+
+    alert('Wallet Updated')
+
+    setWalletAmount('')
+
+    fetchAllData()
+  }
+
+  async function banUser(user){
+
+    await supabase
+    .from('users')
+    .update({
+      banned:true
+    })
+    .eq('id',user.id)
+
+    alert('User Banned')
+
+    fetchAllData()
+  }
+
+  async function unbanUser(user){
+
+    await supabase
+    .from('users')
+    .update({
+      banned:false
+    })
+    .eq('id',user.id)
+
+    alert('User Unbanned')
+
+    fetchAllData()
+  }
+
+  const filteredUsers =
+    users.filter((u)=>
+
+      u.name
+      ?.toLowerCase()
+      .includes(
+        search.toLowerCase()
+      )
+
+    )
+
+  const totalCollection =
     bets.reduce(
       (sum,bet)=>
       sum + Number(bet.amount),
       0
     )
 
+  const totalUsers =
+    users.length
+
+  const totalBets =
+    bets.length
+
+  const totalWon =
+    bets.filter(
+      (b)=>
+      b.status === 'won'
+    ).length
+
   return(
 
     <main className="adminPage">
 
-      <h1 className="adminTitle">
-        DBBA ADMIN PANEL
+      <h1 className="adminMainTitle">
+        DBBA INDIA ADMIN
       </h1>
 
-      <div className="adminGrid">
+      <div className="analyticsGrid">
 
-        <div className="adminCard">
+        <div className="analyticsCard">
 
           <h3>
             Total Users
           </h3>
 
           <h1>
-            {users.length}
+            {totalUsers}
           </h1>
 
         </div>
 
-        <div className="adminCard">
+        <div className="analyticsCard">
 
           <h3>
             Total Bets
           </h3>
 
           <h1>
-            {bets.length}
+            {totalBets}
           </h1>
 
         </div>
 
-        <div className="adminCard">
+        <div className="analyticsCard">
 
           <h3>
             Total Collection
           </h3>
 
           <h1>
-            ₹ {totalBetAmount}
+            ₹ {totalCollection}
+          </h1>
+
+        </div>
+
+        <div className="analyticsCard">
+
+          <h3>
+            Winners
+          </h3>
+
+          <h1>
+            {totalWon}
           </h1>
 
         </div>
 
       </div>
 
-      <div className="resultPanel">
+      <div className="adminBox">
 
-        <input
-          type="text"
-          placeholder="Winning Number"
+        <h2>
+          Declare Result
+        </h2>
 
-          value={winningNumber}
+        <div className="actionRow">
 
-          onChange={(e)=>
-            setWinningNumber(
-              e.target.value
-            )
-          }
-        />
+          <input
+            placeholder="Winning Number"
 
-        <button
-          onClick={declareResult}
-        >
-          {
-            loading
-            ? 'Processing...'
-            : 'Declare Result'
-          }
-        </button>
+            value={winningNumber}
+
+            onChange={(e)=>
+              setWinningNumber(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            onClick={declareResult}
+          >
+            Declare
+          </button>
+
+        </div>
 
       </div>
 
-      <div className="tableBox">
+      <div className="adminBox">
 
         <h2>
-          User Bets
+          Search User
+        </h2>
+
+        <input
+          placeholder="Search by name"
+
+          value={search}
+
+          onChange={(e)=>
+            setSearch(e.target.value)
+          }
+        />
+
+      </div>
+
+      <div className="adminBox">
+
+        <h2>
+          Wallet Control
+        </h2>
+
+        <select
+          onChange={(e)=>{
+
+            const found =
+              users.find(
+                (u)=>
+                u.id ==
+                e.target.value
+              )
+
+            setSelectedUser(found)
+          }}
+        >
+
+          <option>
+            Select User
+          </option>
+
+          {
+            users.map((u)=>(
+
+              <option
+                value={u.id}
+                key={u.id}
+              >
+                {u.name}
+              </option>
+
+            ))
+          }
+
+        </select>
+
+        <div className="actionRow">
+
+          <input
+            type="number"
+            placeholder="Wallet Amount"
+
+            value={walletAmount}
+
+            onChange={(e)=>
+              setWalletAmount(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            onClick={updateWallet}
+          >
+            Update Wallet
+          </button>
+
+        </div>
+
+      </div>
+
+      <div className="adminBox">
+
+        <h2>
+          Users
         </h2>
 
         {
-          bets.map((bet)=>(
+          filteredUsers.map((u)=>(
 
             <div
-              key={bet.id}
-              className="tableRow"
+              className="userCard"
+              key={u.id}
             >
 
               <div>
-                #{bet.number}
+
+                <h3>
+                  {u.name}
+                </h3>
+
+                <p>
+                  {u.email}
+                </p>
+
+                <p>
+                  Wallet :
+                  ₹ {u.wallet}
+                </p>
+
               </div>
 
-              <div>
-                ₹ {bet.amount}
-              </div>
+              <div className="userBtns">
 
-              <div>
-                {bet.status}
+                {
+                  u.banned
+                  ?
+
+                  <button
+                    onClick={()=>
+                      unbanUser(u)
+                    }
+                  >
+                    Unban
+                  </button>
+
+                  :
+
+                  <button
+                    onClick={()=>
+                      banUser(u)
+                    }
+                  >
+                    Ban
+                  </button>
+
+                }
+
               </div>
 
             </div>
@@ -278,35 +490,31 @@ export default function AdminPage(){
 
       </div>
 
-      <div className="tableBox">
+      <div className="adminBox">
 
         <h2>
           Result History
         </h2>
 
         {
-          results.map((result)=>(
+          results.map((r)=>(
 
             <div
-              key={result.id}
-              className="tableRow"
+              className="resultRow"
+              key={r.id}
             >
 
-              <div>
-                Winning No.
-              </div>
+              <h3>
+                {r.winning_number}
+              </h3>
 
-              <div>
-                {result.winning_number}
-              </div>
-
-              <div>
+              <p>
                 {
                   new Date(
-                    result.created_at
+                    r.created_at
                   ).toLocaleString()
                 }
-              </div>
+              </p>
 
             </div>
 
@@ -314,119 +522,7 @@ export default function AdminPage(){
         }
 
       </div>
-<div className="tableBox">
 
-<h2>
-Deposit / Withdraw Requests
-</h2>
-
-{
-transactions.map((item)=>(
-
-<div
-key={item.id}
-className="tableRow"
->
-
-<div>
-{item.type}
-</div>
-
-<div>
-₹ {item.amount}
-</div>
-
-<div>
-{item.status}
-</div>
-
-<button
-onClick={()=>
-approveTransaction(item)
-}
->
-Approve
-</button>
-
-</div>
-
-))
-}
-
-</div>
     </main>
   )
-}
-const [transactions,
-setTransactions] =
-useState([])
-
-async function fetchTransactions(){
-
-const { data } =
-await supabase
-.from('transactions')
-.select('*')
-.order('id',
-{ ascending:false })
-
-if(data){
-
-setTransactions(data)
-}
-}
-async function approveTransaction(
-item
-){
-
-if(item.status !== 'pending'){
-
-alert('Already Processed')
-
-return
-}
-
-const { data:user }
-=
-await supabase
-.from('users')
-.select('*')
-.eq('id',item.user_id)
-.single()
-
-if(!user) return
-
-let updatedWallet =
-Number(user.wallet)
-
-if(item.type === 'deposit'){
-
-updatedWallet +=
-Number(item.amount)
-
-}else{
-
-updatedWallet -=
-Number(item.amount)
-}
-
-await supabase
-.from('users')
-.update({
-wallet:updatedWallet
-})
-.eq('id',user.id)
-
-await supabase
-.from('transactions')
-.update({
-status:'approved'
-})
-.eq('id',item.id)
-
-alert('Request Approved')
-
-fetchTransactions()
-
-fetchData()
 }
