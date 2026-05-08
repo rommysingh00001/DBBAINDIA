@@ -386,3 +386,48 @@ flex-direction:column;
 }
 cursor:pointer;
 }
+.myBets{
+margin-top:30px;
+background:#111;
+padding:25px;
+border-radius:25px;
+border:1px solid #222;
+}
+
+.myBets h2{
+margin-bottom:20px;
+font-size:30px;
+}
+
+.betCard{
+background:#1a1a1a;
+padding:20px;
+border-radius:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.betCard h3{
+font-size:24px;
+color:gold;
+margin-bottom:10px;
+}
+
+.betCard p{
+color:#bbb;
+margin-bottom:5px;
+}
+
+.betCard button{
+padding:12px 20px;
+border:none;
+border-radius:12px;
+background:red;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
