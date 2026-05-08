@@ -523,3 +523,245 @@ td {
     font-size: 38px;
   }
 }
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background: #050505;
+  color: white;
+}
+
+.adminSide {
+  width: 280px;
+  background: linear-gradient(to bottom, #0a0a0a, #111);
+  border-right: 1px solid #1f1f1f;
+  padding: 30px 20px;
+}
+
+.logoArea h1 {
+  color: gold;
+  font-size: 34px;
+}
+
+.logoArea p {
+  color: #888;
+  margin-top: 8px;
+  margin-bottom: 50px;
+}
+
+.adminSide nav {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adminSide button {
+  background: #111;
+  border: 1px solid #222;
+  color: white;
+  padding: 18px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.adminSide button:hover,
+.navActive {
+  background: gold !important;
+  color: black !important;
+}
+
+.adminMain {
+  flex: 1;
+  padding: 40px;
+}
+
+.adminHero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.adminHero h2 {
+  font-size: 54px;
+  margin-bottom: 8px;
+}
+
+.adminHero p {
+  color: #888;
+}
+
+.adminHero button {
+  background: gold;
+  color: black;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.premiumStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+.premiumCard {
+  background: linear-gradient(to bottom right, #111, #0a0a0a);
+  border: 1px solid #222;
+  border-radius: 28px;
+  padding: 35px;
+}
+
+.premiumCard span {
+  color: #888;
+}
+
+.premiumCard h3 {
+  font-size: 42px;
+  color: gold;
+  margin-top: 15px;
+}
+
+.actionGrid {
+  margin-top: 35px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.glassCard {
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid #222;
+  border-radius: 30px;
+  padding: 35px;
+  backdrop-filter: blur(10px);
+}
+
+.glassHeader h3 {
+  font-size: 32px;
+}
+
+.glassHeader p {
+  color: #888;
+  margin-top: 6px;
+}
+
+.publishBox {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.publishBox input {
+  flex: 1;
+  min-width: 200px;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 18px;
+  padding: 18px;
+  color: white;
+  font-size: 18px;
+}
+
+.publishBox button {
+  background: #00ff88;
+  color: black;
+  border: none;
+  border-radius: 18px;
+  padding: 18px 28px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.quickStats {
+  margin-top: 25px;
+  display: grid;
+  gap: 20px;
+}
+
+.quickStats div {
+  background: #0a0a0a;
+  border: 1px solid #222;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.quickStats span {
+  color: #888;
+}
+
+.quickStats h4 {
+  color: gold;
+  font-size: 30px;
+  margin-top: 8px;
+}
+
+.tableCard {
+  margin-top: 35px;
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid #222;
+  border-radius: 30px;
+  padding: 35px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+}
+
+th {
+  text-align: left;
+  color: gold;
+  padding-bottom: 20px;
+  font-size: 18px;
+}
+
+td {
+  padding: 18px 0;
+  border-bottom: 1px solid #222;
+  color: #ddd;
+}
+
+.success {
+  color: #00ff88;
+  font-weight: bold;
+}
+
+.danger {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+.pending {
+  color: gold;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .adminLayout {
+    flex-direction: column;
+  }
+
+  .adminSide {
+    width: 100%;
+  }
+
+  .adminMain {
+    padding: 20px;
+  }
+
+  .adminHero h2 {
+    font-size: 38px;
+  }
+}
