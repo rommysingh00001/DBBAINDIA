@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
 export default function AdminPage() {
@@ -10,21 +10,20 @@ const [bets,setBets] = useState([]);
 const [results,setResults] = useState([]);
 const [requests,setRequests] = useState([]);
 const [winningNumber,setWinningNumber] = useState("");
-const [liveUsers,setLiveUsers] = useState(0);
 
 useEffect(()=>{
 
-fetchAllData();
+loadData();
 
 const interval = setInterval(()=>{
-fetchAllData();
+loadData();
 },5000);
 
 return ()=> clearInterval(interval);
 
 },[]);
 
-async function fetchAllData(){
+async function loadData(){
 
 const { data:usersData } =
 await supabase
@@ -54,21 +53,61 @@ setBets(betsData || []);
 setResults(resultsData || []);
 setRequests(requestsData || []);
 
-setLiveUsers(
-Math.floor(Math.random()*900)+100
+}
+
+const totalBetAmount = useMemo(()=>{
+
+return bets.reduce(
+(acc,item)=>
+acc + Number(item.amount || 0),
+0
 );
+
+},[bets]);
+
+const numberReport = useMemo(()=>{
+
+let report = {};
+
+for(let i=0;i<=99;i++){
+
+const num =
+String(i).padStart(2,"0");
+
+report[num] = 0;
 
 }
 
+bets.forEach((bet)=>{
+
+const num =
+String(bet.number)
+.padStart(2,"0");
+
+report[num] +=
+Number(bet.amount || 0);
+
+});
+
+return Object.entries(report)
+.sort((a,b)=>a[1]-b[1])
+.slice(0,10);
+
+},[bets]);
+
 async function declareResult(){
 
-if(winningNumber === "") return;
+if(winningNumber==="") return;
+
+const finalNumber =
+String(winningNumber)
+.padStart(2,"0");
 
 await supabase
 .from("results")
 .insert([
 {
-number: winningNumber
+number:finalNumber
 }
 ]);
 
@@ -76,120 +115,249 @@ alert("Result Declared");
 
 setWinningNumber("");
 
-fetchAllData();
+loadData();
 
 }
 
-async function approveRequest(id){
+async function autoDeclareLowestBetResult(){
+
+const lowestNumber =
+numberReport[0]?.[0];
+
+if(!lowestNumber) return;
+
+await supabase
+.from("results")
+.insert([
+{
+number:lowestNumber
+}
+]);
+
+alert(
+`Auto Result : ${lowestNumber}`
+);
+
+loadData();
+
+}
+
+async function updateWallet(
+userId,
+currentWallet,
+amount
+){
+
+const newWallet =
+Number(currentWallet)
++ Number(amount);
+
+await supabase
+.from("users")
+.update({
+wallet:newWallet
+})
+.eq("id",userId);
+
+loadData();
+
+}
+
+async function approveRequest(request){
 
 await supabase
 .from("requests")
 .update({
 status:"approved"
 })
-.eq("id",id);
+.eq("id",request.id);
 
-fetchAllData();
+loadData();
 
 }
 
-async function rejectRequest(id){
+async function rejectRequest(request){
 
 await supabase
 .from("requests")
 .update({
 status:"rejected"
 })
-.eq("id",id);
+.eq("id",request.id);
 
-fetchAllData();
+loadData();
 
 }
 
-return (
+return(
 
-<div className="adminMain">
+<div className="adminContainer">
 
-<h1 className="adminTitle">
-DBBA INDIA ADMIN PANEL
+<div className="adminHeader">
+
+<div>
+
+<h1>
+DBBA INDIA ADMIN
 </h1>
 
-<div className="liveTicker">
-
-<div className="liveDot"></div>
-
-LIVE USERS :
-{liveUsers}
+<p>
+Premium Betting Control Panel
+</p>
 
 </div>
 
-<div className="adminStats">
+<div className="liveBadge">
 
-<div className="statCard">
-<h3>TOTAL USERS</h3>
-<h1>{users.length}</h1>
+<span className="dot"></span>
+
+LIVE ADMIN PANEL
+
 </div>
 
-<div className="statCard">
-<h3>TOTAL BETS</h3>
-<h1>{bets.length}</h1>
 </div>
 
-<div className="statCard">
-<h3>RESULTS</h3>
-<h1>{results.length}</h1>
+<div className="statsGrid">
+
+<div className="statsCard">
+
+<h3>Total Users</h3>
+
+<h2>
+{users.length}
+</h2>
+
 </div>
 
-<div className="statCard">
-<h3>PENDING REQUESTS</h3>
-<h1>
+<div className="statsCard">
+
+<h3>Total Bets</h3>
+
+<h2>
+{bets.length}
+</h2>
+
+</div>
+
+<div className="statsCard">
+
+<h3>Total Bet Amount</h3>
+
+<h2>
+₹ {totalBetAmount}
+</h2>
+
+</div>
+
+<div className="statsCard">
+
+<h3>Pending Requests</h3>
+
+<h2>
+
 {
 requests.filter(
-x=>x.status==="pending"
+(x)=>
+x.status==="pending"
 ).length
 }
-</h1>
+
+</h2>
+
 </div>
 
 </div>
 
 <div className="adminGrid">
 
-<div className="leftAdmin">
+<div>
 
-<div className="adminCard">
+<div className="adminBox">
 
-<h2>Declare Result</h2>
+<h2>
+Declare Result
+</h2>
 
 <input
 type="number"
 placeholder="00 - 99"
 value={winningNumber}
 onChange={(e)=>
-setWinningNumber(e.target.value)
+setWinningNumber(
+e.target.value
+)
 }
 />
 
-<button onClick={declareResult}>
-Declare Winning Number
+<button
+onClick={declareResult}
+>
+
+Declare Manual Result
+
+</button>
+
+<button
+className="secondaryBtn"
+onClick={
+autoDeclareLowestBetResult
+}
+>
+
+Auto Lowest Bet Result
+
 </button>
 
 </div>
 
-<div className="adminCard">
+<div className="adminBox">
 
-<h2>Recent Results</h2>
+<h2>
+Lowest Liability Numbers
+</h2>
+
+{
+numberReport.map((item,index)=>(
+
+<div
+className="reportRow"
+key={index}
+>
+
+<span>
+Number {item[0]}
+</span>
+
+<strong>
+₹ {item[1]}
+</strong>
+
+</div>
+
+))
+}
+
+</div>
+
+<div className="adminBox">
+
+<h2>
+Recent Results
+</h2>
 
 <div className="resultsWrap">
 
 {
-results.slice(0,12).map((item,index)=>(
+results.slice(0,15)
+.map((item,index)=>(
 
 <div
 className="resultBall"
 key={index}
 >
+
 {item.number}
+
 </div>
 
 ))
@@ -199,59 +367,60 @@ key={index}
 
 </div>
 
-<div className="adminCard">
+</div>
 
-<h2>Deposit / Withdraw Requests</h2>
+<div>
+
+<div className="adminBox">
+
+<h2>
+Deposit & Withdraw Requests
+</h2>
 
 {
-requests.map((item,index)=>(
+requests.map((req,index)=>(
 
 <div
-className="transactionRow"
+className="tableRow"
 key={index}
 >
 
 <div>
 
-<h3>
-{item.name}
-</h3>
+<h4>
+{req.name}
+</h4>
 
 <p>
-₹ {item.amount}
-</p>
 
-<p>
-{item.type}
+{req.type}
+• ₹ {req.amount}
+
 </p>
 
 </div>
 
-<div
-style={{
-display:"flex",
-gap:"10px"
-}}
->
+<div className="actionBtns">
 
 <button
 onClick={()=>
-approveRequest(item.id)
+approveRequest(req)
 }
 >
+
 Approve
+
 </button>
 
 <button
-style={{
-background:"#ff1744",
-color:"white"
-}}
+className="dangerBtn"
 onClick={()=>
-rejectRequest(item.id)
+rejectRequest(req)
 }
 >
+
 Reject
+
 </button>
 
 </div>
@@ -263,27 +432,25 @@ Reject
 
 </div>
 
-</div>
+<div className="adminBox">
 
-<div className="rightAdmin">
-
-<div className="adminCard">
-
-<h2>Users Wallet Data</h2>
+<h2>
+Users Wallet Manager
+</h2>
 
 {
 users.map((user,index)=>(
 
 <div
-className="userRow"
+className="tableRow"
 key={index}
 >
 
 <div>
 
-<h3>
+<h4>
 {user.name}
-</h3>
+</h4>
 
 <p>
 {user.email}
@@ -291,9 +458,42 @@ key={index}
 
 </div>
 
-<div className="winStatus">
+<div className="walletActions">
 
-₹ {user.wallet}
+<span className="walletTag">
+
+₹ {user.wallet || 0}
+
+</span>
+
+<button
+onClick={()=>
+updateWallet(
+user.id,
+user.wallet || 0,
+100
+)
+}
+>
+
++100
+
+</button>
+
+<button
+className="dangerBtn"
+onClick={()=>
+updateWallet(
+user.id,
+user.wallet || 0,
+-100
+)
+}
+>
+
+-100
+
+</button>
 
 </div>
 
@@ -304,57 +504,38 @@ key={index}
 
 </div>
 
-<div className="adminCard">
+<div className="adminBox">
 
-<h2>All User Bets</h2>
+<h2>
+All User Bets
+</h2>
 
 {
 bets.map((bet,index)=>(
 
 <div
-className="betRowAdmin"
+className="tableRow"
 key={index}
 >
 
 <div>
 
-<h3>
+<h4>
 {bet.name}
-</h3>
+</h4>
 
 <p>
-Number : {bet.number}
+
+Number {bet.number}
+• ₹ {bet.amount}
+
 </p>
 
 </div>
 
-<div>
+<div className="statusTag">
 
-<p>
-Bet Amount
-</p>
-
-<h3>
-₹ {bet.amount}
-</h3>
-
-</div>
-
-<div
-className={
-bet.status === "win"
-?
-"winStatus"
-:
-bet.status === "loss"
-?
-"lossStatus"
-:
-"pendingStatus"
-}
->
-
-{bet.status}
+{bet.status || "pending"}
 
 </div>
 
