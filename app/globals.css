@@ -719,3 +719,65 @@ color:#bbb;
 color:#00ff66;
 font-weight:bold;
 }
+.liveStrip{
+margin-bottom:20px;
+background:#111;
+padding:15px 20px;
+border-radius:16px;
+display:flex;
+align-items:center;
+gap:12px;
+font-weight:bold;
+border:1px solid #222;
+}
+
+.liveDot{
+width:14px;
+height:14px;
+background:#00ff66;
+border-radius:50%;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+
+0%{
+transform:scale(1);
+opacity:1;
+}
+
+50%{
+transform:scale(1.4);
+opacity:0.5;
+}
+
+100%{
+transform:scale(1);
+opacity:1;
+}
+
+}
+
+.countdownCard{
+background:linear-gradient(
+135deg,
+#1a1a1a,
+#111
+);
+padding:30px;
+border-radius:25px;
+border:1px solid #222;
+margin-bottom:25px;
+text-align:center;
+}
+
+.countdownCard h2{
+color:#aaa;
+margin-bottom:15px;
+}
+
+.countdownCard h1{
+font-size:70px;
+color:gold;
+font-weight:900;
+}
