@@ -320,9 +320,36 @@ status:"approved"
 })
 .eq("id",req.id);
 
-loadData();
+const { data:userData } =
+await supabase
+.from("users")
+.select("*")
+.eq("email",req.name)
+.single();
+
+if(userData){
+
+let newWallet =
+Number(userData.wallet || 0);
+
+if(req.type === "deposit"){
+
+newWallet +=
+Number(req.amount);
 
 }
+
+if(req.type === "withdraw"){
+
+newWallet -=
+Number(req.amount);
+
+}
+
+await supabase
+.from("users")
+.update({
+wallet:newWallet
 
 async function rejectRequest(req){
 
