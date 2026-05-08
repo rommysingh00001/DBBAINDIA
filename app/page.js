@@ -1,32 +1,98 @@
-async function login() {
+'use client'
 
-  const { data, error } =
-    await supabase
-    .from('users')
-    .select('*')
-    .eq('email', email)
-    .eq('password', password)
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '../lib/supabase'
+import './globals.css'
 
-  if (error) {
+export default function Home() {
 
-    alert('Database Error')
+  const router = useRouter()
 
-    console.log(error)
+  const [email, setEmail] =
+    useState('')
 
-    return
+  const [password, setPassword] =
+    useState('')
+
+  async function login() {
+
+    const { data, error } =
+      await supabase
+      .from('users')
+      .select('*')
+
+    if (error) {
+
+      alert('Database Error')
+
+      console.log(error)
+
+      return
+    }
+
+    const user =
+      data.find(
+        (u)=>
+          u.email === email
+          &&
+          u.password === password
+      )
+
+    if (!user) {
+
+      alert('Invalid Login')
+
+      return
+    }
+
+    localStorage.setItem(
+      'dbbaUser',
+      JSON.stringify(user)
+    )
+
+    router.push('/dashboard')
   }
 
-  if (!data || data.length === 0) {
+  return (
 
-    alert('Invalid Login')
+    <main className="authPage">
 
-    return
-  }
+      <div className="authBox">
 
-  localStorage.setItem(
-    'dbbaUser',
-    JSON.stringify(data[0])
+        <h1>DBBA INDIA</h1>
+
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e)=>
+            setEmail(e.target.value)
+          }
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e)=>
+            setPassword(e.target.value)
+          }
+        />
+
+        <button onClick={login}>
+          Login
+        </button>
+
+        <button
+          onClick={()=>
+            router.push('/signup')
+          }
+        >
+          Signup
+        </button>
+
+      </div>
+
+    </main>
   )
-
-  router.push('/dashboard')
 }
