@@ -348,7 +348,11 @@ Welcome Back 👋
 <p>
 Premium Gaming Dashboard
 </p>
+<div className="liveClock">
 
+🕒 {time}
+
+</div>
 </div>
 
 <div className="walletBox">
@@ -623,7 +627,20 @@ bets.map((bet,index)=>(
 
 </div>
 
-<style jsx>{`.walletActions{
+<style jsx>{.liveClock{
+margin-top:12px;
+display:inline-block;
+padding:12px 18px;
+border-radius:16px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+font-weight:700;
+font-size:16px;
+}`.walletActions{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:20px;
