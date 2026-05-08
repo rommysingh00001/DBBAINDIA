@@ -2,6 +2,7 @@
   "name": "dbba-india",
   "version": "0.1.0",
   "dependencies": {
+    "lucide-react": "^0.542.0"
     "@supabase/supabase-js": "latest",
     "next": "latest",
     "react": "latest",
