@@ -389,7 +389,52 @@ Send Withdraw Request
 </div>
 
 </div>
+<div className="walletActions">
 
+<div className="walletCard">
+
+<h2>Deposit Request</h2>
+
+<input
+type="number"
+placeholder="Enter Deposit Amount"
+value={depositAmount}
+onChange={(e)=>
+setDepositAmount(e.target.value)
+}
+/>
+
+<button onClick={sendDepositRequest}>
+Send Deposit Request
+</button>
+
+</div>
+
+<div className="walletCard">
+
+<h2>Withdraw Request</h2>
+
+<input
+type="number"
+placeholder="Enter Withdraw Amount"
+value={withdrawAmount}
+onChange={(e)=>
+setWithdrawAmount(e.target.value)
+}
+/>
+
+<button
+className="withdrawBtn"
+onClick={sendWithdrawRequest}
+>
+
+Send Withdraw Request
+
+</button>
+
+</div>
+
+</div>
 <div className="contentGrid">
 
 <div className="betCard">
@@ -495,7 +540,56 @@ bets.map((bet,index)=>(
 
 </div>
 
-<style jsx>{`
+<style jsx>{`.walletActions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:30px;
+}
+
+.walletCard{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:25px;
+}
+
+.walletCard h2{
+margin-bottom:20px;
+}
+
+.walletCard input{
+width:100%;
+padding:18px;
+border:none;
+outline:none;
+border-radius:16px;
+background:rgba(255,255,255,0.05);
+color:white;
+font-size:16px;
+margin-bottom:15px;
+}
+
+.walletCard button{
+width:100%;
+padding:18px;
+border:none;
+border-radius:18px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+color:white;
+font-size:16px;
+font-weight:800;
+cursor:pointer;
+}
+
+.withdrawBtn{
+background:#ef4444 !important;
+}
 
 .dashWrapper{
 display:flex;
