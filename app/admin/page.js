@@ -350,7 +350,16 @@ await supabase
 .from("users")
 .update({
 wallet:newWallet
+})
+.eq("email",req.name);
 
+}
+
+alert("Request Approved");
+
+loadData();
+
+}
 async function rejectRequest(req){
 
 await supabase
