@@ -1,17 +1,76 @@
-import '../globals.css'
+'use client'
 
-export default function Results() {
+import { useEffect,useState }
+from 'react'
 
-  return (
+import '../../app/globals.css'
 
-    <main className="page">
+import { supabase }
+from '../../lib/supabase'
 
-      <h1>Results</h1>
+import Navbar
+from '../../components/Navbar'
 
-      <div className="resultCard">
-        Today's Winning Number
-        <h2>47</h2>
-      </div>
+export default function Results(){
+
+  const [results,setResults] =
+    useState([])
+
+  useEffect(()=>{
+
+    fetchResults()
+
+  },[])
+
+  async function fetchResults(){
+
+    const { data } =
+      await supabase
+      .from('results')
+      .select('*')
+      .order('id',
+        { ascending:false })
+
+    if(data){
+
+      setResults(data)
+    }
+  }
+
+  return(
+
+    <main className="pageContainer">
+
+      <h1 className="pageTitle">
+        Result History
+      </h1>
+
+      {
+        results.map((item)=>(
+
+          <div
+            key={item.id}
+            className="resultCard"
+          >
+
+            <h2>
+              {item.winning_number}
+            </h2>
+
+            <p>
+              {
+                new Date(
+                  item.created_at
+                ).toLocaleString()
+              }
+            </p>
+
+          </div>
+
+        ))
+      }
+
+      <Navbar/>
 
     </main>
   )
