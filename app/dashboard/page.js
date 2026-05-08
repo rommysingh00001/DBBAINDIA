@@ -1,405 +1,329 @@
-'use client'
+"use client";
 
-import { useEffect,useState }
-from 'react'
+import { useEffect, useState } from "react";
+import {
+Wallet,
+Clock3,
+Trophy,
+CircleDollarSign,
+LogOut
+} from "lucide-react";
 
-import '../globals.css'
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
-import { supabase }
-from '../../lib/supabase'
+export default function DashboardPage(){
 
-import Navbar
-from '../../components/Navbar'
+const router = useRouter();
 
-export default function Dashboard(){
-
-const [user,setUser] =
-useState(null)
-
-const [selected,setSelected] =
-useState('')
-
-const [amount,setAmount] =
-useState('')
-
-const [myBets,setMyBets] =
-useState([])
-
-const [results,setResults] =
-useState([])
-
-const [loading,setLoading] =
-useState(false)
-
-const numbers =
-Array.from(
-{ length:100 },
-(_,i)=>
-i.toString()
-.padStart(2,'0')
-)
+const [user,setUser] = useState(null);
+const [wallet,setWallet] = useState(0);
+const [number,setNumber] = useState("");
+const [amount,setAmount] = useState("");
+const [results,setResults] = useState([]);
+const [bets,setBets] = useState([]);
 
 useEffect(()=>{
 
-const localUser =
-localStorage.getItem(
-'dbbaUser'
-)
+getUser();
 
-if(localUser){
+loadResults();
 
-const parsed =
-JSON.parse(localUser)
+loadBets();
 
-setUser(parsed)
+},[]);
 
-refreshWallet(parsed.id)
+async function getUser(){
 
-fetchMyBets(parsed.id)
+const {
+data:{user}
+} = await supabase.auth.getUser();
 
-fetchResults()
+if(!user){
+
+router.push("/login");
+return;
+
 }
 
-const walletChannel =
-supabase.channel(
-'wallet-realtime'
-)
+setUser(user);
 
-walletChannel.on(
-'postgres_changes',
-{
-event:'UPDATE',
-schema:'public',
-table:'users'
-},
-(payload)=>{
-
-if(
-payload.new.id === user?.id
-){
-
-setUser(payload.new)
-
-localStorage.setItem(
-'dbbaUser',
-JSON.stringify(payload.new)
-)
-}
-}
-)
-
-.subscribe()
-
-let seconds = 59
-
-setInterval(()=>{
-
-const timer =
-document.getElementById(
-'timer'
-)
-
-if(timer){
-
-if(seconds < 10){
-
-timer.innerText =
-`00:0${seconds}`
-
-}else{
-
-timer.innerText =
-`00:${seconds}`
-}
-
-seconds--
-
-if(seconds < 0){
-
-seconds = 59
-}
-}
-
-},1000)
-
-},[])
-
-async function refreshWallet(id){
-
-const { data } =
-await supabase
-.from('users')
-.select('*')
-.eq('id',id)
-.single()
+const { data } = await supabase
+.from("users")
+.select("*")
+.eq("email",user.email)
+.single();
 
 if(data){
 
-setUser(data)
+setWallet(data.wallet || 0);
 
-localStorage.setItem(
-'dbbaUser',
-JSON.stringify(data)
-)
-}
 }
 
-async function fetchMyBets(id){
-
-const { data } =
-await supabase
-.from('bets')
-.select('*')
-.eq('user_id',id)
-.order('id',
-{ ascending:false })
-
-if(data){
-
-setMyBets(data)
-}
 }
 
-async function fetchResults(){
+async function loadResults(){
 
-const { data } =
-await supabase
-.from('results')
-.select('*')
-.order('id',
-{ ascending:false })
-.limit(20)
+const { data } = await supabase
+.from("results")
+.select("*")
+.order("created_at",{ascending:false})
+.limit(10);
 
-if(data){
+setResults(data || []);
 
-setResults(data)
 }
+
+async function loadBets(){
+
+const {
+data:{user}
+} = await supabase.auth.getUser();
+
+if(!user) return;
+
+const { data } = await supabase
+.from("bets")
+.select("*")
+.eq("user_id",user.id)
+.order("created_at",{ascending:false});
+
+setBets(data || []);
+
 }
 
 async function placeBet(){
 
-if(!selected){
+if(!number || !amount){
 
-alert(
-'Select Number'
-)
+alert("Fill all fields");
+return;
 
-return
 }
 
-if(!amount){
+if(Number(amount) > wallet){
 
-alert(
-'Enter Amount'
-)
+alert("Insufficient Wallet");
+return;
 
-return
 }
 
-if(
-Number(amount)
->
-Number(user.wallet)
-){
-
-alert(
-'Low Wallet Balance'
-)
-
-return
-}
-
-setLoading(true)
-
-const updatedWallet =
-Number(user.wallet)
-- Number(amount)
+const {
+data:{user}
+} = await supabase.auth.getUser();
 
 await supabase
-.from('users')
-.update({
-wallet:updatedWallet
-})
-.eq('id',user.id)
-
-await supabase
-.from('bets')
+.from("bets")
 .insert([
 {
 user_id:user.id,
-number:selected,
-amount:Number(amount),
-status:'pending'
+name:user.email,
+number,
+amount
 }
-])
+]);
 
-setLoading(false)
+const newWallet =
+wallet - Number(amount);
 
-alert(
-`Bet placed on ${selected}`
-)
+await supabase
+.from("users")
+.update({
+wallet:newWallet
+})
+.eq("email",user.email);
 
-setAmount('')
+setWallet(newWallet);
 
-refreshWallet(user.id)
+alert("Bet Placed");
 
-fetchMyBets(user.id)
+setNumber("");
+setAmount("");
+
+loadBets();
+
+}
+
+async function logout(){
+
+await supabase.auth.signOut();
+
+router.push("/login");
+
 }
 
 return(
 
-<main className="premiumDashboard">
+<div className="dashWrapper">
+
+<div className="sidebar">
+
+<h1>DBBA INDIA</h1>
+
+<div className="menu">
+
+<div className="menuItem active">
+Dashboard
+</div>
+
+<div className="menuItem">
+My Bets
+</div>
+
+<div className="menuItem">
+Wallet
+</div>
+
+<div className="menuItem">
+Results
+</div>
+
+</div>
+
+<button
+className="logoutBtn"
+onClick={logout}
+>
+
+<LogOut size={18}/>
+
+Logout
+
+</button>
+
+</div>
+
+<div className="mainDash">
 
 <div className="topHeader">
 
 <div>
 
-<h1 className="mainLogo">
-DBBA INDIA
-</h1>
+<h2>
+Welcome Back 👋
+</h2>
 
-<p className="tagline">
-India's Premium Virtual Platform
+<p>
+Premium Gaming Dashboard
 </p>
 
 </div>
 
-<div className="walletCard">
+<div className="walletBox">
 
-<span>
-Wallet Balance
-</span>
+<Wallet size={24}/>
+
+₹ {wallet}
+
+</div>
+
+</div>
+
+<div className="cardsGrid">
+
+<div className="dashCard">
+
+<div className="iconBox">
+<Wallet size={26}/>
+</div>
+
+<div>
+<p>Wallet Balance</p>
+<h1>₹ {wallet}</h1>
+</div>
+
+</div>
+
+<div className="dashCard">
+
+<div className="iconBox">
+<Clock3 size={26}/>
+</div>
+
+<div>
+<p>Next Result</p>
+<h1>8 Hours</h1>
+</div>
+
+</div>
+
+<div className="dashCard">
+
+<div className="iconBox">
+<Trophy size={26}/>
+</div>
+
+<div>
+<p>Last Result</p>
 
 <h1>
-₹ {user?.wallet || 0}
+{results[0]?.number || "--"}
 </h1>
 
 </div>
 
 </div>
 
-<div className="liveTicker">
+<div className="dashCard">
 
-<div className="liveDot"></div>
+<div className="iconBox">
+<CircleDollarSign size={26}/>
+</div>
 
-LIVE PLAYERS :
-{
-Math.floor(
-Math.random() * 500
-)
-+ 500
-}
+<div>
+<p>Total Bets</p>
+<h1>{bets.length}</h1>
+</div>
 
 </div>
 
-<div className="dashboardGrid">
-
-<div className="leftPanel">
-
-<div className="timerCard">
-
-<h2>
-NEXT RESULT
-</h2>
-
-<h1 id="timer">
-00:59
-</h1>
-
 </div>
 
-<div className="bettingCard">
+<div className="contentGrid">
 
-<h2>
-Select Number
-</h2>
+<div className="betCard">
 
-<div className="selectedBox">
+<h2>Place Bet</h2>
 
-{selected || '--'}
-
-</div>
-
-<div className="numberGrid">
-
-{
-numbers.map((num)=>(
-
-<button
-key={num}
-
-className={
-selected === num
-? 'activeNumber'
-: ''
+<input
+type="number"
+placeholder="Enter Number 00-99"
+value={number}
+onChange={(e)=>
+setNumber(e.target.value)
 }
-
-onClick={()=>
-setSelected(num)
-}
->
-
-{num}
-
-</button>
-
-))
-}
-
-</div>
-
-<div className="amountBox">
+/>
 
 <input
 type="number"
 placeholder="Enter Amount"
-
 value={amount}
-
 onChange={(e)=>
-setAmount(
-e.target.value
-)
+setAmount(e.target.value)
 }
 />
 
-<button
-onClick={placeBet}
->
-
-{
-loading
-? 'Processing...'
-: 'Place Bet'
-}
-
+<button onClick={placeBet}>
+Place Bet
 </button>
 
 </div>
 
-</div>
+<div className="resultCard">
 
-</div>
+<h2>Latest Results</h2>
 
-<div className="rightPanel">
-
-<div className="historyCard">
-
-<h2>
-Recent Results
-</h2>
-
-<div className="resultList">
+<div className="resultWrap">
 
 {
-results.map((r)=>(
+results.map((item,index)=>(
 
 <div
 className="resultBall"
-key={r.id}
+key={index}
 >
 
-{r.winning_number}
+{item.number}
 
 </div>
 
@@ -410,62 +334,321 @@ key={r.id}
 
 </div>
 
-<div className="betsCard">
+</div>
 
-<h2>
-My Bets
-</h2>
+<div className="historyCard">
+
+<h2>My Bets</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Number</th>
+<th>Amount</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
 
 {
-myBets.map((bet)=>(
+bets.map((bet,index)=>(
 
-<div
-className="betRow"
-key={bet.id}
->
+<tr key={index}>
 
-<div>
+<td>{bet.number}</td>
 
-<h3>
-{bet.number}
-</h3>
-
-<p>
+<td>
 ₹ {bet.amount}
-</p>
+</td>
 
-</div>
-
-<div
-className={
-bet.status === 'won'
-? 'winStatus'
-:
-bet.status === 'lost'
-? 'lossStatus'
-:
-'pendingStatus'
-}
->
-
+<td>
 {bet.status}
+</td>
 
-</div>
-
-</div>
+</tr>
 
 ))
 }
 
-</div>
+</tbody>
+
+</table>
 
 </div>
 
 </div>
 
-<Navbar/>
+<style jsx>{`
 
-</main>
+.dashWrapper{
+display:flex;
+min-height:100vh;
+background:
+linear-gradient(
+135deg,
+#050816,
+#0f172a
+);
+color:white;
+}
+
+.sidebar{
+width:260px;
+background:rgba(255,255,255,0.05);
+border-right:1px solid rgba(255,255,255,0.08);
+padding:30px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.sidebar h1{
+font-size:30px;
+font-weight:900;
+background:
+linear-gradient(
+to right,
+#00ffe0,
+#00a2ff
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.menu{
+margin-top:40px;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.menuItem{
+padding:16px;
+border-radius:16px;
+background:rgba(255,255,255,0.04);
+cursor:pointer;
+}
+
+.active{
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+}
+
+.logoutBtn{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+padding:16px;
+border:none;
+border-radius:16px;
+background:#ef4444;
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+}
+
+.mainDash{
+flex:1;
+padding:30px;
+}
+
+.topHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.topHeader h2{
+font-size:36px;
+font-weight:800;
+}
+
+.topHeader p{
+color:#94a3b8;
+margin-top:6px;
+}
+
+.walletBox{
+display:flex;
+align-items:center;
+gap:10px;
+padding:15px 25px;
+border-radius:18px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+font-size:20px;
+font-weight:800;
+}
+
+.cardsGrid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.dashCard{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:25px;
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.iconBox{
+width:65px;
+height:65px;
+border-radius:20px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.dashCard p{
+color:#94a3b8;
+margin-bottom:8px;
+}
+
+.dashCard h1{
+font-size:28px;
+}
+
+.contentGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:30px;
+}
+
+.betCard,
+.resultCard,
+.historyCard{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:25px;
+}
+
+.betCard h2,
+.resultCard h2,
+.historyCard h2{
+margin-bottom:20px;
+}
+
+.betCard input{
+width:100%;
+padding:18px;
+margin-bottom:15px;
+border:none;
+outline:none;
+border-radius:16px;
+background:rgba(255,255,255,0.05);
+color:white;
+font-size:16px;
+}
+
+.betCard button{
+width:100%;
+padding:18px;
+border:none;
+border-radius:18px;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+color:white;
+font-size:18px;
+font-weight:800;
+cursor:pointer;
+}
+
+.resultWrap{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.resultBall{
+width:70px;
+height:70px;
+border-radius:50%;
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+font-weight:900;
+}
+
+.historyCard table{
+width:100%;
+border-collapse:collapse;
+}
+
+.historyCard th,
+.historyCard td{
+padding:16px;
+text-align:left;
+border-bottom:
+1px solid rgba(255,255,255,0.08);
+}
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+.contentGrid{
+grid-template-columns:1fr;
+}
+
+.topHeader{
+flex-direction:column;
+align-items:flex-start;
+gap:20px;
+}
+
+}
+
+`}</style>
+
+</div>
+
+</div>
 
 )
 
