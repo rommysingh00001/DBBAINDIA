@@ -249,18 +249,7 @@ export default function Dashboard(){
     setLoading(false)
   }
 
-  async function cancelBet(bet){
-
-    if(
-      bet.status !== 'pending'
-    ){
-
-      alert(
-        'Cannot cancel'
-      )
-
-      return
-    }
+  
 
     const updatedWallet =
       Number(user.wallet)
@@ -441,14 +430,6 @@ export default function Dashboard(){
                 </p>
 
               </div>
-
-              <button
-                onClick={()=>
-                  cancelBet(bet)
-                }
-              >
-                Cancel
-              </button>
 
             </div>
 
