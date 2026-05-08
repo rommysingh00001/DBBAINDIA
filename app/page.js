@@ -5,29 +5,35 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Header */}
+
       <header className="flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-5 border-b border-zinc-800">
         <div>
-          <h1 className="text-4xl font-extrabold text-yellow-400 tracking-wide">
+          <h1 className="text-4xl font-extrabold text-yellow-400">
             DBBA INDIA
           </h1>
+
           <p className="text-zinc-400 mt-1">
             Virtual Number Selection Platform
           </p>
         </div>
 
-        <div className="mt-4 md:mt-0 bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-3 text-center shadow-lg">
+        <div className="mt-4 md:mt-0 bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-3 text-center">
           <p className="text-zinc-400 text-sm">Wallet Balance</p>
-          <h2 className="text-2xl font-bold text-green-400">₹25,000</h2>
+
+          <h2 className="text-2xl font-bold text-green-400">
+            ₹25,000
+          </h2>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="text-center px-6 md:px-16 py-20 bg-gradient-to-b from-zinc-900 to-black">
+      <section className="text-center px-6 md:px-16 py-20">
         <h2 className="text-5xl md:text-7xl font-black leading-tight">
           Select Your Lucky Number
           <br />
-          <span className="text-yellow-400">Win Up To 90x Rewards</span>
+
+          <span className="text-yellow-400">
+            Win Up To 90x Rewards
+          </span>
         </h2>
 
         <p className="max-w-3xl mx-auto mt-8 text-zinc-400 text-lg leading-8">
@@ -36,28 +42,33 @@ export default function Home() {
         </p>
 
         <div className="mt-10 flex flex-wrap justify-center gap-5">
-          <button className="bg-yellow-400 text-black px-8 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 shadow-xl">
+          <button className="bg-yellow-400 text-black px-8 py-4 rounded-2xl font-bold text-lg">
             Play Now
           </button>
 
-          <button className="border border-zinc-700 px-8 py-4 rounded-2xl font-semibold hover:bg-zinc-900 transition-all duration-300">
+          <button className="border border-zinc-700 px-8 py-4 rounded-2xl font-semibold">
             How To Play
           </button>
         </div>
       </section>
 
-      {/* Number Grid */}
       <section className="px-6 md:px-16 py-16">
         <div className="flex flex-col md:flex-row justify-between items-center gap-5 mb-10">
           <div>
-            <h3 className="text-4xl font-bold">Choose Number</h3>
+            <h3 className="text-4xl font-bold">
+              Choose Number
+            </h3>
+
             <p className="text-zinc-400 mt-2">
               Select any number between 00 - 99
             </p>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-4 text-center shadow-lg">
-            <p className="text-zinc-400 text-sm">Today's Result Time</p>
+          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-4 text-center">
+            <p className="text-zinc-400 text-sm">
+              Today's Result Time
+            </p>
+
             <h4 className="text-yellow-400 text-2xl font-bold mt-1">
               09:15 AM
             </h4>
@@ -68,7 +79,7 @@ export default function Home() {
           {numbers.map((num) => (
             <button
               key={num}
-              className="bg-zinc-900 border border-zinc-700 rounded-2xl py-5 text-xl font-bold hover:bg-yellow-400 hover:text-black hover:scale-105 transition-all duration-300 shadow-lg"
+              className="bg-zinc-900 border border-zinc-700 rounded-2xl py-5 text-xl font-bold hover:bg-yellow-400 hover:text-black transition-all"
             >
               {num}
             </button>
@@ -76,55 +87,65 @@ export default function Home() {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-green-400 text-black px-10 py-4 rounded-2xl text-xl font-bold hover:scale-105 transition-all duration-300 shadow-2xl">
+          <button className="bg-green-400 text-black px-10 py-4 rounded-2xl text-xl font-bold">
             Place Bet
           </button>
         </div>
       </section>
 
-      {/* Features */}
       <section className="px-6 md:px-16 py-20 bg-zinc-950">
         <h3 className="text-5xl font-bold text-center mb-16">
           Platform Features
         </h3>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-xl hover:-translate-y-2 transition-all duration-300">
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
             <div className="text-6xl mb-6">🎯</div>
+
             <h4 className="text-2xl font-bold mb-4">
               Easy Number Selection
             </h4>
+
             <p className="text-zinc-400 leading-8">
               Smooth and mobile-friendly number selection system from 00 to 99.
             </p>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-xl hover:-translate-y-2 transition-all duration-300">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
             <div className="text-6xl mb-6">💰</div>
-            <h4 className="text-2xl font-bold mb-4">90x Reward Logic</h4>
+
+            <h4 className="text-2xl font-bold mb-4">
+              90x Reward Logic
+            </h4>
+
             <p className="text-zinc-400 leading-8">
               Winning numbers receive up to 90 times the selected amount.
             </p>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-xl hover:-translate-y-2 transition-all duration-300">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
             <div className="text-6xl mb-6">⚡</div>
-            <h4 className="text-2xl font-bold mb-4">Realtime Updates</h4>
+
+            <h4 className="text-2xl font-bold mb-4">
+              Realtime Updates
+            </h4>
+
             <p className="text-zinc-400 leading-8">
               Daily result announcements and wallet updates with realtime system integration.
             </p>
           </div>
+
         </div>
       </section>
 
-      {/* Winner Section */}
       <section className="px-6 md:px-16 py-20">
-        <div className="bg-gradient-to-r from-yellow-300 to-yellow-500 text-black rounded-[40px] p-10 md:p-16 text-center shadow-2xl">
+        <div className="bg-gradient-to-r from-yellow-300 to-yellow-500 text-black rounded-[40px] p-10 md:p-16 text-center">
           <h3 className="text-4xl md:text-5xl font-black">
             Today's Winning Number
           </h3>
 
-          <div className="text-8xl md:text-9xl font-black my-8 tracking-widest">
+          <div className="text-8xl md:text-9xl font-black my-8">
             47
           </div>
 
@@ -134,35 +155,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-800 px-6 md:px-16 py-12 text-center bg-black">
-        <h4 className="text-3xl font-black text-yellow-400 mb-4">
-          DBBA INDIA
-        </h4>
-
-        <p className="text-zinc-500 max-w-3xl mx-auto leading-8">
-          This is a premium UI demo concept for virtual number selection and wallet-based gameplay interface.
-        </p>
-
-        <div className="flex justify-center gap-6 mt-8 flex-wrap text-zinc-400">
-          <a href="#" className="hover:text-yellow-400 transition-all">
-            Home
-          </a>
-          <a href="#" className="hover:text-yellow-400 transition-all">
-            Wallet
-          </a>
-          <a href="#" className="hover:text-yellow-400 transition-all">
-            Results
-          </a>
-          <a href="#" className="hover:text-yellow-400 transition-all">
-            Contact
-          </a>
-        </div>
-
-        <p className="text-zinc-600 text-sm mt-10">
-          © 2026 DBBA INDIA. All Rights Reserved.
-        </p>
-      </footer>
     </main>
   );
 }
