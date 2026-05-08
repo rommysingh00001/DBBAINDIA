@@ -2,75 +2,155 @@
 
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import '../globals.css';
 
-export default function AdminPanel() {
+export default function Admin() {
 
-  const [winningNumber, setWinningNumber] = useState('');
+  const [mobile,setMobile] =
+    useState('');
 
-  const publishResult = async () => {
+  const [wallet,setWallet] =
+    useState('');
 
-    if (!winningNumber) {
-      alert('Enter winning number');
+  const [result,setResult] =
+    useState('');
+
+  const addWallet = async () => {
+
+    const { data:user } =
+      await supabase
+      .from('users')
+      .select('*')
+      .eq('mobile',mobile)
+      .single();
+
+    if (!user) {
+      alert('User Not Found');
       return;
     }
+
+    const newBalance =
+      Number(user.wallet) +
+      Number(wallet);
+
+    await supabase
+      .from('users')
+      .update({
+        wallet:newBalance
+      })
+      .eq('mobile',mobile);
+
+    alert('Wallet Updated');
+  };
+
+  const publishResult = async () => {
 
     await supabase
       .from('results')
       .insert([
         {
-          winning_number: winningNumber,
-        },
+          winning_number:result
+        }
       ]);
 
-    await supabase
+    const { data:bets } =
+      await supabase
       .from('bets')
-      .update({ status: 'Lost' })
-      .neq('selected_number', winningNumber);
+      .select('*');
 
-    await supabase
-      .from('bets')
-      .update({ status: 'Winner' })
-      .eq('selected_number', winningNumber);
+    for (const bet of bets) {
+
+      if (
+        bet.selected_number === result
+      ) {
+
+        const winAmount =
+          bet.amount * 90;
+
+        const { data:user } =
+          await supabase
+          .from('users')
+          .select('*')
+          .eq(
+            'mobile',
+            bet.user_mobile
+          )
+          .single();
+
+        await supabase
+          .from('users')
+          .update({
+            wallet:
+              user.wallet +
+              winAmount
+          })
+          .eq(
+            'mobile',
+            bet.user_mobile
+          );
+
+        await supabase
+          .from('bets')
+          .update({
+            status:'Winner'
+          })
+          .eq('id',bet.id);
+
+      } else {
+
+        await supabase
+          .from('bets')
+          .update({
+            status:'Lost'
+          })
+          .eq('id',bet.id);
+      }
+    }
 
     alert('Result Published');
-
-    setWinningNumber('');
-
   };
 
   return (
 
-    <main className="adminLayout">
+    <main className="dashboard">
 
-      <section className="adminMain">
+      <div className="adminCard">
 
-        <div className="glassCard">
+        <h1>ADMIN PANEL</h1>
 
-          <div className="glassHeader">
-            <h3>Publish Result</h3>
-            <p>Update today winning number</p>
-          </div>
+        <input
+          placeholder="User Mobile"
+          value={mobile}
+          onChange={(e)=>
+            setMobile(e.target.value)
+          }
+        />
 
-          <div className="publishBox">
+        <input
+          placeholder="Wallet Amount"
+          value={wallet}
+          onChange={(e)=>
+            setWallet(e.target.value)
+          }
+        />
 
-            <input
-              type="text"
-              placeholder="Enter Winning Number"
-              value={winningNumber}
-              onChange={(e) =>
-                setWinningNumber(e.target.value)
-              }
-            />
+        <button onClick={addWallet}>
+          Add Wallet
+        </button>
 
-            <button onClick={publishResult}>
-              Publish
-            </button>
+        <input
+          placeholder="Winning Number"
+          value={result}
+          onChange={(e)=>
+            setResult(e.target.value)
+          }
+        />
 
-          </div>
+        <button onClick={publishResult}>
+          Publish Result
+        </button>
 
-        </div>
-
-      </section>
+      </div>
 
     </main>
   );
