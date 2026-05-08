@@ -10,519 +10,554 @@ from '../../lib/supabase'
 
 export default function AdminPage(){
 
-  const [users,setUsers] =
-    useState([])
+const [users,setUsers] =
+useState([])
 
-  const [bets,setBets] =
-    useState([])
+const [bets,setBets] =
+useState([])
 
-  const [search,setSearch] =
-    useState('')
+const [results,setResults] =
+useState([])
 
-  const [walletAmount,
-  setWalletAmount] =
-    useState('')
+const [transactions,
+setTransactions] =
+useState([])
 
-  const [selectedUser,
-  setSelectedUser] =
-    useState(null)
+const [winningNumber,
+setWinningNumber] =
+useState('')
 
-  const [results,setResults] =
-    useState([])
+const [totalCollection,
+setTotalCollection] =
+useState(0)
 
-  const [winningNumber,
-  setWinningNumber] =
-    useState('')
+const [totalPayout,
+setTotalPayout] =
+useState(0)
 
-  useEffect(()=>{
+useEffect(()=>{
 
-    fetchAllData()
+fetchAllData()
 
-  },[])
+setInterval(()=>{
 
-  async function fetchAllData(){
+autoResult()
 
-    const { data:userData } =
-      await supabase
-      .from('users')
-      .select('*')
-      .order('id',
-        { ascending:false })
+},60000)
 
-    if(userData){
+},[])
 
-      setUsers(userData)
-    }
+async function fetchAllData(){
 
-    const { data:betData } =
-      await supabase
-      .from('bets')
-      .select('*')
-      .order('id',
-        { ascending:false })
+const { data:userData } =
+await supabase
+.from('users')
+.select('*')
 
-    if(betData){
+if(userData){
 
-      setBets(betData)
-    }
+setUsers(userData)
+}
 
-    const { data:resultData } =
-      await supabase
-      .from('results')
-      .select('*')
-      .order('id',
-        { ascending:false })
+const { data:betData } =
+await supabase
+.from('bets')
+.select('*')
+.order('id',
+{ ascending:false })
 
-    if(resultData){
+if(betData){
 
-      setResults(resultData)
-    }
+setBets(betData)
 
-  }
+const collection =
+betData.reduce(
+(total,item)=>
+total + Number(item.amount),
+0
+)
 
-  async function declareResult(){
+setTotalCollection(collection)
+}
 
-    if(!winningNumber){
+const { data:resultData } =
+await supabase
+.from('results')
+.select('*')
+.order('id',
+{ ascending:false })
 
-      alert(
-        'Enter Winning Number'
-      )
+if(resultData){
 
-      return
-    }
+setResults(resultData)
+}
 
-    await supabase
-    .from('results')
-    .insert([
-      {
-        winning_number:
-        winningNumber
-      }
-    ])
+const { data:transactionData } =
+await supabase
+.from('transactions')
+.select('*')
+.order('id',
+{ ascending:false })
 
-    for(const bet of bets){
+if(transactionData){
 
-      if(
-        bet.status === 'pending'
-      ){
+setTransactions(
+transactionData
+)
+}
 
-        if(
-          bet.number ===
-          winningNumber
-        ){
+}
 
-          const user =
-            users.find(
-              (u)=>
-              u.id === bet.user_id
-            )
+async function autoResult(){
 
-          if(user){
+const random =
+Math.floor(
+Math.random() * 100
+)
+.toString()
+.padStart(2,'0')
+
+await supabase
+.from('results')
+.insert([
+{
+winning_number:random
+}
+])
+
+}
+
+async function declareResult(){
+
+const validNumbers =
+Array.from(
+{ length:100 },
+(_,i)=>
+i.toString().padStart(2,'0')
+)
+
+if(
+!validNumbers.includes(
+winningNumber
+)
+){
 
-            const reward =
-              Number(bet.amount)
-              * 90
+alert(
+'Only 00 to 99 allowed'
+)
 
-            const updatedWallet =
-              Number(user.wallet)
-              + reward
+return
+}
 
-            await supabase
-            .from('users')
-            .update({
-              wallet:updatedWallet
-            })
-            .eq('id',user.id)
+await supabase
+.from('results')
+.insert([
+{
+winning_number:
+winningNumber
+}
+])
 
-            await supabase
-            .from('bets')
-            .update({
-              status:'won'
-            })
-            .eq('id',bet.id)
+let payout = 0
+
+for(const bet of bets){
 
-          }
+if(
+bet.status === 'pending'
+){
 
-        }else{
+if(
+bet.number ===
+winningNumber
+){
 
-          await supabase
-          .from('bets')
-          .update({
-            status:'lost'
-          })
-          .eq('id',bet.id)
+const user =
+users.find(
+(u)=>
+u.id === bet.user_id
+)
 
-        }
+if(user){
 
-      }
+const reward =
+Number(bet.amount)
+* 90
 
-    }
+payout += reward
+
+const updatedWallet =
+Number(user.wallet)
++ reward
+
+await supabase
+.from('users')
+.update({
+wallet:updatedWallet
+})
+.eq('id',user.id)
 
-    alert(
-      `Result ${winningNumber} Declared`
-    )
+await supabase
+.from('bets')
+.update({
+status:'won'
+})
+.eq('id',bet.id)
 
-    setWinningNumber('')
+}
 
-    fetchAllData()
-  }
+}else{
 
-  async function updateWallet(){
+await supabase
+.from('bets')
+.update({
+status:'lost'
+})
+.eq('id',bet.id)
 
-    if(!selectedUser){
+}
 
-      alert('Select User')
+}
 
-      return
-    }
+}
 
-    const updatedWallet =
-      Number(selectedUser.wallet)
-      + Number(walletAmount)
+setTotalPayout(payout)
 
-    await supabase
-    .from('users')
-    .update({
-      wallet:updatedWallet
-    })
-    .eq('id',selectedUser.id)
+alert(
+`Result ${winningNumber} Declared`
+)
 
-    alert('Wallet Updated')
+setWinningNumber('')
 
-    setWalletAmount('')
+fetchAllData()
 
-    fetchAllData()
-  }
+}
 
-  async function banUser(user){
+async function approveTransaction(
+item
+){
 
-    await supabase
-    .from('users')
-    .update({
-      banned:true
-    })
-    .eq('id',user.id)
+if(
+item.status !== 'pending'
+){
 
-    alert('User Banned')
+alert(
+'Already Approved'
+)
 
-    fetchAllData()
-  }
+return
+}
 
-  async function unbanUser(user){
+const { data:user }
+=
+await supabase
+.from('users')
+.select('*')
+.eq('id',item.user_id)
+.single()
 
-    await supabase
-    .from('users')
-    .update({
-      banned:false
-    })
-    .eq('id',user.id)
+if(!user) return
 
-    alert('User Unbanned')
+let updatedWallet =
+Number(user.wallet)
 
-    fetchAllData()
-  }
+if(
+item.type === 'deposit'
+){
 
-  const filteredUsers =
-    users.filter((u)=>
+updatedWallet +=
+Number(item.amount)
 
-      u.name
-      ?.toLowerCase()
-      .includes(
-        search.toLowerCase()
-      )
+}else{
 
-    )
+updatedWallet -=
+Number(item.amount)
+}
 
-  const totalCollection =
-    bets.reduce(
-      (sum,bet)=>
-      sum + Number(bet.amount),
-      0
-    )
+await supabase
+.from('users')
+.update({
+wallet:updatedWallet
+})
+.eq('id',user.id)
 
-  const totalUsers =
-    users.length
+await supabase
+.from('transactions')
+.update({
+status:'approved'
+})
+.eq('id',item.id)
 
-  const totalBets =
-    bets.length
+alert(
+'Request Approved'
+)
 
-  const totalWon =
-    bets.filter(
-      (b)=>
-      b.status === 'won'
-    ).length
+fetchAllData()
 
-  return(
+}
 
-    <main className="adminPage">
+return(
 
-      <h1 className="adminMainTitle">
-        DBBA INDIA ADMIN
-      </h1>
+<main className="adminMain">
 
-      <div className="analyticsGrid">
+<h1 className="adminTitle">
+DBBA INDIA ADMIN PANEL
+</h1>
 
-        <div className="analyticsCard">
+<div className="adminStats">
 
-          <h3>
-            Total Users
-          </h3>
+<div className="statCard">
 
-          <h1>
-            {totalUsers}
-          </h1>
+<h3>
+Total Users
+</h3>
 
-        </div>
+<h1>
+{users.length}
+</h1>
 
-        <div className="analyticsCard">
+</div>
 
-          <h3>
-            Total Bets
-          </h3>
+<div className="statCard">
 
-          <h1>
-            {totalBets}
-          </h1>
+<h3>
+Total Collection
+</h3>
 
-        </div>
+<h1>
+₹ {totalCollection}
+</h1>
 
-        <div className="analyticsCard">
+</div>
 
-          <h3>
-            Total Collection
-          </h3>
+<div className="statCard">
 
-          <h1>
-            ₹ {totalCollection}
-          </h1>
+<h3>
+Total Payout
+</h3>
 
-        </div>
+<h1>
+₹ {totalPayout}
+</h1>
 
-        <div className="analyticsCard">
+</div>
 
-          <h3>
-            Winners
-          </h3>
+<div className="statCard">
 
-          <h1>
-            {totalWon}
-          </h1>
+<h3>
+Live Bets
+</h3>
 
-        </div>
+<h1>
+{bets.length}
+</h1>
 
-      </div>
+</div>
 
-      <div className="adminBox">
+</div>
 
-        <h2>
-          Declare Result
-        </h2>
+<div className="adminGrid">
 
-        <div className="actionRow">
+<div className="leftAdmin">
 
-          <input
-            placeholder="Winning Number"
+<div className="adminCard">
 
-            value={winningNumber}
+<h2>
+Declare Result
+</h2>
 
-            onChange={(e)=>
-              setWinningNumber(
-                e.target.value
-              )
-            }
-          />
+<input
+placeholder="00 to 99"
 
-          <button
-            onClick={declareResult}
-          >
-            Declare
-          </button>
+value={winningNumber}
 
-        </div>
+onChange={(e)=>
+setWinningNumber(
+e.target.value
+)
+}
+/>
 
-      </div>
+<button
+onClick={declareResult}
+>
 
-      <div className="adminBox">
+Declare Result
 
-        <h2>
-          Search User
-        </h2>
+</button>
 
-        <input
-          placeholder="Search by name"
+</div>
 
-          value={search}
+<div className="adminCard">
 
-          onChange={(e)=>
-            setSearch(e.target.value)
-          }
-        />
+<h2>
+Recent Results
+</h2>
 
-      </div>
+<div className="resultsWrap">
 
-      <div className="adminBox">
+{
+results.map((r)=>(
 
-        <h2>
-          Wallet Control
-        </h2>
+<div
+className="resultBall"
+key={r.id}
+>
 
-        <select
-          onChange={(e)=>{
+{r.winning_number}
 
-            const found =
-              users.find(
-                (u)=>
-                u.id ==
-                e.target.value
-              )
+</div>
 
-            setSelectedUser(found)
-          }}
-        >
+))
+}
 
-          <option>
-            Select User
-          </option>
+</div>
 
-          {
-            users.map((u)=>(
+</div>
 
-              <option
-                value={u.id}
-                key={u.id}
-              >
-                {u.name}
-              </option>
+<div className="adminCard">
 
-            ))
-          }
+<h2>
+Deposit / Withdraw Requests
+</h2>
 
-        </select>
+{
+transactions.map((t)=>(
 
-        <div className="actionRow">
+<div
+className="transactionRow"
+key={t.id}
+>
 
-          <input
-            type="number"
-            placeholder="Wallet Amount"
+<div>
 
-            value={walletAmount}
+<h3>
+{t.type}
+</h3>
 
-            onChange={(e)=>
-              setWalletAmount(
-                e.target.value
-              )
-            }
-          />
+<p>
+₹ {t.amount}
+</p>
 
-          <button
-            onClick={updateWallet}
-          >
-            Update Wallet
-          </button>
+<p>
+{t.status}
+</p>
 
-        </div>
+</div>
 
-      </div>
+<button
+onClick={()=>
+approveTransaction(t)
+}
+>
 
-      <div className="adminBox">
+Approve
 
-        <h2>
-          Users
-        </h2>
+</button>
 
-        {
-          filteredUsers.map((u)=>(
+</div>
 
-            <div
-              className="userCard"
-              key={u.id}
-            >
+))
+}
 
-              <div>
+</div>
 
-                <h3>
-                  {u.name}
-                </h3>
+</div>
 
-                <p>
-                  {u.email}
-                </p>
+<div className="rightAdmin">
 
-                <p>
-                  Wallet :
-                  ₹ {u.wallet}
-                </p>
+<div className="adminCard">
 
-              </div>
+<h2>
+All Users Wallet
+</h2>
 
-              <div className="userBtns">
+{
+users.map((u)=>(
 
-                {
-                  u.banned
-                  ?
+<div
+className="userRow"
+key={u.id}
+>
 
-                  <button
-                    onClick={()=>
-                      unbanUser(u)
-                    }
-                  >
-                    Unban
-                  </button>
+<div>
 
-                  :
+<h3>
+{u.name}
+</h3>
 
-                  <button
-                    onClick={()=>
-                      banUser(u)
-                    }
-                  >
-                    Ban
-                  </button>
+<p>
+{u.email}
+</p>
 
-                }
+</div>
 
-              </div>
+<h2>
+₹ {u.wallet}
+</h2>
 
-            </div>
+</div>
 
-          ))
-        }
+))
+}
 
-      </div>
+</div>
 
-      <div className="adminBox">
+<div className="adminCard">
 
-        <h2>
-          Result History
-        </h2>
+<h2>
+All Bets
+</h2>
 
-        {
-          results.map((r)=>(
+{
+bets.map((bet)=>(
 
-            <div
-              className="resultRow"
-              key={r.id}
-            >
+<div
+className="betRowAdmin"
+key={bet.id}
+>
 
-              <h3>
-                {r.winning_number}
-              </h3>
+<div>
 
-              <p>
-                {
-                  new Date(
-                    r.created_at
-                  ).toLocaleString()
-                }
-              </p>
+<h3>
+Number :
+{bet.number}
+</h3>
 
-            </div>
+<p>
+₹ {bet.amount}
+</p>
 
-          ))
-        }
+</div>
 
-      </div>
+<div
+className={
+bet.status === 'won'
+? 'winStatus'
+:
+bet.status === 'lost'
+? 'lossStatus'
+:
+'pendingStatus'
+}
+>
 
-    </main>
-  )
+{bet.status}
+
+</div>
+
+</div>
+
+))
+}
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+)
+
 }
