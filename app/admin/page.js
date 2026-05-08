@@ -1,100 +1,206 @@
-export default function AdminPanel() {
-  return (
-    <main className="adminPage">
+.adminWrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #000;
+  color: white;
+}
 
-      <aside className="sidebar">
-        <h1>DBBA ADMIN</h1>
+.adminSidebar {
+  width: 270px;
+  background: #0d0d0d;
+  border-right: 1px solid #222;
+  padding: 35px 20px;
+}
 
-        <ul>
-          <li>Dashboard</li>
-          <li>Winning Number</li>
-          <li>User Bets</li>
-          <li>Wallet Control</li>
-          <li>Results</li>
-          <li>Users</li>
-        </ul>
-      </aside>
+.adminSidebar h1 {
+  color: gold;
+  font-size: 34px;
+  margin-bottom: 50px;
+}
 
-      <section className="content">
+.adminSidebar ul {
+  list-style: none;
+}
 
-        <div className="topBar">
-          <h2>Admin Dashboard</h2>
+.adminSidebar li {
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background: #111;
+  border: 1px solid #222;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
 
-          <button>Logout</button>
-        </div>
+.adminSidebar li:hover {
+  background: gold;
+  color: black;
+}
 
-        <div className="statsGrid">
+.adminContent {
+  flex: 1;
+  padding: 40px;
+}
 
-          <div className="statCard">
-            <h3>Total Users</h3>
-            <p>1,250</p>
-          </div>
+.adminTopbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 45px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 
-          <div className="statCard">
-            <h3>Total Bets</h3>
-            <p>8,540</p>
-          </div>
+.adminTopbar h2 {
+  font-size: 48px;
+}
 
-          <div className="statCard">
-            <h3>Today's Collection</h3>
-            <p>₹1,25,000</p>
-          </div>
+.adminTopbar p {
+  color: #999;
+  margin-top: 5px;
+}
 
-          <div className="statCard">
-            <h3>Today's Winning No.</h3>
-            <p>47</p>
-          </div>
+.adminTopbar button {
+  background: gold;
+  color: black;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-        </div>
+.adminCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
 
-        <div className="winnerSection">
-          <h3>Update Winning Number</h3>
+.adminCard {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 26px;
+  padding: 35px;
+}
 
-          <div className="winnerControls">
-            <input type="text" placeholder="Enter Number" />
-            <button>Publish Result</button>
-          </div>
-        </div>
+.adminCard span {
+  color: #999;
+  display: block;
+  margin-bottom: 15px;
+}
 
-        <div className="tableSection">
-          <h3>Recent Bets</h3>
+.adminCard h3 {
+  color: gold;
+  font-size: 42px;
+}
 
-          <table>
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Number</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
+.publishSection {
+  margin-top: 50px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 30px;
+  padding: 35px;
+}
 
-            <tbody>
-              <tr>
-                <td>Rahul</td>
-                <td>47</td>
-                <td>₹500</td>
-                <td>Pending</td>
-              </tr>
+.publishSection h3 {
+  font-size: 32px;
+  margin-bottom: 25px;
+}
 
-              <tr>
-                <td>Aman</td>
-                <td>12</td>
-                <td>₹1000</td>
-                <td>Lost</td>
-              </tr>
+.publishControls {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
 
-              <tr>
-                <td>Rohit</td>
-                <td>47</td>
-                <td>₹200</td>
-                <td>Winner</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+.publishControls input {
+  flex: 1;
+  min-width: 250px;
+  background: black;
+  border: 1px solid #333;
+  border-radius: 18px;
+  padding: 18px;
+  color: white;
+  font-size: 18px;
+}
 
-      </section>
-    </main>
-  );
+.publishControls button {
+  background: #00ff88;
+  color: black;
+  border: none;
+  border-radius: 18px;
+  padding: 18px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.betsSection {
+  margin-top: 50px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 30px;
+  padding: 35px;
+  overflow-x: auto;
+}
+
+.sectionHeader {
+  margin-bottom: 25px;
+}
+
+.sectionHeader h3 {
+  font-size: 32px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  color: gold;
+  text-align: left;
+  padding-bottom: 20px;
+  font-size: 18px;
+}
+
+td {
+  padding: 18px 0;
+  border-bottom: 1px solid #222;
+  color: #ddd;
+}
+
+.win {
+  color: #00ff88;
+  font-weight: bold;
+}
+
+.lose {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+.pending {
+  color: gold;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .adminWrapper {
+    flex-direction: column;
+  }
+
+  .adminSidebar {
+    width: 100%;
+  }
+
+  .adminContent {
+    padding: 20px;
+  }
+
+  .adminTopbar h2 {
+    font-size: 36px;
+  }
 }
