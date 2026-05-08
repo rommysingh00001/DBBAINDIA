@@ -1,91 +1,84 @@
-'use client';
+'use client'
 
-import {
-  useState
-} from 'react';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '../lib/supabase'
+import './globals.css'
 
-import {
-  useRouter
-} from 'next/navigation';
+export default function Home() {
 
-import {
-  supabase
-} from '../lib/supabase';
+  const router = useRouter()
 
-import './globals.css';
+  const [email, setEmail] =
+    useState('')
 
-export default function Login() {
+  const [password, setPassword] =
+    useState('')
 
-  const router =
-    useRouter();
-
-  const [mobile,setMobile] =
-    useState('');
-
-  const [password,setPassword] =
-    useState('');
-
-  const login = async ()=>{
+  async function login() {
 
     const { data } =
       await supabase
       .from('users')
       .select('*')
-      .eq('mobile',mobile)
-      .eq('password',password)
-      .single();
+      .eq('email', email)
+      .eq('password', password)
+      .single()
 
-    if(!data){
+    if (!data) {
 
-      alert('Invalid Login');
+      alert('Invalid Login')
 
-      return;
+      return
     }
 
     localStorage.setItem(
       'dbbaUser',
       JSON.stringify(data)
-    );
+    )
 
-    router.push('/dashboard');
-  };
+    router.push('/dashboard')
+  }
 
   return (
 
     <main className="authPage">
 
-      <div className="authCard">
+      <div className="authBox">
 
         <h1>DBBA INDIA</h1>
 
         <input
-          placeholder="Mobile"
-
-          value={mobile}
-
+          placeholder="Email"
+          value={email}
           onChange={(e)=>
-            setMobile(e.target.value)
+            setEmail(e.target.value)
           }
         />
 
         <input
           type="password"
-
           placeholder="Password"
-
           value={password}
-
           onChange={(e)=>
             setPassword(e.target.value)
           }
         />
 
         <button onClick={login}>
-          LOGIN
+          Login
+        </button>
+
+        <button
+          onClick={()=>
+            router.push('/signup')
+          }
+        >
+          Signup
         </button>
 
       </div>
 
     </main>
-  );
+  )
 }
