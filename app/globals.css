@@ -980,3 +980,60 @@ opacity:1;
 }
 
 }
+.authPage{
+min-height:100vh;
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.authBox{
+width:100%;
+max-width:420px;
+background:#111;
+padding:40px;
+border-radius:28px;
+border:1px solid #222;
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.authBox h1{
+font-size:42px;
+font-weight:900;
+color:gold;
+text-align:center;
+}
+
+.authBox p{
+text-align:center;
+color:#999;
+margin-bottom:10px;
+}
+
+.authBox input{
+padding:18px;
+border:none;
+border-radius:16px;
+background:#1a1a1a;
+color:white;
+font-size:18px;
+}
+
+.authBox button{
+padding:18px;
+border:none;
+border-radius:16px;
+background:gold;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.secondaryBtn{
+background:#222 !important;
+color:white;
+}
