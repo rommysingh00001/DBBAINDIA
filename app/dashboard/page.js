@@ -1,44 +1,65 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import './globals.css'
+import { useState } from 'react'
 
-export default function Home() {
+import '../globals.css'
 
-  const router = useRouter()
+import Navbar from '../../components/Navbar.jsx'
+import WalletCard from '../../components/WalletCard.jsx'
+import NumberGrid from '../../components/NumberGrid.jsx'
+import BetPopup from '../../components/BetPopup.jsx'
+
+export default function Dashboard() {
+
+  const numbers =
+    Array.from(
+      { length: 100 },
+      (_, i) =>
+        i.toString().padStart(2, '0')
+    )
+
+  const [selected, setSelected] =
+    useState('')
 
   return (
 
-    <main className="loginPage">
+    <main className="dashboard">
 
-      <div className="loginBox">
+      <Navbar />
 
-        <h1>DBBA INDIA</h1>
+      <section className="hero">
 
-        <input placeholder="Mobile" />
+        <h1>
+          Select Your Lucky Number
+        </h1>
 
-        <input
-          placeholder="Password"
-          type="password"
+        <h2>
+          Win Up To 90x Rewards
+        </h2>
+
+      </section>
+
+      <div className="topCards">
+
+        <WalletCard
+          title="Wallet"
+          value="₹1000"
         />
 
-        <button
-          onClick={() =>
-            router.push('/dashboard')
-          }
-        >
-          Login
-        </button>
-
-        <button
-          onClick={() =>
-            router.push('/signup')
-          }
-        >
-          Signup
-        </button>
+        <WalletCard
+          title="Latest Result"
+          value="47"
+        />
 
       </div>
+
+      <NumberGrid
+        numbers={numbers}
+        selected={selected}
+        onSelect={setSelected}
+      />
+
+      <BetPopup selected={selected} />
 
     </main>
   )
