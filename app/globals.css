@@ -10,7 +10,49 @@ body{
   color:white;
 }
 
-.main{
+.loginPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.loginCard{
+  width:350px;
+  background:#111827;
+  padding:30px;
+  border-radius:20px;
+}
+
+.loginCard h1{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.loginCard p{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.loginCard input{
+  width:100%;
+  padding:15px;
+  margin-bottom:15px;
+  border:none;
+  border-radius:12px;
+}
+
+.loginCard button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#f59e0b;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.dashboard{
   min-height:100vh;
   padding:20px;
 }
@@ -20,8 +62,7 @@ body{
   gap:20px;
 }
 
-.walletCard,
-.resultCard{
+.walletCard{
   flex:1;
 
   background:linear-gradient(
@@ -32,23 +73,15 @@ body{
 
   padding:20px;
   border-radius:20px;
-
   color:black;
 }
 
-.walletCard h1,
-.resultCard h1{
-  margin-top:10px;
-}
-
 .title{
-  margin-top:30px;
-  margin-bottom:20px;
+  margin:30px 0 20px;
 }
 
 .numberGrid{
   display:grid;
-
   grid-template-columns:
     repeat(5,1fr);
 
@@ -57,27 +90,51 @@ body{
 
 .numberBtn{
   padding:18px;
-
   border:none;
-
   border-radius:14px;
-
   background:#1e293b;
-
   color:white;
-
   font-size:18px;
-
   cursor:pointer;
-
-  transition:0.3s;
 }
 
 .numberBtn:hover{
-
   background:#f59e0b;
-
   color:black;
+}
 
-  transform:scale(1.05);
+.historyCard{
+  background:#111827;
+  padding:20px;
+  border-radius:14px;
+  margin-bottom:12px;
+
+  display:flex;
+  justify-content:space-between;
+}
+
+.adminCard{
+  max-width:400px;
+  margin:auto;
+  background:#111827;
+  padding:30px;
+  border-radius:20px;
+}
+
+.adminCard input{
+  width:100%;
+  padding:15px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+}
+
+.adminCard button{
+  width:100%;
+  padding:15px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+  background:#f59e0b;
+  font-weight:bold;
 }
