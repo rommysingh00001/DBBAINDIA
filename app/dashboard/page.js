@@ -31,7 +31,37 @@ getUser();
 loadResults();
 
 loadBets();
+const betsChannel =
+supabase
+.channel("bets-live")
+.on(
+"postgres_changes",
+{
+event:"*",
+schema:"public",
+table:"bets"
+},
+()=>{
+loadBets();
+}
+)
+.subscribe();
 
+const resultsChannel =
+supabase
+.channel("results-live")
+.on(
+"postgres_changes",
+{
+event:"*",
+schema:"public",
+table:"results"
+},
+()=>{
+loadResults();
+}
+)
+.subscribe();
 },[]);
 
 async function getUser(){
