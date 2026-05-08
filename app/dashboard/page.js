@@ -1,20 +1,16 @@
 'use client';
 
 import {
-  useEffect,
   useState
 } from 'react';
 
 import '../globals.css';
 
-import Navbar
-from '../../components/Navbar';
+import Navbar from '../../components/Navbar.jsx';
 
-import NumberGrid
-from '../../components/NumberGrid';
+import NumberGrid from '../../components/NumberGrid.jsx';
 
-import WalletCard
-from '../../components/WalletCard';
+import WalletCard from '../../components/WalletCard.jsx';
 
 export default function Dashboard() {
 
