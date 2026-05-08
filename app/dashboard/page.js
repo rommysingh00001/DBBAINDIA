@@ -715,7 +715,8 @@ bets.map((bet,index)=>(
 </div>
 
 </div>
-<style jsx>{.mobileNav{
+<style jsx>{`
+.mobileNav{
 position:fixed;
 bottom:0;
 left:0;
