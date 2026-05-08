@@ -98,6 +98,8 @@ supabase.removeChannel(
 resultsChannel
 );
 
+clearInterval(timer);
+
 };
 
 },[]);
