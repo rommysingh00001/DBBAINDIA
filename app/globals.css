@@ -919,3 +919,64 @@ flex-direction:column;
 }
 
 }
+.loaderWrap{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100vh;
+background:#000000dd;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.loader{
+width:70px;
+height:70px;
+border-radius:50%;
+border:6px solid #222;
+border-top:6px solid gold;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+0%{
+transform:rotate(0deg);
+}
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+.toastBox{
+position:fixed;
+top:20px;
+right:20px;
+background:#111;
+padding:18px 25px;
+border-radius:18px;
+border:1px solid #333;
+color:white;
+font-weight:bold;
+z-index:9999;
+animation:toastAnim 0.3s ease;
+}
+
+@keyframes toastAnim{
+
+0%{
+transform:translateY(-20px);
+opacity:0;
+}
+
+100%{
+transform:translateY(0px);
+opacity:1;
+}
+
+}
