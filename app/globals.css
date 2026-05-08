@@ -526,3 +526,128 @@ flex-direction:column;
 }
 
 }
+.bottomNav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:#111;
+padding:18px;
+display:flex;
+justify-content:space-around;
+border-top:1px solid #222;
+z-index:100;
+}
+
+.bottomNav a{
+color:white;
+text-decoration:none;
+font-size:18px;
+font-weight:bold;
+}
+
+.pageContainer{
+min-height:100vh;
+background:#050505;
+padding:25px;
+padding-bottom:120px;
+color:white;
+}
+
+.pageTitle{
+font-size:42px;
+font-weight:900;
+margin-bottom:25px;
+color:gold;
+}
+
+.resultCard{
+background:#111;
+padding:25px;
+border-radius:22px;
+margin-bottom:18px;
+border:1px solid #222;
+text-align:center;
+}
+
+.resultCard h2{
+font-size:55px;
+color:#00ff66;
+margin-bottom:10px;
+}
+
+.resultCard p{
+color:#aaa;
+}
+
+.walletBigCard{
+background:linear-gradient(
+135deg,
+#1a1a1a,
+#111
+);
+padding:40px;
+border-radius:25px;
+text-align:center;
+border:1px solid #222;
+margin-bottom:30px;
+}
+
+.walletBigCard h2{
+font-size:65px;
+color:#00ff66;
+margin-bottom:10px;
+}
+
+.walletBigCard p{
+color:#aaa;
+font-size:20px;
+}
+
+.walletBtns{
+display:flex;
+gap:20px;
+}
+
+.walletBtns button{
+flex:1;
+padding:20px;
+border:none;
+border-radius:18px;
+background:gold;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.profileCard{
+background:#111;
+padding:35px;
+border-radius:25px;
+border:1px solid #222;
+text-align:center;
+}
+
+.profileCard h2{
+font-size:40px;
+margin-bottom:10px;
+color:gold;
+}
+
+.profileCard p{
+margin-bottom:12px;
+color:#bbb;
+font-size:18px;
+}
+
+.profileCard button{
+margin-top:20px;
+padding:18px 30px;
+border:none;
+border-radius:18px;
+background:red;
+color:white;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
