@@ -22,7 +22,8 @@ const [number,setNumber] = useState("");
 const [amount,setAmount] = useState("");
 const [results,setResults] = useState([]);
 const [bets,setBets] = useState([]);
-
+const [depositAmount,setDepositAmount] = useState("");
+const [withdrawAmount,setWithdrawAmount] = useState("");
 useEffect(()=>{
 
 getUser();
@@ -143,7 +144,72 @@ setAmount("");
 loadBets();
 
 }
+async function sendDepositRequest(){
 
+if(!depositAmount){
+
+alert("Enter amount");
+return;
+
+}
+
+const {
+data:{user}
+} = await supabase.auth.getUser();
+
+await supabase
+.from("requests")
+.insert([
+{
+name:user.email,
+type:"deposit",
+amount:depositAmount,
+status:"pending"
+}
+]);
+
+alert("Deposit Request Sent");
+
+setDepositAmount("");
+
+}
+
+async function sendWithdrawRequest(){
+
+if(!withdrawAmount){
+
+alert("Enter amount");
+return;
+
+}
+
+if(Number(withdrawAmount) > wallet){
+
+alert("Insufficient Wallet");
+return;
+
+}
+
+const {
+data:{user}
+} = await supabase.auth.getUser();
+
+await supabase
+.from("requests")
+.insert([
+{
+name:user.email,
+type:"withdraw",
+amount:withdrawAmount,
+status:"pending"
+}
+]);
+
+alert("Withdraw Request Sent");
+
+setWithdrawAmount("");
+
+}
 async function logout(){
 
 await supabase.auth.signOut();
@@ -220,7 +286,52 @@ Premium Gaming Dashboard
 </div>
 
 <div className="cardsGrid">
+<div className="walletActions">
 
+<div className="walletCard">
+
+<h2>Deposit Request</h2>
+
+<input
+type="number"
+placeholder="Enter Deposit Amount"
+value={depositAmount}
+onChange={(e)=>
+setDepositAmount(e.target.value)
+}
+/>
+
+<button onClick={sendDepositRequest}>
+Send Deposit Request
+</button>
+
+</div>
+
+<div className="walletCard">
+
+<h2>Withdraw Request</h2>
+
+<input
+type="number"
+placeholder="Enter Withdraw Amount"
+value={withdrawAmount}
+onChange={(e)=>
+setWithdrawAmount(e.target.value)
+}
+/>
+
+<button
+className="withdrawBtn"
+onClick={sendWithdrawRequest}
+>
+
+Send Withdraw Request
+
+</button>
+
+</div>
+
+</div>
 <div className="dashCard">
 
 <div className="iconBox">
