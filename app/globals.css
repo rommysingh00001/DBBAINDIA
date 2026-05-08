@@ -10,6 +10,8 @@ body {
   color: white;
 }
 
+/* HOME PAGE */
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -80,6 +82,7 @@ body {
   font-weight: bold;
   margin: 10px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 .heroButtons button:first-child {
@@ -91,6 +94,10 @@ body {
   background: transparent;
   border: 1px solid #444 !important;
   color: white;
+}
+
+.heroButtons button:hover {
+  transform: translateY(-3px);
 }
 
 .numbersSection {
@@ -153,6 +160,7 @@ body {
 .numberBtn:hover {
   background: gold;
   color: black;
+  transform: scale(1.05);
 }
 
 .betArea {
@@ -169,360 +177,15 @@ body {
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
-}
-
-.adminWrapper {
-  display: flex;
-  min-height: 100vh;
-  background: #000;
-}
-
-.adminSidebar {
-  width: 270px;
-  background: #0d0d0d;
-  border-right: 1px solid #222;
-  padding: 35px 20px;
-}
-
-.adminSidebar h1 {
-  color: gold;
-  font-size: 34px;
-  margin-bottom: 50px;
-}
-
-.adminSidebar ul {
-  list-style: none;
-}
-
-.adminSidebar li {
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  border-radius: 16px;
-  background: #111;
-  border: 1px solid #222;
-  cursor: pointer;
-}
-
-.adminSidebar li:hover {
-  background: gold;
-  color: black;
-}
-
-.adminContent {
-  flex: 1;
-  padding: 40px;
-}
-
-.adminTopbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 45px;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.adminTopbar h2 {
-  font-size: 48px;
-}
-
-.adminTopbar p {
-  color: #999;
-}
-
-.adminTopbar button {
-  background: gold;
-  color: black;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.adminCards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-}
-
-.adminCard {
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 26px;
-  padding: 35px;
-}
-
-.adminCard span {
-  color: #999;
-  display: block;
-  margin-bottom: 15px;
-}
-
-.adminCard h3 {
-  color: gold;
-  font-size: 42px;
-}
-
-.publishSection {
-  margin-top: 50px;
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 30px;
-  padding: 35px;
-}
-
-.publishSection h3 {
-  font-size: 32px;
-  margin-bottom: 25px;
-}
-
-.publishControls {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.publishControls input {
-  flex: 1;
-  min-width: 250px;
-  background: black;
-  border: 1px solid #333;
-  border-radius: 18px;
-  padding: 18px;
-  color: white;
-}
-
-.publishControls button {
-  background: #00ff88;
-  color: black;
-  border: none;
-  border-radius: 18px;
-  padding: 18px 30px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-@media (max-width: 900px) {
-  .adminWrapper {
-    flex-direction: column;
-  }
-
-  .adminSidebar {
-    width: 100%;
-  }
-
-  .adminContent {
-    padding: 20px;
-  }
-
-  .hero h2 {
-    font-size: 40px;
-  }
-}
-.adminPanel {
-  display: flex;
-  min-height: 100vh;
-  background: #050505;
-  color: white;
-}
-
-.sidebar {
-  width: 280px;
-  background: linear-gradient(to bottom, #0d0d0d, #111);
-  border-right: 1px solid #222;
-  padding: 35px 20px;
-}
-
-.sidebar h1 {
-  color: gold;
-  font-size: 36px;
-  margin-bottom: 8px;
-}
-
-.sidebar p {
-  color: #888;
-  margin-bottom: 45px;
-}
-
-.sidebar ul {
-  list-style: none;
-}
-
-.sidebar li {
-  padding: 16px 18px;
-  border-radius: 18px;
-  margin-bottom: 14px;
-  background: #111;
-  border: 1px solid #222;
-  cursor: pointer;
   transition: 0.3s;
-  font-weight: bold;
 }
 
-.sidebar li:hover,
-.sidebar .active {
-  background: gold;
-  color: black;
+.betBtn:hover {
+  transform: translateY(-3px);
 }
 
-.mainContent {
-  flex: 1;
-  padding: 40px;
-}
+/* ADMIN PANEL */
 
-.dashboardTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 45px;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.dashboardTop h2 {
-  font-size: 52px;
-  margin-bottom: 8px;
-}
-
-.dashboardTop span {
-  color: #888;
-}
-
-.dashboardTop button {
-  background: gold;
-  color: black;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 18px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.statsBoxes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 24px;
-}
-
-.statBox {
-  background: linear-gradient(to bottom right, #111, #0b0b0b);
-  border: 1px solid #222;
-  padding: 35px;
-  border-radius: 28px;
-}
-
-.statBox p {
-  color: #888;
-  margin-bottom: 15px;
-}
-
-.statBox h3 {
-  font-size: 42px;
-  color: gold;
-}
-
-.publishCard,
-.recentBets {
-  margin-top: 40px;
-  background: linear-gradient(to bottom right, #111, #0b0b0b);
-  border: 1px solid #222;
-  border-radius: 30px;
-  padding: 35px;
-}
-
-.cardHeader {
-  margin-bottom: 25px;
-}
-
-.cardHeader h3 {
-  font-size: 32px;
-  margin-bottom: 5px;
-}
-
-.cardHeader span {
-  color: #888;
-}
-
-.publishArea {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.publishArea input {
-  flex: 1;
-  min-width: 220px;
-  background: #000;
-  border: 1px solid #333;
-  padding: 18px;
-  border-radius: 18px;
-  color: white;
-  font-size: 18px;
-}
-
-.publishArea button {
-  background: #00ff88;
-  color: black;
-  border: none;
-  padding: 18px 30px;
-  border-radius: 18px;
-  font-weight: bold;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  color: gold;
-  text-align: left;
-  padding-bottom: 20px;
-  font-size: 18px;
-}
-
-td {
-  padding: 18px 0;
-  border-bottom: 1px solid #222;
-  color: #ddd;
-}
-
-.green {
-  color: #00ff88;
-  font-weight: bold;
-}
-
-.red {
-  color: #ff4d4d;
-  font-weight: bold;
-}
-
-.yellow {
-  color: gold;
-  font-weight: bold;
-}
-
-@media (max-width: 900px) {
-  .adminPanel {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-  }
-
-  .mainContent {
-    padding: 20px;
-  }
-
-  .dashboardTop h2 {
-    font-size: 38px;
-  }
-}
 .adminLayout {
   display: flex;
   min-height: 100vh;
@@ -763,5 +426,9 @@ td {
 
   .adminHero h2 {
     font-size: 38px;
+  }
+
+  .hero h2 {
+    font-size: 42px;
   }
 }
