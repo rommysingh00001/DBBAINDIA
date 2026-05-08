@@ -1,98 +1,40 @@
-'use client'
+async function login() {
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '../lib/supabase'
-import './globals.css'
-
-export default function Home() {
-
-  const router = useRouter()
-
-  const [email, setEmail] =
-    useState('')
-
-  const [password, setPassword] =
-    useState('')
-
-  async function login() {
-
-    const { data, error } =
-      await supabase
+  const { data, error } =
+    await supabase
       .from('users')
       .select('*')
 
-    if (error) {
+  console.log(data)
 
-      alert('Database Error')
+  if (error) {
 
-      console.log(error)
+    console.log(error)
 
-      return
-    }
+    alert('Database Error')
 
-    const user =
-      data.find(
-        (u)=>
-          u.email === email
-          &&
-          u.password === password
-      )
-
-    if (!user) {
-
-      alert('Invalid Login')
-
-      return
-    }
-
-    localStorage.setItem(
-      'dbbaUser',
-      JSON.stringify(user)
-    )
-
-    router.push('/dashboard')
+    return
   }
 
-  return (
+  const foundUser =
+    data.find(
+      (item) =>
+        item.email?.trim() === email.trim()
+        &&
+        item.password?.trim() === password.trim()
+    )
 
-    <main className="authPage">
+  if (!foundUser) {
 
-      <div className="authBox">
+    alert('Invalid Login')
 
-        <h1>DBBA INDIA</h1>
+    return
+  }
 
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e)=>
-            setEmail(e.target.value)
-          }
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e)=>
-            setPassword(e.target.value)
-          }
-        />
-
-        <button onClick={login}>
-          Login
-        </button>
-
-        <button
-          onClick={()=>
-            router.push('/signup')
-          }
-        >
-          Signup
-        </button>
-
-      </div>
-
-    </main>
+  localStorage.setItem(
+    'dbbaUser',
+    JSON.stringify(foundUser)
   )
+
+  router.push('/dashboard')
 }
