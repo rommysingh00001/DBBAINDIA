@@ -1,206 +1,68 @@
-.adminWrapper {
-  display: flex;
-  min-height: 100vh;
-  background: #000;
-  color: white;
-}
+export default function AdminPanel() {
+  return (
+    <main className="adminWrapper">
 
-.adminSidebar {
-  width: 270px;
-  background: #0d0d0d;
-  border-right: 1px solid #222;
-  padding: 35px 20px;
-}
+      <aside className="adminSidebar">
+        <h1>DBBA ADMIN</h1>
 
-.adminSidebar h1 {
-  color: gold;
-  font-size: 34px;
-  margin-bottom: 50px;
-}
+        <ul>
+          <li>Dashboard</li>
+          <li>Winning Number</li>
+          <li>User Bets</li>
+          <li>Wallet Control</li>
+          <li>Results</li>
+          <li>Users</li>
+        </ul>
+      </aside>
 
-.adminSidebar ul {
-  list-style: none;
-}
+      <section className="adminContent">
 
-.adminSidebar li {
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  border-radius: 16px;
-  background: #111;
-  border: 1px solid #222;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-}
+        <div className="adminTopbar">
+          <div>
+            <h2>Admin Dashboard</h2>
+            <p>Manage complete DBBA INDIA platform</p>
+          </div>
 
-.adminSidebar li:hover {
-  background: gold;
-  color: black;
-}
+          <button>Logout</button>
+        </div>
 
-.adminContent {
-  flex: 1;
-  padding: 40px;
-}
+        <div className="adminCards">
 
-.adminTopbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 45px;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+          <div className="adminCard">
+            <span>Total Users</span>
+            <h3>1,250</h3>
+          </div>
 
-.adminTopbar h2 {
-  font-size: 48px;
-}
+          <div className="adminCard">
+            <span>Total Bets</span>
+            <h3>8,540</h3>
+          </div>
 
-.adminTopbar p {
-  color: #999;
-  margin-top: 5px;
-}
+          <div className="adminCard">
+            <span>Today's Collection</span>
+            <h3>₹1,25,000</h3>
+          </div>
 
-.adminTopbar button {
-  background: gold;
-  color: black;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
+          <div className="adminCard">
+            <span>Winning Number</span>
+            <h3>47</h3>
+          </div>
 
-.adminCards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-}
+        </div>
 
-.adminCard {
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 26px;
-  padding: 35px;
-}
+        <div className="publishSection">
 
-.adminCard span {
-  color: #999;
-  display: block;
-  margin-bottom: 15px;
-}
+          <h3>Publish Winning Number</h3>
 
-.adminCard h3 {
-  color: gold;
-  font-size: 42px;
-}
+          <div className="publishControls">
+            <input type="text" placeholder="Enter Winning Number" />
+            <button>Publish Result</button>
+          </div>
 
-.publishSection {
-  margin-top: 50px;
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 30px;
-  padding: 35px;
-}
+        </div>
 
-.publishSection h3 {
-  font-size: 32px;
-  margin-bottom: 25px;
-}
+      </section>
 
-.publishControls {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.publishControls input {
-  flex: 1;
-  min-width: 250px;
-  background: black;
-  border: 1px solid #333;
-  border-radius: 18px;
-  padding: 18px;
-  color: white;
-  font-size: 18px;
-}
-
-.publishControls button {
-  background: #00ff88;
-  color: black;
-  border: none;
-  border-radius: 18px;
-  padding: 18px 30px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.betsSection {
-  margin-top: 50px;
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 30px;
-  padding: 35px;
-  overflow-x: auto;
-}
-
-.sectionHeader {
-  margin-bottom: 25px;
-}
-
-.sectionHeader h3 {
-  font-size: 32px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  color: gold;
-  text-align: left;
-  padding-bottom: 20px;
-  font-size: 18px;
-}
-
-td {
-  padding: 18px 0;
-  border-bottom: 1px solid #222;
-  color: #ddd;
-}
-
-.win {
-  color: #00ff88;
-  font-weight: bold;
-}
-
-.lose {
-  color: #ff4d4d;
-  font-weight: bold;
-}
-
-.pending {
-  color: gold;
-  font-weight: bold;
-}
-
-@media (max-width: 900px) {
-  .adminWrapper {
-    flex-direction: column;
-  }
-
-  .adminSidebar {
-    width: 100%;
-  }
-
-  .adminContent {
-    padding: 20px;
-  }
-
-  .adminTopbar h2 {
-    font-size: 36px;
-  }
+    </main>
+  );
 }
