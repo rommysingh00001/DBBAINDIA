@@ -651,3 +651,71 @@ font-size:18px;
 font-weight:bold;
 cursor:pointer;
 }
+.moneyPanel{
+background:#111;
+padding:25px;
+border-radius:22px;
+border:1px solid #222;
+margin-bottom:30px;
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.moneyPanel select,
+.moneyPanel input{
+padding:18px;
+border:none;
+border-radius:16px;
+background:#1a1a1a;
+color:white;
+font-size:18px;
+}
+
+.moneyPanel button{
+padding:18px;
+border:none;
+border-radius:18px;
+background:#00cc66;
+color:white;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.historyBox{
+background:#111;
+padding:25px;
+border-radius:22px;
+border:1px solid #222;
+}
+
+.historyBox h2{
+margin-bottom:20px;
+font-size:30px;
+}
+
+.historyCard{
+background:#1a1a1a;
+padding:18px;
+border-radius:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.historyCard h3{
+text-transform:capitalize;
+color:gold;
+margin-bottom:5px;
+}
+
+.historyCard p{
+color:#bbb;
+}
+
+.historyCard span{
+color:#00ff66;
+font-weight:bold;
+}
