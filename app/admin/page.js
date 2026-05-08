@@ -28,6 +28,8 @@ export default function AdminPage(){
 
   useEffect(()=>{
 
+    fetchTransactions()
+    
     fetchData()
 
   },[])
@@ -312,7 +314,46 @@ export default function AdminPage(){
         }
 
       </div>
+<div className="tableBox">
 
+<h2>
+Deposit / Withdraw Requests
+</h2>
+
+{
+transactions.map((item)=>(
+
+<div
+key={item.id}
+className="tableRow"
+>
+
+<div>
+{item.type}
+</div>
+
+<div>
+₹ {item.amount}
+</div>
+
+<div>
+{item.status}
+</div>
+
+<button
+onClick={()=>
+approveTransaction(item)
+}
+>
+Approve
+</button>
+
+</div>
+
+))
+}
+
+</div>
     </main>
   )
 }
