@@ -12,9 +12,11 @@ RefreshCw
 } from "lucide-react";
 
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage(){
-
+const router = useRouter();
+  
 const [users,setUsers] = useState([]);
 const [bets,setBets] = useState([]);
 const [results,setResults] = useState([]);
@@ -22,7 +24,31 @@ const [requests,setRequests] = useState([]);
 const [winningNumber,setWinningNumber] = useState("");
 
 useEffect(()=>{
+checkAdmin();
+  async function checkAdmin(){
 
+const {
+data:{user}
+} = await supabase.auth.getUser();
+
+if(!user){
+
+router.push("/login");
+return;
+
+}
+
+const adminEmail =
+""rommysingh00001@gmail.com"";
+
+if(user.email !== adminEmail){
+
+router.push("/dashboard");
+return;
+
+}
+
+}
 loadData();
 
 const interval = setInterval(()=>{
