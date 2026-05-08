@@ -334,3 +334,58 @@ if(data){
 setTransactions(data)
 }
 }
+async function approveTransaction(
+item
+){
+
+if(item.status !== 'pending'){
+
+alert('Already Processed')
+
+return
+}
+
+const { data:user }
+=
+await supabase
+.from('users')
+.select('*')
+.eq('id',item.user_id)
+.single()
+
+if(!user) return
+
+let updatedWallet =
+Number(user.wallet)
+
+if(item.type === 'deposit'){
+
+updatedWallet +=
+Number(item.amount)
+
+}else{
+
+updatedWallet -=
+Number(item.amount)
+}
+
+await supabase
+.from('users')
+.update({
+wallet:updatedWallet
+})
+.eq('id',user.id)
+
+await supabase
+.from('transactions')
+.update({
+status:'approved'
+})
+.eq('id',item.id)
+
+alert('Request Approved')
+
+fetchTransactions()
+
+fetchData()
+}
