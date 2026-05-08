@@ -31,6 +31,7 @@ getUser();
 loadResults();
 
 loadBets();
+
 const betsChannel =
 supabase
 .channel("bets-live")
@@ -62,6 +63,19 @@ loadResults();
 }
 )
 .subscribe();
+
+return ()=>{
+
+supabase.removeChannel(
+betsChannel
+);
+
+supabase.removeChannel(
+resultsChannel
+);
+
+};
+
 },[]);
 
 async function getUser(){
