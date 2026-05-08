@@ -10,13 +10,60 @@ body {
   color: white;
 }
 
-/* HOME PAGE */
+.signupPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.signupCard {
+  width: 100%;
+  max-width: 420px;
+  background: #111;
+  border: 1px solid #222;
+  padding: 40px;
+  border-radius: 30px;
+}
+
+.signupCard h1 {
+  color: gold;
+  font-size: 42px;
+}
+
+.signupCard p {
+  color: #888;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.signupCard input {
+  width: 100%;
+  background: #000;
+  border: 1px solid #333;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 18px;
+  color: white;
+}
+
+.signupCard button {
+  width: 100%;
+  background: gold;
+  color: black;
+  border: none;
+  padding: 18px;
+  border-radius: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  padding: 25px 40px;
   border-bottom: 1px solid #222;
   flex-wrap: wrap;
   gap: 20px;
@@ -24,130 +71,70 @@ body {
 
 .header h1 {
   color: gold;
-  font-size: 40px;
+  font-size: 42px;
 }
 
 .header p {
-  color: #999;
+  color: #888;
+  margin-top: 8px;
 }
 
-.wallet {
+.walletBox {
   background: #111;
-  border: 1px solid #333;
-  padding: 15px 25px;
-  border-radius: 20px;
-  text-align: center;
+  border: 1px solid #222;
+  padding: 20px 28px;
+  border-radius: 22px;
 }
 
-.wallet span {
-  color: #aaa;
-  font-size: 14px;
+.walletBox span {
+  color: #888;
 }
 
-.wallet h2 {
+.walletBox h2 {
   color: #00ff88;
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .hero {
   text-align: center;
-  padding: 100px 20px;
+  padding: 80px 20px;
 }
 
 .hero h2 {
-  font-size: 65px;
+  font-size: 62px;
   line-height: 1.3;
-  font-weight: bold;
 }
 
 .hero span {
   color: gold;
 }
 
-.hero p {
-  margin-top: 25px;
-  color: #aaa;
-  font-size: 18px;
-}
-
-.heroButtons {
-  margin-top: 40px;
-}
-
-.heroButtons button {
-  padding: 15px 35px;
-  border-radius: 15px;
-  border: none;
-  font-size: 18px;
-  font-weight: bold;
-  margin: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.heroButtons button:first-child {
-  background: gold;
-  color: black;
-}
-
-.secondary {
-  background: transparent;
-  border: 1px solid #444 !important;
-  color: white;
-}
-
-.heroButtons button:hover {
-  transform: translateY(-3px);
-}
-
 .numbersSection {
-  padding: 50px 40px;
+  padding: 20px 40px 60px;
 }
 
-.topBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-  gap: 20px;
+.topTitle {
+  margin-bottom: 35px;
 }
 
-.topBar h3 {
-  font-size: 40px;
+.topTitle h3 {
+  font-size: 42px;
 }
 
-.topBar p {
-  color: #999;
-}
-
-.resultBox {
-  background: #111;
-  border: 1px solid #333;
-  padding: 15px 25px;
-  border-radius: 20px;
-  text-align: center;
-}
-
-.resultBox span {
-  color: #999;
-}
-
-.resultBox h4 {
-  color: gold;
-  font-size: 28px;
-  margin-top: 5px;
+.topTitle p {
+  color: #888;
+  margin-top: 8px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
   gap: 15px;
 }
 
 .numberBtn {
   background: #111;
-  border: 1px solid #333;
+  border: 1px solid #222;
   color: white;
   padding: 22px;
   border-radius: 18px;
@@ -163,272 +150,95 @@ body {
   transform: scale(1.05);
 }
 
-.betArea {
-  text-align: center;
-  margin-top: 50px;
-}
-
-.betBtn {
-  background: #00ff88;
-  color: black;
-  border: none;
-  padding: 18px 45px;
-  border-radius: 18px;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.betBtn:hover {
-  transform: translateY(-3px);
-}
-
-/* ADMIN PANEL */
-
-.adminLayout {
+.popupOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
   display: flex;
-  min-height: 100vh;
-  background: #050505;
-  color: white;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-.adminSide {
-  width: 280px;
-  background: linear-gradient(to bottom, #0a0a0a, #111);
-  border-right: 1px solid #1f1f1f;
-  padding: 30px 20px;
-}
-
-.logoArea h1 {
-  color: gold;
-  font-size: 34px;
-}
-
-.logoArea p {
-  color: #888;
-  margin-top: 8px;
-  margin-bottom: 50px;
-}
-
-.adminSide nav {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.adminSide button {
+.popupCard {
+  width: 100%;
+  max-width: 420px;
   background: #111;
   border: 1px solid #222;
-  color: white;
-  padding: 18px;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: left;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.adminSide button:hover,
-.navActive {
-  background: gold !important;
-  color: black !important;
-}
-
-.adminMain {
-  flex: 1;
+  border-radius: 30px;
   padding: 40px;
 }
 
-.adminHero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-  gap: 20px;
+.popupCard h2 {
+  margin-bottom: 25px;
 }
 
-.adminHero h2 {
-  font-size: 54px;
-  margin-bottom: 8px;
-}
-
-.adminHero p {
-  color: #888;
-}
-
-.adminHero button {
-  background: gold;
-  color: black;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 18px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.premiumStats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-}
-
-.premiumCard {
-  background: linear-gradient(to bottom right, #111, #0a0a0a);
-  border: 1px solid #222;
-  border-radius: 28px;
-  padding: 35px;
-}
-
-.premiumCard span {
-  color: #888;
-}
-
-.premiumCard h3 {
-  font-size: 42px;
-  color: gold;
-  margin-top: 15px;
-}
-
-.actionGrid {
-  margin-top: 35px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 25px;
-}
-
-.glassCard {
-  background: rgba(17, 17, 17, 0.9);
-  border: 1px solid #222;
-  border-radius: 30px;
-  padding: 35px;
-  backdrop-filter: blur(10px);
-}
-
-.glassHeader h3 {
-  font-size: 32px;
-}
-
-.glassHeader p {
-  color: #888;
-  margin-top: 6px;
-}
-
-.publishBox {
-  margin-top: 25px;
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.publishBox input {
-  flex: 1;
-  min-width: 200px;
+.popupCard input {
+  width: 100%;
   background: #000;
   border: 1px solid #333;
-  border-radius: 18px;
   padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 20px;
   color: white;
-  font-size: 18px;
 }
 
-.publishBox button {
+.popupCard button {
+  width: 100%;
   background: #00ff88;
   color: black;
   border: none;
+  padding: 18px;
   border-radius: 18px;
-  padding: 18px 28px;
-  font-size: 17px;
   font-weight: bold;
   cursor: pointer;
 }
 
-.quickStats {
-  margin-top: 25px;
+.historySection {
+  padding: 0 40px 60px;
+}
+
+.historySection h3 {
+  font-size: 36px;
+  margin-bottom: 25px;
+}
+
+.historyGrid {
   display: grid;
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
 }
 
-.quickStats div {
-  background: #0a0a0a;
+.historyCard {
+  background: #111;
   border: 1px solid #222;
-  padding: 20px;
-  border-radius: 20px;
+  border-radius: 22px;
+  padding: 25px;
 }
 
-.quickStats span {
-  color: #888;
-}
-
-.quickStats h4 {
+.historyCard h4 {
+  font-size: 34px;
   color: gold;
-  font-size: 30px;
-  margin-top: 8px;
 }
 
-.tableCard {
-  margin-top: 35px;
-  background: rgba(17, 17, 17, 0.9);
-  border: 1px solid #222;
-  border-radius: 30px;
-  padding: 35px;
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 25px;
-}
-
-th {
-  text-align: left;
-  color: gold;
-  padding-bottom: 20px;
-  font-size: 18px;
-}
-
-td {
-  padding: 18px 0;
-  border-bottom: 1px solid #222;
-  color: #ddd;
-}
-
-.success {
+.historyCard p {
   color: #00ff88;
-  font-weight: bold;
-}
-
-.danger {
-  color: #ff4d4d;
-  font-weight: bold;
-}
-
-.pending {
-  color: gold;
-  font-weight: bold;
+  margin-top: 10px;
+  font-size: 20px;
 }
 
 @media (max-width: 900px) {
-  .adminLayout {
-    flex-direction: column;
-  }
-
-  .adminSide {
-    width: 100%;
-  }
-
-  .adminMain {
-    padding: 20px;
-  }
-
-  .adminHero h2 {
+  .hero h2 {
     font-size: 38px;
   }
 
-  .hero h2 {
-    font-size: 42px;
+  .header {
+    padding: 20px;
+  }
+
+  .numbersSection,
+  .historySection {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
