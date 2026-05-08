@@ -1,160 +1,374 @@
+# SIMPLE WORKING NEXT.JS WEBSITE (NO TAILWIND NEEDED)
+
+Ye version bina Tailwind ke chalega.
+Aapko sirf 2 files paste karni hain.
+
+---
+
+# FILE 1 → app/page.js
+
+```javascript
+import './globals.css';
+
 export default function Home() {
   const numbers = Array.from({ length: 100 }, (_, i) =>
     i.toString().padStart(2, '0')
   );
 
   return (
-    <main className="min-h-screen bg-black text-white">
-
-      <header className="flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-5 border-b border-zinc-800">
+    <main>
+      <header className="header">
         <div>
-          <h1 className="text-4xl font-extrabold text-yellow-400">
-            DBBA INDIA
-          </h1>
-
-          <p className="text-zinc-400 mt-1">
-            Virtual Number Selection Platform
-          </p>
+          <h1>DBBA INDIA</h1>
+          <p>Virtual Number Selection Platform</p>
         </div>
 
-        <div className="mt-4 md:mt-0 bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-3 text-center">
-          <p className="text-zinc-400 text-sm">Wallet Balance</p>
-
-          <h2 className="text-2xl font-bold text-green-400">
-            ₹25,000
-          </h2>
+        <div className="wallet">
+          <span>Wallet Balance</span>
+          <h2>₹25,000</h2>
         </div>
       </header>
 
-      <section className="text-center px-6 md:px-16 py-20">
-        <h2 className="text-5xl md:text-7xl font-black leading-tight">
+      <section className="hero">
+        <h2>
           Select Your Lucky Number
           <br />
-
-          <span className="text-yellow-400">
-            Win Up To 90x Rewards
-          </span>
+          <span>Win Up To 90x Rewards</span>
         </h2>
 
-        <p className="max-w-3xl mx-auto mt-8 text-zinc-400 text-lg leading-8">
-          Choose numbers from 00 to 99, place your virtual bet,
-          and check daily results announced every morning at 09:15 AM.
+        <p>
+          Choose numbers from 00 to 99 and check daily results.
         </p>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-5">
-          <button className="bg-yellow-400 text-black px-8 py-4 rounded-2xl font-bold text-lg">
-            Play Now
-          </button>
-
-          <button className="border border-zinc-700 px-8 py-4 rounded-2xl font-semibold">
-            How To Play
-          </button>
+        <div className="heroButtons">
+          <button>Play Now</button>
+          <button className="secondary">How To Play</button>
         </div>
       </section>
 
-      <section className="px-6 md:px-16 py-16">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-5 mb-10">
+      <section className="numbersSection">
+        <div className="topBar">
           <div>
-            <h3 className="text-4xl font-bold">
-              Choose Number
-            </h3>
-
-            <p className="text-zinc-400 mt-2">
-              Select any number between 00 - 99
-            </p>
+            <h3>Choose Number</h3>
+            <p>Select any number between 00 - 99</p>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl px-6 py-4 text-center">
-            <p className="text-zinc-400 text-sm">
-              Today's Result Time
-            </p>
-
-            <h4 className="text-yellow-400 text-2xl font-bold mt-1">
-              09:15 AM
-            </h4>
+          <div className="resultBox">
+            <span>Today's Result Time</span>
+            <h4>09:15 AM</h4>
           </div>
         </div>
 
-        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-4">
+        <div className="grid">
           {numbers.map((num) => (
-            <button
-              key={num}
-              className="bg-zinc-900 border border-zinc-700 rounded-2xl py-5 text-xl font-bold hover:bg-yellow-400 hover:text-black transition-all"
-            >
+            <button key={num} className="numberBtn">
               {num}
             </button>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <button className="bg-green-400 text-black px-10 py-4 rounded-2xl text-xl font-bold">
-            Place Bet
-          </button>
+        <div className="betArea">
+          <button className="betBtn">Place Bet</button>
         </div>
       </section>
 
-      <section className="px-6 md:px-16 py-20 bg-zinc-950">
-        <h3 className="text-5xl font-bold text-center mb-16">
-          Platform Features
-        </h3>
+      <section className="features">
+        <h3>Platform Features</h3>
 
-        <div className="grid md:grid-cols-3 gap-8">
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-            <div className="text-6xl mb-6">🎯</div>
-
-            <h4 className="text-2xl font-bold mb-4">
-              Easy Number Selection
-            </h4>
-
-            <p className="text-zinc-400 leading-8">
-              Smooth and mobile-friendly number selection system from 00 to 99.
-            </p>
+        <div className="cards">
+          <div className="card">
+            <div className="icon">🎯</div>
+            <h4>Easy Number Selection</h4>
+            <p>Mobile-friendly number selection system.</p>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-            <div className="text-6xl mb-6">💰</div>
-
-            <h4 className="text-2xl font-bold mb-4">
-              90x Reward Logic
-            </h4>
-
-            <p className="text-zinc-400 leading-8">
-              Winning numbers receive up to 90 times the selected amount.
-            </p>
+          <div className="card">
+            <div className="icon">💰</div>
+            <h4>90x Reward Logic</h4>
+            <p>Winning numbers receive up to 90x rewards.</p>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-            <div className="text-6xl mb-6">⚡</div>
-
-            <h4 className="text-2xl font-bold mb-4">
-              Realtime Updates
-            </h4>
-
-            <p className="text-zinc-400 leading-8">
-              Daily result announcements and wallet updates with realtime system integration.
-            </p>
+          <div className="card">
+            <div className="icon">⚡</div>
+            <h4>Realtime Updates</h4>
+            <p>Daily result announcements and wallet updates.</p>
           </div>
-
         </div>
       </section>
 
-      <section className="px-6 md:px-16 py-20">
-        <div className="bg-gradient-to-r from-yellow-300 to-yellow-500 text-black rounded-[40px] p-10 md:p-16 text-center">
-          <h3 className="text-4xl md:text-5xl font-black">
-            Today's Winning Number
-          </h3>
-
-          <div className="text-8xl md:text-9xl font-black my-8">
-            47
-          </div>
-
-          <p className="text-xl font-semibold">
-            Results Updated Daily at 09:15 AM
-          </p>
-        </div>
+      <section className="winner">
+        <h3>Today's Winning Number</h3>
+        <div className="winnerNumber">47</div>
+        <p>Results Updated Daily at 09:15 AM</p>
       </section>
-
     </main>
   );
 }
+```
+
+---
+
+# FILE 2 → app/globals.css
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #000;
+  color: white;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid #222;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header h1 {
+  color: gold;
+  font-size: 40px;
+}
+
+.header p {
+  color: #999;
+}
+
+.wallet {
+  background: #111;
+  border: 1px solid #333;
+  padding: 15px 25px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.wallet span {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.wallet h2 {
+  color: #00ff88;
+  margin-top: 5px;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.hero h2 {
+  font-size: 65px;
+  line-height: 1.3;
+  font-weight: bold;
+}
+
+.hero span {
+  color: gold;
+}
+
+.hero p {
+  margin-top: 25px;
+  color: #aaa;
+  font-size: 18px;
+}
+
+.heroButtons {
+  margin-top: 40px;
+}
+
+.heroButtons button {
+  padding: 15px 35px;
+  border-radius: 15px;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.heroButtons button:first-child {
+  background: gold;
+  color: black;
+}
+
+.secondary {
+  background: transparent;
+  border: 1px solid #444 !important;
+  color: white;
+}
+
+.numbersSection {
+  padding: 50px 40px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.topBar h3 {
+  font-size: 40px;
+}
+
+.topBar p {
+  color: #999;
+}
+
+.resultBox {
+  background: #111;
+  border: 1px solid #333;
+  padding: 15px 25px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.resultBox span {
+  color: #999;
+}
+
+.resultBox h4 {
+  color: gold;
+  font-size: 28px;
+  margin-top: 5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 15px;
+}
+
+.numberBtn {
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  padding: 22px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.numberBtn:hover {
+  background: gold;
+  color: black;
+}
+
+.betArea {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.betBtn {
+  background: #00ff88;
+  color: black;
+  border: none;
+  padding: 18px 45px;
+  border-radius: 18px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.features {
+  padding: 80px 40px;
+  background: #080808;
+}
+
+.features h3 {
+  text-align: center;
+  font-size: 50px;
+  margin-bottom: 50px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: #111;
+  border: 1px solid #333;
+  padding: 35px;
+  border-radius: 30px;
+}
+
+.icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.card h4 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.card p {
+  color: #aaa;
+  line-height: 1.7;
+}
+
+.winner {
+  margin: 60px 40px;
+  padding: 70px 20px;
+  text-align: center;
+  background: linear-gradient(to right, gold, #ffd54f);
+  color: black;
+  border-radius: 35px;
+}
+
+.winner h3 {
+  font-size: 50px;
+}
+
+.winnerNumber {
+  font-size: 120px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.winner p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 40px;
+  }
+
+  .winnerNumber {
+    font-size: 80px;
+  }
+
+  .features h3,
+  .topBar h3 {
+    font-size: 35px;
+  }
+}
+```
+
+---
+
+# BAS ITNA KARO
+
+1. app/page.js me first code paste karo
+2. app/globals.css me second code paste karo
+3. Save + Commit Changes
+4. Vercel automatically redeploy karega
+5. Premium website live
