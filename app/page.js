@@ -1,84 +1,32 @@
-'use client'
+async function login() {
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '../lib/supabase'
-import './globals.css'
+  const { data, error } =
+    await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .eq('password', password)
 
-export default function Home() {
+  if (error) {
 
-  const router = useRouter()
+    alert('Database Error')
 
-  const [email, setEmail] =
-    useState('')
+    console.log(error)
 
-  const [password, setPassword] =
-    useState('')
-
-  async function login() {
-
-    const { data } =
-      await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .eq('password', password)
-      .single()
-
-    if (!data) {
-
-      alert('Invalid Login')
-
-      return
-    }
-
-    localStorage.setItem(
-      'dbbaUser',
-      JSON.stringify(data)
-    )
-
-    router.push('/dashboard')
+    return
   }
 
-  return (
+  if (!data || data.length === 0) {
 
-    <main className="authPage">
+    alert('Invalid Login')
 
-      <div className="authBox">
+    return
+  }
 
-        <h1>DBBA INDIA</h1>
-
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e)=>
-            setEmail(e.target.value)
-          }
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e)=>
-            setPassword(e.target.value)
-          }
-        />
-
-        <button onClick={login}>
-          Login
-        </button>
-
-        <button
-          onClick={()=>
-            router.push('/signup')
-          }
-        >
-          Signup
-        </button>
-
-      </div>
-
-    </main>
+  localStorage.setItem(
+    'dbbaUser',
+    JSON.stringify(data[0])
   )
+
+  router.push('/dashboard')
 }
