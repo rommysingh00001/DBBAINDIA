@@ -26,10 +26,24 @@ useEffect(()=>{
 loadData();
 
 const interval = setInterval(()=>{
+
 loadData();
+
 },5000);
 
-return ()=> clearInterval(interval);
+const auto = setInterval(()=>{
+
+autoResult();
+
+},28800000);
+
+return ()=>{
+
+clearInterval(interval);
+
+clearInterval(auto);
+
+};
 
 },[]);
 
@@ -138,16 +152,80 @@ loadData();
 
 async function autoResult(){
 
+let report = {};
+
+for(let i=0;i<=99;i++){
+
+const num =
+String(i).padStart(2,"0");
+
+report[num] = 0;
+
+}
+
+bets.forEach((bet)=>{
+
+const num =
+String(bet.number)
+.padStart(2,"0");
+
+report[num] +=
+Number(bet.amount || 0);
+
+});
+
+const sorted =
+Object.entries(report)
+.sort((a,b)=>a[1]-b[1]);
+
+const lowestNumber =
+sorted[0][0];
+
 await supabase
 .from("results")
 .insert([
 {
-number:lowestBetNumber
+number:lowestNumber
 }
 ]);
 
+const winners =
+bets.filter(
+(bet)=>
+String(bet.number)
+.padStart(2,"0")
+=== lowestNumber
+);
+
+for(const win of winners){
+
+const { data:userData } =
+await supabase
+.from("users")
+.select("*")
+.eq("email",win.name)
+.single();
+
+if(userData){
+
+const reward =
+Number(win.amount) * 10;
+
+await supabase
+.from("users")
+.update({
+wallet:
+Number(userData.wallet || 0)
++ reward
+})
+.eq("email",win.name);
+
+}
+
+}
+
 alert(
-`Auto Result : ${lowestBetNumber}`
+`Auto Result Declared : ${lowestNumber}`
 );
 
 loadData();
