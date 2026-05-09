@@ -48,58 +48,80 @@
 
         div.innerHTML = `
 
-          <h2 class="text-2xl font-black mb-2">
-            ${user.full_name}
-          </h2>
+  <div class="grid lg:grid-cols-2 gap-8">
 
-          <p class="text-gray-400 mb-2">
-            ${user.email}
-          </p>
+    <div>
 
-          <p class="text-green-400 mb-4">
-            Balance : ${user.balance}
-          </p>
+      <h2 class="text-3xl font-black text-yellow-400 mb-4">
+        ${user.full_name}
+      </h2>
 
-          <input
-          id="balance-${user.id}"
-          type="number"
-          placeholder="Enter New Balance"
-          class="bg-black border border-gray-700 rounded-2xl p-3 w-full mb-4"/>
+      <div class="space-y-2 text-lg">
 
-          <button
-          onclick="updateBalance('${user.id}')"
-          class="bg-yellow-400 text-black font-black px-5 py-3 rounded-2xl">
-          UPDATE BALANCE
-          </button>
-        `;
+        <p>
+          <span class="text-gray-400">
+            Email :
+          </span>
 
-        usersList.appendChild(div);
-      });
-    }
+          ${user.email}
+        </p>
 
-    window.updateBalance =
-      async function(userId){
+        <p>
+          <span class="text-gray-400">
+            Phone :
+          </span>
 
-      const value =
-        document.getElementById(
-          `balance-${userId}`
-        ).value;
+          ${user.phone}
+        </p>
 
-      await supabase
-        .from("users")
-        .update({
-          balance: value
-        })
-        .eq("id", userId);
+        <p>
+          <span class="text-gray-400">
+            Password :
+          </span>
 
-      alert("Balance Updated");
+          ${user.password}
+        </p>
 
-      loadUsers();
-    }
+        <p>
+          <span class="text-gray-400">
+            Balance :
+          </span>
 
-    loadUsers();
+          <span class="text-green-400">
+            ${user.balance}
+          </span>
+        </p>
 
-  </script>
+      </div>
 
-</body>
-</html>
+    </div>
+
+    <div>
+
+      <input
+      id="balance-${user.id}"
+      type="number"
+      placeholder="Enter New Balance"
+      class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+
+      <button
+      onclick="updateBalance('${user.id}')"
+      class="bg-yellow-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-4">
+      UPDATE BALANCE
+      </button>
+
+      <button
+      onclick="viewUserData('${user.id}')"
+      class="bg-green-500 text-black font-black px-5 py-4 rounded-2xl w-full">
+      VIEW USER RECORD
+      </button>
+
+    </div>
+
+  </div>
+
+  <div id="userData-${user.id}"
+  class="hidden mt-8 bg-black rounded-2xl p-5 border border-gray-800">
+
+  </div>
+`;
