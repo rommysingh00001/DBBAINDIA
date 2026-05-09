@@ -16,13 +16,6 @@
   <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today's Winner</button>
 </div>
 
-<!-- ANNOUNCE RESULT SECTION -->
-<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
-  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button id="announceBtn" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl">Announce</button>
-</div>
-
 <!-- MANAGE USERS SECTION -->
 <div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6 hidden">
   <h2 class="text-3xl font-black text-blue-400 mb-4">Manage Users</h2>
@@ -41,6 +34,13 @@
       <tbody id="usersList" class="divide-y divide-gray-700"></tbody>
     </table>
   </div>
+</div>
+
+<!-- ANNOUNCE WINNER SECTION -->
+<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6 hidden">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
+  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <button id="announceBtn" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl">Announce</button>
 </div>
 
 <script type="module">
@@ -126,8 +126,6 @@ async function announceResult(){
 // INIT
 window.onload=()=>{ 
   showUsers(); 
-
-  // Bind announce button
   document.getElementById("announceBtn").addEventListener("click", announceResult);
 };
 </script>
