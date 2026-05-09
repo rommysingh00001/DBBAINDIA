@@ -200,7 +200,29 @@ async function loadReports(){
 
 // INIT
 window.onload = ()=>{ showAnnounce(); };
+async function announceResult() {
+    const value = document.getElementById("resultInput").value;
+    if(!value){ 
+        alert("Enter winning number"); 
+        return; 
+    }
 
+    // INSERT INTO RESULTS TABLE
+    const { data, error } = await supabase
+        .from("results")
+        .insert([{ winning_number: value }]);
+
+    if(error){ 
+        alert("Failed to announce result: " + error.message); 
+        return; 
+    }
+
+    alert("Result announced: " + value);
+    document.getElementById("resultInput").value = "";
+
+    // OPTIONAL: Update main.html Recent Results automatically
+    // window.parent.updateRecentResults(value);
+}
 </script>
 
 </body>
