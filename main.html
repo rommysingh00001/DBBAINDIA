@@ -332,7 +332,11 @@
   </div>
 
 </section>
-
+<!-- RECENT ANNOUNCED RESULT -->
+<div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-2">Recent Result</h2>
+  <h1 id="recentResult" class="text-5xl font-black text-green-400">00</h1>
+</div>
   <script type="module">
 
     import {
@@ -388,7 +392,27 @@ if(userData){
 
       window.location.href = "index.html";
     }
+// FETCH LATEST ANNOUNCED RESULT
+async function loadRecentResult(){
+  const { data } = await supabase
+    .from("recent_result")
+    .select("*")
+    .order("id", { ascending: false })
+    .limit(1);
 
+  if(data && data.length){
+    document.getElementById("recentResult").innerText = data[0].winning_number;
+  }
+}
+
+// Call on page load
+window.onload = async function() {
+  // existing load functions for balance etc
+  const { data: { session } } = await supabase.auth.getSession();
+  if(!session){ window.location.href = "index.html"; return; }
+
+  loadRecentResult(); // ← new function call
+};
     // NUMBER GRID
 
     const numbersDiv =
