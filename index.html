@@ -112,47 +112,7 @@
     </div>
 
   </div>
-// FORCE LOGOUT
 
-await supabase.auth.signOut();
-
-localStorage.removeItem(
-  "manualLogin"
-);
-
-// SUCCESS MESSAGE
-
-alert(
-  "Account Created Successfully! Please Login."
-);
-
-// OPEN LOGIN PAGE
-
-closeSignup();
-
-// AUTO FILL LOGIN
-
-document.getElementById(
-  "loginInput"
-).value = email;
-
-// CLEAR SIGNUP FORM
-
-document.getElementById(
-  "fullName"
-).value = "";
-
-document.getElementById(
-  "phone"
-).value = "";
-
-document.getElementById(
-  "email"
-).value = "";
-
-document.getElementById(
-  "password"
-).value = "";
   <!-- HEADER -->
 
   <header class="border-b border-gray-800 bg-black">
