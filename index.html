@@ -1,40 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DBBA INDIA</title>
+
+  <title>Login - DBBA INDIA</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
-<body class="bg-[#050816] text-white">
+<body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
-  <div class="min-h-screen flex items-center justify-center p-5">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
 
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 w-full max-w-md text-center">
+    <h2 class="text-4xl font-black text-center mb-2">
+      <span class="text-yellow-400">DBBA</span>
+      <span class="text-green-400">INDIA</span>
+    </h2>
 
-      <h1 class="text-5xl font-black mb-3">
-        <span class="text-yellow-400">DBBA</span>
-        <span class="text-green-400">INDIA</span>
-      </h1>
+    <p class="text-center text-gray-400 mb-6">
+      Login To Continue
+    </p>
 
-      <p class="text-gray-400 mb-8">
-        Predict • Play • Win
-      </p>
+    <input
+    id="loginInput"
+    type="text"
+    placeholder="Email or Phone Number"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
 
-      <a href="login.html"
-      class="block w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4">
-      LOGIN
-      </a>
+    <input
+    id="loginPassword"
+    type="password"
+    placeholder="Password"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
 
-      <a href="signup.html"
-      class="block w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">
-      CREATE ACCOUNT
-      </a>
+    <button
+    onclick="login()"
+    class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4">
+    LOGIN
+    </button>
 
-    </div>
+    <a href="signup.html"
+    class="block text-center text-green-400 font-bold">
+    Create New Account
+    </a>
 
   </div>
+
+  <script type="module">
+
+    import {
+      supabase
+    } from "./supabase.js";
+
+    window.login = async function(){
+
+      const input =
+        document.getElementById(
+          "loginInput"
+        ).value.trim();
+
+      const password =
+        document.getElementById(
+          "loginPassword"
+        ).value.trim();
+
+      if(!input || !password){
+
+        alert("Please fill all fields");
+        return;
+      }
+
+      let email = input;
+
+      if(!input.includes("@")){
+
+        const { data } =
+          await supabase
+            .from("users")
+            .select("*")
+            .eq("phone", input)
+            .single();
+
+        if(!data){
+
+          alert("Phone number not found");
+          return;
+        }
+
+        email = data.email;
+      }
+
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if(error){
+
+        alert(error.message);
+
+      } else {
+
+        window.location.href = "main.html";
+      }
+    }
+
+  </script>
 
 </body>
 </html>
