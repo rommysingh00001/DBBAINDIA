@@ -193,13 +193,15 @@
 
       // UPDATE BALANCE
 
-      const { error: updateError } =
-        await supabase
-          .from("users")
-          .update({
-            balance: newBalance
-          })
-          .eq("id", userId);
+      const { data: updatedUser, error: updateError } =
+  await supabase
+    .from("users")
+    .update({
+      balance: Number(newBalance)
+    })
+    .eq("id", userId)
+    .select()
+    .single();
 
       if(updateError){
 
@@ -275,13 +277,15 @@
 
       // UPDATE BALANCE
 
-      const { error: updateError } =
-        await supabase
-          .from("users")
-          .update({
-            balance: newBalance
-          })
-          .eq("id", userId);
+      const { data: updatedUser, error: updateError } =
+  await supabase
+    .from("users")
+    .update({
+      balance: Number(newBalance)
+    })
+    .eq("id", userId)
+    .select()
+    .single();
 
       if(updateError){
 
