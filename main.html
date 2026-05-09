@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>DBBA INDIA</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-[#050816] text-white">
+
+  <!-- HEADER -->
+
+  <header class="border-b border-gray-800 bg-black">
+
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-5 py-4">
+
+      <div>
+
+        <h1 class="text-4xl font-black">
+          <span class="text-yellow-400">DBBA</span>
+          <span class="text-green-400">INDIA</span>
+        </h1>
+
+        <p class="text-gray-400 text-sm">
+          Predict • Play • Win
+        </p>
+
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <div class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700">
+
+          <p class="text-gray-400 text-sm">
+            Balance
+          </p>
+
+          <h2 class="text-2xl font-bold text-yellow-400">
+            12,500 Coins
+          </h2>
+
+        </div>
+
+        <button
+        onclick="logout()"
+        class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
+        Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- TOP CARDS -->
+
+  <section class="max-w-7xl mx-auto px-5 py-8">
+
+    <div class="grid md:grid-cols-3 gap-5">
+
+      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+
+        <p class="text-gray-400 mb-3">
+          Next Draw
+        </p>
+
+        <h2 class="text-5xl font-black text-yellow-400">
+          09:15 AM
+        </h2>
+
+      </div>
+
+      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 text-center">
+
+        <p class="text-gray-400 mb-3">
+          Next Draw In
+        </p>
+
+        <h2 id="timer"
+        class="text-5xl font-black text-green-400">
+        00:00:00
+        </h2>
+
+      </div>
+
+      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+
+        <p class="text-gray-400 mb-3">
+          Reward
+        </p>
+
+        <h2 class="text-5xl font-black text-green-400">
+          90x
+        </h2>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- MAIN -->
+
+  <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
+
+    <!-- NUMBERS -->
+
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+
+      <div class="flex justify-between items-center mb-6">
+
+        <h2 class="text-3xl font-black">
+          Choose Your Number
+        </h2>
+
+        <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">
+          Virtual Game
+        </div>
+
+      </div>
+
+      <div id="numbers"
+      class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
+
+    </div>
+
+    <!-- BET SLIP -->
+
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 h-fit">
+
+      <h2 class="text-3xl font-black text-yellow-400 mb-6">
+        Bet Slip
+      </h2>
+
+      <div class="mb-5">
+
+        <p class="text-gray-400 mb-2">
+          Selected Number
+        </p>
+
+        <div id="selected"
+        class="bg-black border border-gray-700 rounded-2xl p-5 text-center text-6xl font-black text-green-400">
+        00
+        </div>
+
+      </div>
+
+      <div class="mb-5">
+
+        <p class="text-gray-400 mb-2">
+          Enter Coins
+        </p>
+
+        <input
+        id="coins"
+        type="number"
+        value="1000"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
+
+      </div>
+
+      <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center mb-6">
+
+        <p class="text-gray-400 mb-2">
+          Potential Win
+        </p>
+
+        <h2 id="win"
+        class="text-5xl font-black text-yellow-400">
+        90000
+        </h2>
+
+        <p class="text-green-400 mt-2">
+          90x Reward
+        </p>
+
+      </div>
+
+      <button
+      class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
+      PLACE BET
+      </button>
+
+    </div>
+
+  </section>
+
+  <script type="module">
+
+    import {
+      supabase
+    } from "./supabase.js";
+
+    // CHECK LOGIN
+
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if(!session){
+
+      window.location.href = "login.html";
+    }
+
+    // LOGOUT
+
+    window.logout = async function(){
+
+      await supabase.auth.signOut();
+
+      window.location.href = "login.html";
+    }
+
+    // NUMBER GRID
+
+    const numbersDiv =
+      document.getElementById("numbers");
+
+    const selectedDiv =
+      document.getElementById("selected");
+
+    for(let i=0;i<100;i++){
+
+      const num =
+        i.toString().padStart(2,"0");
+
+      const btn =
+        document.createElement("button");
+
+      btn.innerText = num;
+
+      btn.className =
+        "bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
+
+      btn.onclick = () => {
+
+        selectedDiv.innerText = num;
+      };
+
+      numbersDiv.appendChild(btn);
+    }
+
+    // WIN CALCULATION
+
+    const coinsInput =
+      document.getElementById("coins");
+
+    const winText =
+      document.getElementById("win");
+
+    coinsInput.addEventListener("input", () => {
+
+      winText.innerText =
+        coinsInput.value * 90;
+    });
+
+    // TIMER
+
+    function updateTimer(){
+
+      const now = new Date();
+
+      const target = new Date();
+
+      target.setHours(9);
+      target.setMinutes(15);
+      target.setSeconds(0);
+
+      if(now > target){
+        target.setDate(
+          target.getDate()+1
+        );
+      }
+
+      const diff = target - now;
+
+      const hrs =
+        Math.floor(diff / 1000 / 60 / 60);
+
+      const mins =
+        Math.floor(diff / 1000 / 60) % 60;
+
+      const secs =
+        Math.floor(diff / 1000) % 60;
+
+      document.getElementById(
+        "timer"
+      ).innerText =
+        `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    }
+
+    updateTimer();
+
+    setInterval(updateTimer,1000);
+
+  </script>
+
+</body>
+</html>
