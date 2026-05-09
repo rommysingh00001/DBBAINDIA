@@ -313,6 +313,38 @@
 window.openReports = function(){
   window.location.href = "reports.html";
 }
+    // LOAD RECENT RESULTS AND TODAY'S WINNER
+async function loadRecentResults(){
+    const { data: results, error } = await supabase
+        .from("results")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+    if(error) return console.error(error);
+
+    const resultsGrid = document.getElementById("resultsGrid");
+    resultsGrid.innerHTML = "";
+
+    results.forEach(result => {
+        const div = document.createElement("div");
+        div.className = "bg-gray-900 rounded-2xl p-4 text-center";
+        div.innerHTML = `
+            <h2 class="text-3xl font-black text-yellow-400">${result.winning_number}</h2>
+            <p class="text-gray-400 text-sm">${new Date(result.created_at).toLocaleString()}</p>
+        `;
+        resultsGrid.appendChild(div);
+    });
+
+    // Display the latest result as Today's Winner
+    if(results.length > 0){
+        document.getElementById("todayWinner").innerText = results[0].winning_number;
+    }
+}
+
+// Call it on page load
+window.onload = loadRecentResults;
+    }
     // CHECK LOGIN
 
     const {
