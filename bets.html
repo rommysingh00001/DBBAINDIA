@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Bets - DBBA INDIA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#050816] text-white p-8">
+
+  <h1 class="text-5xl font-black text-yellow-400 mb-8">My Bets</h1>
+
+  <div id="betsList" class="space-y-4"></div>
+
+  <button onclick="goBack()" class="mt-8 bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold">
+    Back
+  </button>
+
+  <script type="module">
+    import { supabase } from "./supabase.js";
+
+    async function loadBets(){
+      const { data: { session } } = await supabase.auth.getSession();
+      if(!session) return window.location.href="index.html";
+      const userId = session.user.id;
+
+      const { data: bets } = await supabase.from("bets").select("*").eq("user_id", userId).order("id",{ascending:false});
+
+      const betsDiv = document.getElementById("betsList");
+      betsDiv.innerHTML = "";
+
+      bets.forEach(bet => {
+        const dt = new Date(bet.created_at).toLocaleString();
+        const result = bet.status === "win" ? `+${bet.potential_win}` : `-${bet.coins}`;
+        const color = bet.status === "win" ? "text-green-400" : "text-red-400";
+
+        betsDiv.innerHTML += `
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-gray-400 text-sm">Number</p>
+                <h2 class="text-3xl font-black text-yellow-400">${bet.selected_number}</h2>
+                <p class="text-gray-400 text-xs">${dt}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-gray-400 text-sm">Result</p>
+                <h2 class="text-2xl font-black ${color}">${result}</h2>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    window.goBack = () => window.history.back();
+
+    loadBets();
+  </script>
+
+</body>
+</html>
