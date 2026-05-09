@@ -18,10 +18,10 @@
 </div>
 
 <!-- ANNOUNCE RESULT SECTION -->
-<div id="announceSection" class="bg-gray-900 p-6 rounded-3xl mb-6">
+<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
   <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Result</h2>
   <input type="text" id="resultInput" placeholder="Today's Winner" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-bold" onclick="announceResult()">Announce</button>
+  <button id="announceBtn" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl">Announce</button>
 </div>
 
 <!-- PAST BETS REPORT -->
@@ -105,27 +105,27 @@ function showUsers(){
 }
 
 // ANNOUNCE RESULT
-async function announceResult() {
+document.getElementById("announceBtn").addEventListener("click", async function() {
     const value = document.getElementById("resultInput").value;
-    if(!value){
+    if (!value) {
         alert("Enter today's winner");
         return;
     }
 
-    // Insert the winning number
+    // Insert into results table
     const { data, error } = await supabase
         .from("results")
         .insert([{ winning_number: value }]);
 
-    if(error){
+    if (error) {
+        console.log("Supabase insert error:", error);
         alert("Failed to announce result: " + error.message);
-        console.log(error);
         return;
     }
 
     alert("Result announced: " + value);
     document.getElementById("resultInput").value = "";
-}
+});
 
     // INSERT into results table
     const { data, error } = await supabase
