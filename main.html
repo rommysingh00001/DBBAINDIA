@@ -724,5 +724,32 @@ class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-
   </div>
 
 </div>
+  const placeBetBtn = document.getElementById("placeBetBtn");
+
+placeBetBtn.addEventListener("click", async () => {
+  const number = selectedDiv.innerText;
+  const coins = parseInt(coinsInput.value) || 0;
+  if(coins <= 0) { alert("Enter valid coins"); return; }
+
+  // Supabase insert
+  const { data: betData, error } = await supabase
+    .from("bets")
+    .insert([{
+      user_id: userId,
+      selected_number: number,
+      coins: coins,
+      potential_win: coins * 90,
+      status: 'pending'
+    }]);
+
+  if(error){
+    alert("Error placing bet: " + error.message);
+    return;
+  }
+
+  alert("Bet placed successfully!");
+  coinsInput.value = userData.balance; // reset
+  loadReports(); // update My Bets section
+});
 </body>
 </html>
