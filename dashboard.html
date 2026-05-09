@@ -177,7 +177,7 @@
         .from("users")
         .select("*")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       if(error){
 
@@ -201,7 +201,7 @@
     })
     .eq("id", userId)
     .select()
-    .single();
+    .maybeSingle();
 
       if(updateError){
 
@@ -253,7 +253,7 @@
         .from("users")
         .select("*")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       if(error){
 
@@ -285,7 +285,7 @@
     })
     .eq("id", userId)
     .select()
-    .single();
+    .maybeSingle();
 
       if(updateError){
 
