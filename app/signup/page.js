@@ -8,27 +8,36 @@ export default function SignupPage(){
 
 const router = useRouter();
 
-const [name,setName] = useState("");
+const [fullName,setFullName] = useState("");
+const [email,setEmail] = useState("");
 const [phone,setPhone] = useState("");
+const [password,setPassword] = useState("");
 
 async function signup(){
 
-const { error } =
-await supabase
+if(
+!fullName ||
+!email ||
+!phone ||
+!password
+){
+alert("Fill all fields");
+return;
+}
+
+const { error } = await supabase
 .from("users")
 .insert([{
-
-name,
+full_name:fullName,
+email,
 phone,
+password,
 wallet:0
-
 }]);
 
 if(error){
-
 alert(error.message);
 return;
-
 }
 
 alert("Signup Successful");
@@ -65,26 +74,47 @@ Signup
 </h1>
 
 <input
-placeholder="Name"
-value={name}
-onChange={(e)=>
-setName(e.target.value)
-}
+placeholder="Full Name"
+value={fullName}
+onChange={(e)=>setFullName(e.target.value)}
 style={{
 padding:"14px",
-borderRadius:"10px"
+borderRadius:"10px",
+border:"none"
+}}
+/>
+
+<input
+placeholder="Email"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+style={{
+padding:"14px",
+borderRadius:"10px",
+border:"none"
 }}
 />
 
 <input
 placeholder="Phone Number"
 value={phone}
-onChange={(e)=>
-setPhone(e.target.value)
-}
+onChange={(e)=>setPhone(e.target.value)}
 style={{
 padding:"14px",
-borderRadius:"10px"
+borderRadius:"10px",
+border:"none"
+}}
+/>
+
+<input
+type="password"
+placeholder="Password"
+value={password}
+onChange={(e)=>setPassword(e.target.value)}
+style={{
+padding:"14px",
+borderRadius:"10px",
+border:"none"
 }}
 />
 
@@ -96,7 +126,8 @@ borderRadius:"10px",
 background:"#06b6d4",
 color:"white",
 fontWeight:"bold",
-border:"none"
+border:"none",
+cursor:"pointer"
 }}
 >
 Signup
