@@ -10,15 +10,23 @@
 
 <h1 class="text-5xl font-black text-yellow-400 mb-6">ADMIN PANEL</h1>
 
-<!-- Top Buttons -->
+<!-- Top Buttons: Scroll to section -->
 <div class="flex gap-4 mb-6">
-  <button onclick="showUsers()" class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold">Manage Users</button>
-  <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today's Winner</button>
+  <button onclick="scrollToUsers()" class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold">Manage Users</button>
+  <button onclick="scrollToAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today's Winner</button>
 </div>
 
-<!-- USERS SECTION -->
+<!-- ANNOUNCE WINNER SECTION -->
+<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
+  <input type="text" id="resultInput" placeholder="Enter Today's Winner" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
+</div>
+
+<!-- MANAGE USERS SECTION -->
 <div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
   <h2 class="text-3xl font-black text-blue-400 mb-4">Manage Users</h2>
+
   <div class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-700">
       <thead>
@@ -36,28 +44,14 @@
   </div>
 </div>
 
-<!-- ANNOUNCE WINNER SECTION -->
-<div id="announceSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
-  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
-</div>
-
 <script type="module">
 import { supabase } from "./supabase.js";
 
 let allUsers = [];
 
-// SHOW SECTIONS
-function showUsers(){
-  document.getElementById("usersSection").classList.remove("hidden");
-  document.getElementById("announceSection").classList.add("hidden");
-  loadUsers();
-}
-function showAnnounce(){
-  document.getElementById("announceSection").classList.remove("hidden");
-  document.getElementById("usersSection").classList.add("hidden");
-}
+// Scroll functions
+window.scrollToUsers = () => document.getElementById("usersSection").scrollIntoView({ behavior:"smooth" });
+window.scrollToAnnounce = () => document.getElementById("announceSection").scrollIntoView({ behavior:"smooth" });
 
 // LOAD USERS
 async function loadUsers(){
@@ -67,7 +61,7 @@ async function loadUsers(){
   renderUsers(users);
 }
 
-// RENDER USERS TABLE
+// RENDER USERS
 function renderUsers(users){
   const usersList = document.getElementById("usersList");
   usersList.innerHTML = "";
@@ -90,7 +84,7 @@ function renderUsers(users){
   });
 }
 
-// CREDIT BALANCE + LEDGER
+// CREDIT BALANCE
 window.creditBalance = async function(userId){
   const amount = parseInt(document.getElementById(`credit-${userId}`).value);
   if(!amount || amount <=0){ alert("Enter valid amount"); return; }
@@ -100,20 +94,16 @@ window.creditBalance = async function(userId){
 
   // Update users table
   await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
-
-  // Insert into balance_ledger
-  await supabase.from("balance_ledger").insert([{ user_id:userId, balance:newBalance, updated_at:new Date().toISOString() }]);
-
   // Insert into deposits table
   await supabase.from("deposits").insert([{ user_id:userId, amount, status:"credited by admin", created_at:new Date().toISOString() }]);
-
+  // Update balance in table
   document.getElementById(`balance-${userId}`).innerText = newBalance;
 }
 
-// DEBIT BALANCE + LEDGER
+// DEBIT BALANCE
 window.debitBalance = async function(userId){
   const amount = parseInt(document.getElementById(`debit-${userId}`).value);
-  if(!amount || amount<=0){ alert("Enter valid amount"); return; }
+  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
 
   const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
   if(amount > (Number(user.balance)||0)){ alert("Insufficient balance"); return; }
@@ -122,13 +112,8 @@ window.debitBalance = async function(userId){
 
   // Update users table
   await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
-
-  // Insert into balance_ledger
-  await supabase.from("balance_ledger").insert([{ user_id:userId, balance:newBalance, updated_at:new Date().toISOString() }]);
-
   // Insert into withdraws table
   await supabase.from("withdraws").insert([{ user_id:userId, amount, status:"debited by admin", created_at:new Date().toISOString() }]);
-
   document.getElementById(`balance-${userId}`).innerText = newBalance;
 }
 
