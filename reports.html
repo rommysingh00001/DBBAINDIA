@@ -133,6 +133,41 @@ window.showBets = async () => {
     `;
   });
 }
+  async function loadReports(){
+  const { data: bets } = await supabase
+    .from("bets")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  const betsList = document.getElementById("betsList");
+  betsList.innerHTML = "";
+
+  bets.forEach(bet => {
+    const statusText = bet.status === "winner" ? "Winner Winner" :
+                       bet.status === "lose" ? "Better luck next time" : "Pending";
+
+    const color = bet.status === "winner" ? "text-green-400" :
+                  bet.status === "lose" ? "text-red-400" : "text-gray-400";
+
+    betsList.innerHTML += `
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex justify-between items-center">
+        <div>
+          <p class="text-gray-400 mb-1">Number</p>
+          <h2 class="text-2xl font-black text-yellow-400">${bet.selected_number}</h2>
+        </div>
+        <div>
+          <p class="text-gray-400 mb-1">Coins</p>
+          <h2 class="text-2xl font-black">${bet.coins}</h2>
+        </div>
+        <div>
+          <p class="text-gray-400 mb-1">Status</p>
+          <h2 class="text-2xl font-black ${color}">${statusText}</h2>
+        </div>
+      </div>
+    `;
+  });
+}
 </script>
 
 </body>
