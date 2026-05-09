@@ -17,6 +17,11 @@
 </div>
 
 <!-- MANAGE USERS -->
+  <input type="number" id="credit-USERID" placeholder="Credit" />
+<button onclick="creditBalance('USERID')">Credit</button>
+
+<input type="number" id="debit-USERID" placeholder="Debit" />
+<button onclick="debitBalance('USERID')">Debit</button>
 <div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
   <h2 class="text-3xl font-black text-green-400 mb-4">Manage Users’ Balance</h2>
   <div class="overflow-x-auto">
@@ -94,23 +99,47 @@ function renderUsers(users){
 async function creditBalance(userId){
   const amount = parseInt(document.getElementById(`credit-${userId}`).value);
   if(!amount || amount <=0){ alert("Enter valid amount"); return; }
-  const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
+
+  // Fetch user
+  const { data: user } = await supabase.from("users").select("*").eq("id", userId).single();
   const newBalance = (Number(user.balance)||0) + amount;
-  await supabase.from("users").update({ balance: newBalance }).eq("id",userId);
-  await supabase.from("deposits").insert([{ user_id:userId, amount, status:"credited by admin", created_at:new Date().toISOString() }]);
-  loadUsers();
+
+  // Update balance
+  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
+
+  // Record in deposits
+  await supabase.from("deposits").insert([{ 
+    user_id:userId, 
+    amount, 
+    status:"credited by admin", 
+    created_at:new Date().toISOString() 
+  }]);
+
+  loadUsers(); // refresh user table
 }
 
 // DEBIT BALANCE
 async function debitBalance(userId){
   const amount = parseInt(document.getElementById(`debit-${userId}`).value);
-  if(!amount || amount<=0){ alert("Enter valid amount"); return; }
-  const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
+  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
+
+  const { data: user } = await supabase.from("users").select("*").eq("id", userId).single();
   if(amount > (Number(user.balance)||0)){ alert("Insufficient balance"); return; }
+
   const newBalance = (Number(user.balance)||0) - amount;
-  await supabase.from("users").update({ balance: newBalance }).eq("id",userId);
-  await supabase.from("withdraws").insert([{ user_id:userId, amount, status:"debited by admin", created_at:new Date().toISOString() }]);
-  loadUsers();
+
+  // Update balance
+  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
+
+  // Record in withdraws
+  await supabase.from("withdraws").insert([{ 
+    user_id:userId, 
+    amount, 
+    status:"debited by admin", 
+    created_at:new Date().toISOString() 
+  }]);
+
+  loadUsers(); // refresh user table
 }
 
 // ANNOUNCE TODAY'S WINNER
