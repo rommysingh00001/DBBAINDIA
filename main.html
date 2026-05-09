@@ -35,10 +35,10 @@
       <div class="flex items-center gap-4">
 
         <div onclick="openReports()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
-          <p class="text-gray-400 text-sm">Balance</p>
-          <h2 id="balanceText" class="text-2xl font-bold text-yellow-400">0 Coins</h2>
-          <p class="text-green-400 text-xs mt-1">View Reports</p>
-        </div>
+  <p class="text-gray-400 text-sm">Balance</p>
+  <h2 id="balanceText" class="text-2xl font-bold text-yellow-400">0 Coins</h2>
+  <p class="text-green-400 text-xs mt-1">View Reports</p>
+</div>
         <button
         onclick="logout()"
         class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
@@ -52,6 +52,7 @@
   </header>
 
   <!-- HERO -->
+
   <section class="max-w-7xl mx-auto px-5 pt-8">
 
     <div class="bg-gradient-to-r from-yellow-400 to-green-400 rounded-3xl p-8 text-black">
@@ -81,6 +82,7 @@
   </section>
 
   <!-- TOP CARDS -->
+
   <section class="max-w-7xl mx-auto px-5 py-8">
 
     <div class="grid md:grid-cols-3 gap-5">
@@ -127,6 +129,7 @@
   </section>
 
   <!-- HOW TO PLAY -->
+
   <section class="max-w-7xl mx-auto px-5 pb-8">
 
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
@@ -208,9 +211,11 @@
   </section>
   
   <!-- MAIN -->
+
   <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
 
     <!-- NUMBERS -->
+
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
       <div class="flex justify-between items-center mb-6">
@@ -234,200 +239,518 @@
       </div>
 
       <!-- NUMBER GRID -->
+
       <div id="numbers"
       class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
 
     </div>
 
     <!-- BET SLIP -->
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+<div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
   
-      <!-- TODAY WINNER -->
-      <div class="bg-black border border-yellow-400 rounded-2xl p-4 mb-6 text-center">
-        <p class="text-gray-400 mb-1">Today’s Winner</p>
-        <h2 id="todayWinner" class="text-3xl font-black text-yellow-400">--</h2>
-      </div>
+  <!-- TODAY WINNER -->
+  <div class="bg-black border border-yellow-400 rounded-2xl p-4 mb-6 text-center">
+    <p class="text-gray-400 mb-1">Today’s Winner</p>
+    <h2 id="todayWinner" class="text-3xl font-black text-yellow-400">--</h2>
+  </div>
 
-      <!-- USER BALANCE -->
-      <div class="bg-black border border-blue-400 rounded-2xl p-4 mb-6 text-center">
-        <p class="text-gray-400 mb-1">Your Balance</p>
-        <h2 id="userBalance" class="text-3xl font-black text-blue-400">0 Coins</h2>
-      </div>
+  <h2 class="text-3xl font-black text-yellow-400 mb-6">Bet Slip</h2>
+  
+  <div class="mb-5">
+    <p class="text-gray-400 mb-2">Selected Number</p>
+    <div id="selected" class="bg-black border-2 border-green-500 rounded-3xl p-10 text-center text-8xl font-black text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.5)]">00</div>
+  </div>
 
-      <h2 class="text-3xl font-black text-yellow-400 mb-6">Bet Slip</h2>
-      
-      <div class="mb-5">
-        <p class="text-gray-400 mb-2">Selected Number</p>
-        <div id="selected" class="bg-black border-2 border-green-500 rounded-3xl p-10 text-center text-8xl font-black text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.5)]">00</div>
-      </div>
+  <div class="mb-5">
+    <p class="text-gray-400 mb-2">Enter Coins</p>
+    <input id="coins" type="number" value="0" class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
+  </div>
 
-      <div class="mb-5">
-        <p class="text-gray-400 mb-2">Enter Coins</p>
-        <input id="coins" type="number" value="0" class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
-      </div>
+  <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center mb-6">
+    <p class="text-gray-400 mb-2">Potential Win</p>
+    <h2 id="win" class="text-5xl font-black text-yellow-400">90000</h2>
+    <p class="text-green-400 mt-2">90x Reward</p>
+  </div>
 
-      <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center mb-6">
-        <p class="text-gray-400 mb-2">Potential Win</p>
-        <h2 id="win" class="text-5xl font-black text-yellow-400">90000</h2>
-        <p class="text-green-400 mt-2">90x Reward</p>
-      </div>
-
-      <button id="placeBetBtn" class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
-      PLACE BET
-      </button>
-    </div>
-
+  <button id="placeBetBtn" class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
+PLACE BET
+</button>
+</div>
+    
   </section>
+
+  
 
   <!-- RECENT RESULTS -->
-  <section class="max-w-7xl mx-auto px-5 pb-16">
 
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
+<section class="max-w-7xl mx-auto px-5 pb-16">
 
-      <div class="flex justify-between items-center mb-8">
+  <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
 
-        <h2 class="text-4xl font-black text-yellow-400">
-          Recent Results
-        </h2>
+    <div class="flex justify-between items-center mb-8">
 
-        <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">
-          Last 10 Draws
-        </div>
+      <h2 class="text-4xl font-black text-yellow-400">
+        Recent Results
+      </h2>
 
+      <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">
+        Last 10 Draws
       </div>
-
-      <div id="resultsGrid"
-      class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4"></div>
 
     </div>
 
-  </section>
+    <div id="resultsGrid"
+    class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4"></div>
+
+  </div>
+
+</section>
 
   <script type="module">
-    import { supabase } from "./supabase.js";
 
-    window.openReports = function(){ window.location.href="reports.html"; }
-
-    // USER SESSION
-    const { data: { session } } = await supabase.auth.getSession();
-    if(!session) window.location.href = "index.html";
-
-    const userId = session.user.id;
-
-    // FETCH CURRENT BALANCE FROM BALANCE_LEDGER
-    async function loadUserBalance(){
-      const { data: ledgerData } = await supabase
-        .from("balance_ledger")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending:false })
-        .limit(1)
-        .single();
-
-      let currentBalance = 0;
-      if(ledgerData) currentBalance = ledgerData.balance;
-
-      document.getElementById("userBalance").innerText = currentBalance + " Coins";
-      document.getElementById("coins").value = currentBalance;
-    }
-
-    // LOAD TODAY'S WINNER
-    async function loadTodayWinner() {
-      const { data: resultData } = await supabase
-        .from("announced_results")
-        .select("*")
-        .order("id",{ascending:false})
-        .limit(1)
-        .single();
-      if(resultData && resultData.number !== undefined){
-        document.getElementById("todayWinner").innerText = resultData.number;
-      }
-    }
-
-    // LOAD RECENT RESULTS
-    async function loadRecentResults(){
-      const { data: results } = await supabase
+    import {
+      supabase
+    } from "./supabase.js";
+window.openReports = function(){
+  window.location.href = "reports.html";
+}
+    
+    // LOAD RECENT RESULTS & TODAY'S WINNER
+async function loadRecentResults(){
+    const { data: results, error } = await supabase
         .from("results")
         .select("*")
-        .order("created_at",{ascending:false})
+        .order("created_at", { ascending: false })
         .limit(10);
 
-      const resultsGrid = document.getElementById("resultsGrid");
-      resultsGrid.innerHTML = "";
-      results.forEach(result=>{
+    const resultsGrid = document.getElementById("resultsGrid");
+    resultsGrid.innerHTML = "";
+
+    results.forEach(result => {
         const div = document.createElement("div");
-        div.className="bg-gray-900 rounded-2xl p-4 text-center";
+        div.className = "bg-gray-900 rounded-2xl p-4 text-center";
         div.innerHTML = `
-          <h2 class="text-3xl font-black text-yellow-400">${result.winning_number}</h2>
-          <p class="text-gray-400 text-sm">${new Date(result.created_at).toLocaleString()}</p>
+            <h2 class="text-3xl font-black text-yellow-400">${result.winning_number}</h2>
+            <p class="text-gray-400 text-sm">${new Date(result.created_at).toLocaleString()}</p>
         `;
         resultsGrid.appendChild(div);
-      });
+    });
+
+    if(results.length > 0){
+        document.getElementById("todayWinner").innerText = results[0].winning_number;
     }
+}
 
-    // INIT
-    window.onload = async () => {
-      await loadUserBalance();
-      await loadTodayWinner();
-      await loadRecentResults();
-      updatePotentialWin();
-    };
+// Call it after page load
+window.onload = async function() {
+    await loadRecentResults();
+};
+    
+    // CHECK LOGIN
 
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if(!session){
+
+      window.location.href = "index.html";
+    }
+// LOAD USER BALANCE
+
+const userId =
+  session.user.id;
+
+const {
+  data: userData
+} = await supabase
+  .from("users")
+  .select("*")
+  .eq("id", userId)
+  .single();
+
+if(userData){
+
+  // HEADER BALANCE
+
+  document.getElementById(
+    "balanceText"
+  ).innerText =
+    userData.balance + " Coins";
+
+  // AUTO FILL ENTER COINS
+
+  document.getElementById(
+    "coins"
+  ).value =
+    userData.balance;
+}
+    // LOGOUT
+
+    window.logout = async function(){
+
+      await supabase.auth.signOut();
+
+      window.location.href = "index.html";
+    }
+// LOAD TODAY WINNER
+async function loadTodayWinner() {
+  const { data: resultData } = await supabase
+    .from("announced_results") // table jahan admin announce karega
+    .select("*")
+    .order("id", { ascending: false })
+    .limit(1)
+    .single();
+  
+  if(resultData && resultData.number !== undefined){
+    document.getElementById("todayWinner").innerText = resultData.number;
+  }
+}
+
+// INIT
+window.onload = async () => {
+  loadTodayWinner(); // show today’s winner
+  updatePotentialWin();
+};
     // NUMBER GRID
-    const numbersDiv = document.getElementById("numbers");
-    const selectedDiv = document.getElementById("selected");
+
+    const numbersDiv =
+      document.getElementById("numbers");
+
+    const selectedDiv =
+      document.getElementById("selected");
 
     for(let i=0;i<100;i++){
-      const num = i.toString().padStart(2,"0");
-      const btn = document.createElement("button");
+
+      const num =
+        i.toString().padStart(2,"0");
+
+      const btn =
+        document.createElement("button");
+
       btn.innerText = num;
-      btn.className="bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
-      btn.onclick = ()=>{ selectedDiv.innerText = num; }
+
+      btn.className =
+        "bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
+
+      btn.onclick = () => {
+
+        selectedDiv.innerText = num;
+      };
+
       numbersDiv.appendChild(btn);
     }
 
-    // POTENTIAL WIN
-    const coinsInput = document.getElementById("coins");
-    const winText = document.getElementById("win");
+    // WIN CALCULATION
+
+    const coinsInput =
+      document.getElementById("coins");
+
+    const winText =
+      document.getElementById("win");
+
     function updatePotentialWin(){
-      const coins = parseInt(coinsInput.value)||0;
-      winText.innerText = coins*90;
-    }
-    coinsInput.addEventListener("input", updatePotentialWin);
 
-    // PLACE BET
-    const placeBetBtn = document.getElementById("placeBetBtn");
-    placeBetBtn.addEventListener("click", async ()=>{
-      const number = selectedDiv.innerText;
-      const coins = parseInt(coinsInput.value)||0;
-      if(coins<=0){ alert("Enter valid coins"); return; }
+  const coins =
+    parseInt(coinsInput.value) || 0;
 
-      const { data: betData, error } = await supabase.from("bets").insert([{
-        user_id, selected_number:number, coins, potential_win:coins*90, status:'pending'
-      }]);
-      if(error){ alert("Error placing bet: "+error.message); return; }
+  winText.innerText =
+    coins * 90;
+}
 
-      alert("Bet placed successfully!");
-      await loadUserBalance(); // refresh balance from ledger
-    });
+// LIVE UPDATE
 
-    // LOGOUT
-    window.logout = async () => { await supabase.auth.signOut(); window.location.href="index.html"; }
+coinsInput.addEventListener(
+  "input",
+  updatePotentialWin
+);
+
+// DEFAULT LOAD
+
+updatePotentialWin();
 
     // TIMER
-    function updateTimer(){
-      const now = new Date();
-      const target = new Date();
-      target.setHours(9); target.setMinutes(15); target.setSeconds(0);
-      if(now>target) target.setDate(target.getDate()+1);
-      const diff = target-now;
-      const hrs=Math.floor(diff/1000/60/60);
-      const mins=Math.floor(diff/1000/60)%60;
-      const secs=Math.floor(diff/1000)%60;
-      document.getElementById("timer").innerText=`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-    }
-    updateTimer(); setInterval(updateTimer,1000);
-  </script>
 
+    function updateTimer(){
+
+      const now = new Date();
+
+      const target = new Date();
+
+      target.setHours(9);
+      target.setMinutes(15);
+      target.setSeconds(0);
+
+      if(now > target){
+
+        target.setDate(
+          target.getDate()+1
+        );
+      }
+
+      const diff = target - now;
+
+      const hrs =
+        Math.floor(diff / 1000 / 60 / 60);
+
+      const mins =
+        Math.floor(diff / 1000 / 60) % 60;
+
+      const secs =
+        Math.floor(diff / 1000) % 60;
+
+      document.getElementById(
+        "timer"
+      ).innerText =
+        `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    }
+
+    updateTimer();
+
+    setInterval(updateTimer,1000);
+// OPEN HISTORY
+
+window.openHistory =
+async function(){
+
+  document.getElementById(
+    "historyPopup"
+  ).classList.remove("hidden");
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  const userId =
+    session.user.id;
+
+  // LOAD DEPOSITS
+
+  const {
+    data: deposits
+  } = await supabase
+    .from("deposits")
+    .select("*")
+    .eq("user_id", userId)
+    .order("id",{ascending:false});
+
+  // LOAD WITHDRAWS
+
+  const {
+    data: withdraws
+  } = await supabase
+    .from("withdraws")
+    .select("*")
+    .eq("user_id", userId)
+    .order("id",{ascending:false});
+
+  // LOAD BETS
+
+  const {
+    data: bets
+  } = await supabase
+    .from("bets")
+    .select("*")
+    .eq("user_id", userId)
+    .order("id",{ascending:false});
+
+  // TRANSACTIONS HTML
+
+  const transactionsBox =
+    document.getElementById(
+      "transactionsList"
+    );
+
+  transactionsBox.innerHTML = "";
+
+  deposits.forEach(dep => {
+
+    transactionsBox.innerHTML += `
+
+  <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 flex justify-between items-center">
+
+    <div>
+
+      <p class="text-gray-400 text-sm">
+        Deposit
+      </p>
+
+      <h2 class="text-4xl font-black text-green-400">
+        +${dep.amount}
+      </h2>
+
+    </div>
+
+  </div>
+`;
+  });
+
+  withdraws.forEach(w => {
+
+    transactionsBox.innerHTML += `
+
+  <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 flex justify-between items-center">
+
+    <div>
+
+      <p class="text-gray-400 text-sm">
+        Withdraw
+      </p>
+
+      <h2 class="text-4xl font-black text-red-400">
+        -${w.amount}
+      </h2>
+
+    </div>
+
+  </div>
+`;
+  });
+
+  // BETS HTML
+
+  const betsBox =
+    document.getElementById(
+      "betsList"
+    );
+
+  betsBox.innerHTML = "";
+
+  bets.forEach(bet => {
+
+    const result =
+      bet.status === "win"
+      ? `+${bet.potential_win}`
+      : `-${bet.coins}`;
+
+    const color =
+      bet.status === "win"
+      ? "text-green-400"
+      : "text-red-400";
+
+    betsBox.innerHTML += `
+
+      <div class="bg-black border border-gray-800 rounded-2xl p-5">
+
+        <div class="flex justify-between items-center">
+
+          <div>
+
+            <p class="text-gray-400 mb-2">
+              Number
+            </p>
+
+            <h2 class="text-5xl font-black text-yellow-400">
+              ${bet.selected_number}
+            </h2>
+
+          </div>
+
+          <div class="text-right">
+
+            <p class="text-gray-400 mb-2">
+              Result
+            </p>
+
+            <h2 class="text-4xl font-black ${color}">
+              ${result}
+            </h2>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+// CLOSE HISTORY
+
+window.closeHistory = function(){
+
+  document.getElementById(
+    "historyPopup"
+  ).classList.add("hidden");
+}
+    const placeBetBtn = document.getElementById("placeBetBtn");
+
+placeBetBtn.addEventListener("click", async () => {
+  const number = selectedDiv.innerText;
+  const coins = parseInt(coinsInput.value) || 0;
+  if(coins <= 0) { alert("Enter valid coins"); return; }
+
+  // Supabase insert
+  const { data: betData, error } = await supabase
+    .from("bets")
+    .insert([{
+      user_id: userId,
+      selected_number: number,
+      coins: coins,
+      potential_win: coins * 90,
+      status: 'pending'
+    }]);
+
+  if(error){
+    alert("Error placing bet: " + error.message);
+    return;
+  }
+
+  alert("Bet placed successfully!");
+  coinsInput.value = userData.balance; // reset
+  loadReports(); // update My Bets section
+});
+  </script>
+<!-- HISTORY POPUP -->
+
+<div id="historyPopup"
+class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-5">
+
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl w-full max-w-3xl p-6 max-h-[90vh] overflow-auto">
+
+    <div class="flex justify-between items-center mb-6">
+
+      <h2 class="text-4xl font-black text-yellow-400">
+        Reports
+      </h2>
+
+      <button
+      onclick="closeHistory()"
+      class="bg-red-500 px-4 py-2 rounded-xl font-bold">
+      X
+      </button>
+
+    </div>
+
+    <!-- TRANSACTIONS -->
+
+    <div class="mb-10">
+
+      <h3 class="text-3xl font-black mb-5">
+        My Transactions
+      </h3>
+
+      <div id="transactionsList"
+      class="space-y-3"></div>
+
+    </div>
+
+    <!-- BETS -->
+
+    <div>
+
+      <h3 class="text-3xl font-black mb-5">
+        My Bets
+      </h3>
+
+      <div id="betsList"
+      class="space-y-3"></div>
+
+    </div>
+
+  </div>
+
+</div>
+  
 </body>
 </html>
