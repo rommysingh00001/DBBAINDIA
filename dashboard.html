@@ -38,17 +38,47 @@
 </div>
 
 <!-- ANNOUNCE WINNER SECTION -->
-<div id="announceSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6 hidden">
   <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
-  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
+
+  <!-- Input Field -->
+  <input type="text" id="resultInput" placeholder="Enter Winning Number" 
+         class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+
+  <!-- Announce Button -->
+  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl"
+          onclick="announceResult()">Announce</button>
 </div>
+  
+// SHOW/HIDE SECTIONS
+function showAnnounce(){
+  document.getElementById("announceSection").classList.remove("hidden");
+  document.getElementById("usersSection").classList.add("hidden");
+}
 
-<script type="module">
-import { supabase } from "./supabase.js";
+// ANNOUNCE TODAY'S WINNER
+window.announceResult = async function(){
+  const value = document.getElementById("resultInput").value;
+  if(!value){ 
+    alert("Enter Winning Number"); 
+    return; 
+  }
 
-let allUsers = [];
+  // INSERT INTO Supabase results table
+  const { data, error } = await supabase.from("results").insert([{ 
+    winning_number: value, 
+    created_at: new Date().toISOString() 
+  }]);
+  
+  if(error){ 
+    alert("Error: "+error.message); 
+    return; 
+  }
 
+  alert("Result announced: " + value);
+  document.getElementById("resultInput").value = "";
+}
+  
 // SHOW SECTIONS
 function showUsers(){
   document.getElementById("usersSection").classList.remove("hidden");
