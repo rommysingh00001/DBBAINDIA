@@ -6,112 +6,148 @@
 </head>
 <body class="bg-[#050816] text-white p-8">
 
-  <h1 class="text-5xl font-black text-yellow-400 mb-8">
-    ADMIN PANEL
-  </h1>
+<h1 class="text-5xl font-black text-yellow-400 mb-8">ADMIN PANEL</h1>
 
-  <!-- TOP BUTTONS -->
-  <div class="flex gap-4 mb-6">
-    <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-bold">
-      Announce Result
-    </button>
+<!-- TOP BUTTONS -->
+<div class="flex gap-4 mb-6">
+  <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-bold">Announce Result</button>
+  <button onclick="showUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-bold">Users</button>
+  <button onclick="showReports()" class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-bold">Reports</button>
+</div>
 
-    <button onclick="showUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-bold">
-      Users
-    </button>
+<!-- ANNOUNCE RESULT SECTION -->
+<div id="announceSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Result</h2>
+  <p class="text-gray-400 mb-4">Admin can announce draw results here.</p>
+  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
+</div>
 
-    <button onclick="showReports()" class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-bold">
-      Reports
-    </button>
+<!-- USERS SECTION -->
+<div id="usersSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Users List</h2>
+
+  <!-- SEARCH BAR -->
+  <div class="mb-4">
+    <input type="text" id="searchUser" placeholder="Search by Name" class="bg-black border border-gray-700 rounded-2xl p-4 w-full" oninput="filterUsers()"/>
   </div>
 
-  <!-- ANNOUNCE RESULT SECTION -->
-  <div id="announceSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-    <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Result</h2>
-    <p class="text-gray-400 mb-4">Placeholder: Admin can announce draw results here.</p>
-    <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-    <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">
-      Announce
-    </button>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-700">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 text-left text-gray-400">Sr. No.</th>
+          <th class="px-4 py-2 text-left text-gray-400">Name</th>
+          <th class="px-4 py-2 text-left text-gray-400">Email</th>
+          <th class="px-4 py-2 text-left text-gray-400">Phone</th>
+          <th class="px-4 py-2 text-left text-gray-400">Balance</th>
+          <th class="px-4 py-2 text-left text-gray-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList" class="divide-y divide-gray-700"></tbody>
+    </table>
   </div>
+</div>
 
-  <!-- USERS SECTION -->
-  <div id="usersSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-    <h2 class="text-3xl font-black text-yellow-400 mb-4">Users List</h2>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-700">
-        <thead>
-          <tr>
-            <th class="px-4 py-2 text-left text-gray-400">Sr. No.</th>
-            <th class="px-4 py-2 text-left text-gray-400">Name</th>
-            <th class="px-4 py-2 text-left text-gray-400">Email</th>
-            <th class="px-4 py-2 text-left text-gray-400">Phone</th>
-            <th class="px-4 py-2 text-left text-gray-400">Balance</th>
-          </tr>
-        </thead>
-        <tbody id="usersList" class="divide-y divide-gray-700">
-          <!-- Users will be loaded here -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+<!-- REPORTS SECTION -->
+<div id="reportsSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Reports</h2>
+  <p class="text-gray-400 mb-4">My Transactions and My Bets placeholder.</p>
+</div>
 
-  <!-- REPORTS SECTION -->
-  <div id="reportsSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-    <h2 class="text-3xl font-black text-yellow-400 mb-4">Reports</h2>
-    <p class="text-gray-400 mb-4">Placeholder: My Transactions and My Bets will be displayed here.</p>
-  </div>
+<script type="module">
+import { supabase } from "./supabase.js";
 
-  <script type="module">
-    import { supabase } from "./supabase.js";
+let allUsers = [];
 
-    // SHOW/HIDE SECTIONS
-    function showAnnounce(){
-      document.getElementById("announceSection").classList.remove("hidden");
-      document.getElementById("usersSection").classList.add("hidden");
-      document.getElementById("reportsSection").classList.add("hidden");
-    }
+// SHOW/HIDE SECTIONS
+function showAnnounce(){
+  document.getElementById("announceSection").classList.remove("hidden");
+  document.getElementById("usersSection").classList.add("hidden");
+  document.getElementById("reportsSection").classList.add("hidden");
+}
 
-    function showUsers(){
-      document.getElementById("announceSection").classList.add("hidden");
-      document.getElementById("usersSection").classList.remove("hidden");
-      document.getElementById("reportsSection").classList.add("hidden");
-      loadUsers();
-    }
+function showUsers(){
+  document.getElementById("announceSection").classList.add("hidden");
+  document.getElementById("usersSection").classList.remove("hidden");
+  document.getElementById("reportsSection").classList.add("hidden");
+  loadUsers();
+}
 
-    function showReports(){
-      document.getElementById("announceSection").classList.add("hidden");
-      document.getElementById("usersSection").classList.add("hidden");
-      document.getElementById("reportsSection").classList.remove("hidden");
-    }
+function showReports(){
+  document.getElementById("announceSection").classList.add("hidden");
+  document.getElementById("usersSection").classList.add("hidden");
+  document.getElementById("reportsSection").classList.remove("hidden");
+}
 
-    // ANNOUNCE RESULT FUNCTION (placeholder)
-    async function announceResult(){
-      const value = document.getElementById("resultInput").value;
-      if(!value) { alert("Enter winning number"); return; }
-      alert("Result announced: " + value);
-      document.getElementById("resultInput").value = "";
-    }
+// ANNOUNCE RESULT FUNCTION (placeholder)
+async function announceResult(){
+  const value = document.getElementById("resultInput").value;
+  if(!value){ alert("Enter winning number"); return; }
+  alert("Result announced: " + value);
+  document.getElementById("resultInput").value = "";
+}
 
-    // LOAD USERS
-    async function loadUsers(){
-      const { data: users } = await supabase.from("users").select("*");
-      const usersList = document.getElementById("usersList");
-      usersList.innerHTML = "";
-      users.forEach((user, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td class="px-4 py-2">${index+1}</td>
-          <td class="px-4 py-2">${user.full_name}</td>
-          <td class="px-4 py-2">${user.email}</td>
-          <td class="px-4 py-2">${user.phone}</td>
-          <td class="px-4 py-2">${user.balance || 0}</td>
-        `;
-        usersList.appendChild(row);
-      });
-    }
+// LOAD USERS
+async function loadUsers(){
+  const { data: users } = await supabase.from("users").select("*");
+  allUsers = users;
+  renderUsers(users);
+}
 
-  </script>
+// RENDER USERS TABLE
+function renderUsers(users){
+  const usersList = document.getElementById("usersList");
+  usersList.innerHTML = "";
+  users.forEach((user, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="px-4 py-2">${index+1}</td>
+      <td class="px-4 py-2">${user.full_name}</td>
+      <td class="px-4 py-2">${user.email}</td>
+      <td class="px-4 py-2">${user.phone}</td>
+      <td class="px-4 py-2">${user.balance || 0}</td>
+      <td class="px-4 py-2 space-x-2">
+        <input type="number" id="credit-${user.id}" placeholder="Credit" class="bg-black border border-green-500 rounded-2xl p-2 w-20"/>
+        <button onclick="creditBalance('${user.id}')" class="bg-green-500 px-3 py-1 rounded-xl font-bold">Credit</button>
+        <input type="number" id="debit-${user.id}" placeholder="Debit" class="bg-black border border-red-500 rounded-2xl p-2 w-20"/>
+        <button onclick="debitBalance('${user.id}')" class="bg-red-500 px-3 py-1 rounded-xl font-bold">Debit</button>
+      </td>
+    `;
+    usersList.appendChild(row);
+  });
+}
 
+// FILTER USERS
+function filterUsers(){
+  const search = document.getElementById("searchUser").value.toLowerCase();
+  const filtered = allUsers.filter(u => u.full_name.toLowerCase().includes(search));
+  renderUsers(filtered);
+}
+
+// CREDIT BALANCE
+async function creditBalance(userId){
+  const amount = parseInt(document.getElementById(`credit-${userId}`).value);
+  if(!amount || amount <= 0){ alert("Enter valid amount"); return; }
+  const { data: currentUser } = await supabase.from("users").select("*").eq("id", userId).single();
+  const newBalance = (Number(currentUser.balance)||0) + amount;
+  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
+  await supabase.from("deposits").insert([{ user_id:userId, amount:amount, status:"credited by admin"}]);
+  loadUsers();
+}
+
+// DEBIT BALANCE
+async function debitBalance(userId){
+  const amount = parseInt(document.getElementById(`debit-${userId}`).value);
+  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
+  const { data: currentUser } = await supabase.from("users").select("*").eq("id", userId).single();
+  if(amount > (Number(currentUser.balance)||0)){ alert("Insufficient balance"); return; }
+  const newBalance = (Number(currentUser.balance)||0) - amount;
+  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
+  await supabase.from("withdraws").insert([{ user_id:userId, amount:amount, status:"debited by admin"}]);
+  loadUsers();
+}
+
+</script>
 </body>
 </html>
