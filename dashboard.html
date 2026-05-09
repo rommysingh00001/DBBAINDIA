@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Admin Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-[#050816] text-white p-8">
+
+  <h1 class="text-5xl font-black text-yellow-400 mb-8">
+    ADMIN PANEL
+  </h1>
+
+  <div id="usersList"
+  class="grid gap-5"></div>
+
+  <script type="module">
+
+    import {
+      supabase
+    } from "./supabase.js";
+
+    async function loadUsers(){
+
+      const {
+        data
+      } = await supabase
+        .from("users")
+        .select("*");
+
+      const usersList =
+        document.getElementById(
+          "usersList"
+        );
+
+      usersList.innerHTML = "";
+
+      data.forEach(user => {
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "bg-gray-900 border border-gray-800 rounded-3xl p-6";
+
+        div.innerHTML = `
+
+          <h2 class="text-2xl font-black mb-2">
+            ${user.full_name}
+          </h2>
+
+          <p class="text-gray-400 mb-2">
+            ${user.email}
+          </p>
+
+          <p class="text-green-400 mb-4">
+            Balance : ${user.balance}
+          </p>
+
+          <input
+          id="balance-${user.id}"
+          type="number"
+          placeholder="Enter New Balance"
+          class="bg-black border border-gray-700 rounded-2xl p-3 w-full mb-4"/>
+
+          <button
+          onclick="updateBalance('${user.id}')"
+          class="bg-yellow-400 text-black font-black px-5 py-3 rounded-2xl">
+          UPDATE BALANCE
+          </button>
+        `;
+
+        usersList.appendChild(div);
+      });
+    }
+
+    window.updateBalance =
+      async function(userId){
+
+      const value =
+        document.getElementById(
+          `balance-${userId}`
+        ).value;
+
+      await supabase
+        .from("users")
+        .update({
+          balance: value
+        })
+        .eq("id", userId);
+
+      alert("Balance Updated");
+
+      loadUsers();
+    }
+
+    loadUsers();
+
+  </script>
+
+</body>
+</html>
