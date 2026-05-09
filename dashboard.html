@@ -23,6 +23,8 @@
       supabase
     } from "./supabase.js";
 
+    // LOAD USERS
+
     async function loadUsers(){
 
       const {
@@ -48,201 +50,286 @@
 
         div.innerHTML = `
 
-  <div class="grid lg:grid-cols-2 gap-8">
+          <div class="grid lg:grid-cols-2 gap-8">
 
-    <div>
+            <div>
 
-      <h2 class="text-3xl font-black text-yellow-400 mb-4">
-        ${user.full_name}
-      </h2>
+              <h2 class="text-3xl font-black text-yellow-400 mb-4">
+                ${user.full_name}
+              </h2>
 
-      <div class="space-y-2 text-lg">
+              <div class="space-y-2 text-lg">
 
-        <p>
-          <span class="text-gray-400">
-            Email :
-          </span>
+                <p>
+                  <span class="text-gray-400">
+                    Email :
+                  </span>
 
-          ${user.email}
-        </p>
+                  ${user.email}
+                </p>
 
-        <p>
-          <span class="text-gray-400">
-            Phone :
-          </span>
+                <p>
+                  <span class="text-gray-400">
+                    Phone :
+                  </span>
 
-          ${user.phone}
-        </p>
+                  ${user.phone}
+                </p>
 
-        <p>
-          <span class="text-gray-400">
-            Password :
-          </span>
+                <p>
+                  <span class="text-gray-400">
+                    Password :
+                  </span>
 
-          ${user.password}
-        </p>
+                  ${user.password}
+                </p>
 
-        <p>
-          <span class="text-gray-400">
-            Balance :
-          </span>
+                <p>
+                  <span class="text-gray-400">
+                    Balance :
+                  </span>
 
-          <span class="text-green-400">
-            ${user.balance}
-          </span>
-        </p>
+                  <span class="text-green-400">
+                    ${user.balance}
+                  </span>
+                </p>
 
-      </div>
+              </div>
 
-    </div>
+            </div>
 
-    <div>
+            <div>
 
-      <input
-      id="balance-${user.id}"
-      type="number"
-      placeholder="Enter New Balance"
-      class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+              <input
+              id="balance-${user.id}"
+              type="number"
+              placeholder="Enter New Balance"
+              class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
 
-      <button
-      onclick="updateBalance('${user.id}')"
-      class="bg-yellow-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-4">
-      UPDATE BALANCE
-      </button>
+              <button
+              onclick="updateBalance('${user.id}')"
+              class="bg-yellow-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-4">
+              UPDATE BALANCE
+              </button>
 
-      <button
-      onclick="viewUserData('${user.id}')"
-      class="bg-green-500 text-black font-black px-5 py-4 rounded-2xl w-full">
-      VIEW USER RECORD
-      </button>
+              <button
+              onclick="viewUserData('${user.id}')"
+              class="bg-green-500 text-black font-black px-5 py-4 rounded-2xl w-full">
+              VIEW USER RECORD
+              </button>
 
-    </div>
-
-  </div>
-
-  <div id="userData-${user.id}"
-  class="hidden mt-8 bg-black rounded-2xl p-5 border border-gray-800">
-
-  </div>
-`;
-window.viewUserData =
-async function(userId){
-
-  const box =
-    document.getElementById(
-      `userData-${userId}`
-    );
-
-  box.classList.remove("hidden");
-
-  // BETS
-
-  const {
-    data: bets
-  } = await supabase
-    .from("bets")
-    .select("*")
-    .eq("user_id", userId);
-
-  // DEPOSITS
-
-  const {
-    data: deposits
-  } = await supabase
-    .from("deposits")
-    .select("*")
-    .eq("user_id", userId);
-
-  // WITHDRAWS
-
-  const {
-    data: withdraws
-  } = await supabase
-    .from("withdraws")
-    .select("*")
-    .eq("user_id", userId);
-
-  box.innerHTML = `
-
-    <h2 class="text-3xl font-black text-yellow-400 mb-6">
-      USER RECORD
-    </h2>
-
-    <div class="mb-8">
-
-      <h3 class="text-2xl font-black mb-4">
-        Bets
-      </h3>
-
-      ${
-        bets.map(bet => `
-          <div class="bg-gray-900 rounded-2xl p-4 mb-3">
-
-            Number :
-            ${bet.selected_number}
-
-            <br>
-
-            Coins :
-            ${bet.coins}
-
-            <br>
-
-            Win :
-            ${bet.potential_win}
+            </div>
 
           </div>
-        `).join("")
-      }
 
-    </div>
-
-    <div class="mb-8">
-
-      <h3 class="text-2xl font-black mb-4">
-        Deposits
-      </h3>
-
-      ${
-        deposits.map(dep => `
-          <div class="bg-gray-900 rounded-2xl p-4 mb-3">
-
-            Amount :
-            ${dep.amount}
-
-            <br>
-
-            Status :
-            ${dep.status}
+          <div id="userData-${user.id}"
+          class="hidden mt-8 bg-black rounded-2xl p-5 border border-gray-800">
 
           </div>
-        `).join("")
+        `;
+
+        usersList.appendChild(div);
+      });
+    }
+
+    // UPDATE BALANCE
+
+    window.updateBalance =
+    async function(userId){
+
+      const value =
+        parseInt(
+          document.getElementById(
+            `balance-${userId}`
+          ).value
+        );
+
+      // GET CURRENT BALANCE
+
+      const {
+        data: currentUser
+      } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      const oldBalance =
+        currentUser.balance;
+
+      // UPDATE BALANCE
+
+      await supabase
+        .from("users")
+        .update({
+          balance: value
+        })
+        .eq("id", userId);
+
+      // CREDIT HISTORY
+
+      if(value > oldBalance){
+
+        await supabase
+          .from("deposits")
+          .insert([
+            {
+              user_id: userId,
+              amount: value - oldBalance,
+              status: "credited by admin"
+            }
+          ]);
       }
 
-    </div>
+      // DEBIT HISTORY
 
-    <div>
+      if(value < oldBalance){
 
-      <h3 class="text-2xl font-black mb-4">
-        Withdraws
-      </h3>
-
-      ${
-        withdraws.map(w => `
-          <div class="bg-gray-900 rounded-2xl p-4 mb-3">
-
-            Amount :
-            ${w.amount}
-
-            <br>
-
-            Status :
-            ${w.status}
-
-          </div>
-        `).join("")
+        await supabase
+          .from("withdraws")
+          .insert([
+            {
+              user_id: userId,
+              amount: oldBalance - value,
+              status: "debited by admin"
+            }
+          ]);
       }
 
-    </div>
-  `;
-}
+      alert("Balance Updated");
+
+      loadUsers();
+    }
+
+    // VIEW USER RECORD
+
+    window.viewUserData =
+    async function(userId){
+
+      const box =
+        document.getElementById(
+          `userData-${userId}`
+        );
+
+      box.classList.remove("hidden");
+
+      // BETS
+
+      const {
+        data: bets
+      } = await supabase
+        .from("bets")
+        .select("*")
+        .eq("user_id", userId);
+
+      // DEPOSITS
+
+      const {
+        data: deposits
+      } = await supabase
+        .from("deposits")
+        .select("*")
+        .eq("user_id", userId);
+
+      // WITHDRAWS
+
+      const {
+        data: withdraws
+      } = await supabase
+        .from("withdraws")
+        .select("*")
+        .eq("user_id", userId);
+
+      box.innerHTML = `
+
+        <h2 class="text-3xl font-black text-yellow-400 mb-6">
+          USER RECORD
+        </h2>
+
+        <div class="mb-8">
+
+          <h3 class="text-2xl font-black mb-4">
+            Bets
+          </h3>
+
+          ${
+            bets.map(bet => `
+              <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+
+                Number :
+                ${bet.selected_number}
+
+                <br>
+
+                Coins :
+                ${bet.coins}
+
+                <br>
+
+                Win :
+                ${bet.potential_win}
+
+              </div>
+            `).join("")
+          }
+
+        </div>
+
+        <div class="mb-8">
+
+          <h3 class="text-2xl font-black mb-4">
+            Deposits
+          </h3>
+
+          ${
+            deposits.map(dep => `
+              <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+
+                Amount :
+                ${dep.amount}
+
+                <br>
+
+                Status :
+                ${dep.status}
+
+              </div>
+            `).join("")
+          }
+
+        </div>
+
+        <div>
+
+          <h3 class="text-2xl font-black mb-4">
+            Withdraws
+          </h3>
+
+          ${
+            withdraws.map(w => `
+              <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+
+                Amount :
+                ${w.amount}
+
+                <br>
+
+                Status :
+                ${w.status}
+
+              </div>
+            `).join("")
+          }
+
+        </div>
+      `;
+    }
+
+    // START
+
+    loadUsers();
+
+  </script>
+
+</body>
+</html>
