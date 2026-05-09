@@ -1,20 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>DBBA INDIA</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 </head>
 
 <body class="bg-[#050816] text-white">
 
-  <!-- Header -->
+  <!-- AUTH SCREEN -->
+
+  <div id="authScreen"
+    class="fixed inset-0 bg-black z-50 flex items-center justify-center p-5">
+
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
+
+      <h2 class="text-4xl font-black text-center mb-2">
+        <span class="text-yellow-400">DBBA</span>
+        <span class="text-green-400">INDIA</span>
+      </h2>
+
+      <p class="text-center text-gray-400 mb-6">
+        Login or Create Account
+      </p>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="Enter Email"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter Password"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
+
+      <button
+        onclick="signup()"
+        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-3">
+        SIGN UP
+      </button>
+
+      <button
+        onclick="login()"
+        class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">
+        LOGIN
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- HEADER -->
+
   <header class="border-b border-gray-800 bg-black">
+
     <div class="max-w-7xl mx-auto flex justify-between items-center px-5 py-4">
 
       <div>
+
         <h1 class="text-4xl font-black">
           <span class="text-yellow-400">DBBA</span>
           <span class="text-green-400">INDIA</span>
@@ -23,57 +75,92 @@
         <p class="text-gray-400 text-sm">
           Predict • Play • Win
         </p>
+
       </div>
 
-      <div class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700">
-        <p class="text-gray-400 text-sm">Balance</p>
+      <div class="flex items-center gap-4">
 
-        <h2 class="text-2xl font-bold text-yellow-400">
-          12,500 Coins
-        </h2>
+        <div class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700">
+
+          <p class="text-gray-400 text-sm">
+            Balance
+          </p>
+
+          <h2 class="text-2xl font-bold text-yellow-400">
+            12,500 Coins
+          </h2>
+
+        </div>
+
+        <button
+          onclick="logout()"
+          class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
+          Logout
+        </button>
+
       </div>
 
     </div>
+
   </header>
 
-  <!-- Top Cards -->
+  <!-- TOP CARDS -->
+
   <section class="max-w-7xl mx-auto px-5 py-8">
+
     <div class="grid md:grid-cols-3 gap-5">
 
       <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-        <p class="text-gray-400 mb-3">Next Draw</p>
+
+        <p class="text-gray-400 mb-3">
+          Next Draw
+        </p>
 
         <h2 class="text-5xl font-black text-yellow-400">
           09:15 AM
         </h2>
+
       </div>
 
       <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 text-center">
-        <p class="text-gray-400 mb-3">Next Draw In</p>
 
-        <h2 id="timer" class="text-5xl font-black text-green-400">
+        <p class="text-gray-400 mb-3">
+          Next Draw In
+        </p>
+
+        <h2 id="timer"
+          class="text-5xl font-black text-green-400">
           00:00:00
         </h2>
+
       </div>
 
       <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-        <p class="text-gray-400 mb-3">Reward</p>
+
+        <p class="text-gray-400 mb-3">
+          Reward
+        </p>
 
         <h2 class="text-5xl font-black text-green-400">
           90x
         </h2>
+
       </div>
 
     </div>
+
   </section>
 
-  <!-- Main -->
+  <!-- MAIN -->
+
   <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
 
-    <!-- Numbers -->
+    <!-- NUMBER GRID -->
+
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
       <div class="flex justify-between items-center mb-6">
+
         <h2 class="text-3xl font-black">
           Choose Your Number
         </h2>
@@ -81,13 +168,16 @@
         <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">
           Virtual Game
         </div>
+
       </div>
 
-      <div id="numbers" class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
+      <div id="numbers"
+        class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
 
     </div>
 
-    <!-- Bet Slip -->
+    <!-- BET SLIP -->
+
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 h-fit">
 
       <h2 class="text-3xl font-black text-yellow-400 mb-6">
@@ -95,6 +185,7 @@
       </h2>
 
       <div class="mb-5">
+
         <p class="text-gray-400 mb-2">
           Selected Number
         </p>
@@ -103,31 +194,38 @@
           class="bg-black border border-gray-700 rounded-2xl p-5 text-center text-6xl font-black text-green-400">
           00
         </div>
+
       </div>
 
       <div class="mb-5">
+
         <p class="text-gray-400 mb-2">
           Enter Coins
         </p>
 
-        <input id="coins"
+        <input
+          id="coins"
           type="number"
           value="1000"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl"/>
+          class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
+
       </div>
 
       <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center mb-6">
+
         <p class="text-gray-400 mb-2">
           Potential Win
         </p>
 
-        <h2 id="win" class="text-5xl font-black text-yellow-400">
+        <h2 id="win"
+          class="text-5xl font-black text-yellow-400">
           90000
         </h2>
 
         <p class="text-green-400 mt-2">
           90x Reward
         </p>
+
       </div>
 
       <button
@@ -139,7 +237,8 @@
 
   </section>
 
-  <!-- Results -->
+  <!-- RESULTS -->
+
   <section class="max-w-7xl mx-auto px-5 pb-10">
 
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
@@ -162,7 +261,8 @@
 
   </section>
 
-  <!-- How To Play -->
+  <!-- HOW TO PLAY -->
+
   <section class="max-w-7xl mx-auto px-5 pb-20">
 
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
@@ -175,22 +275,30 @@
 
         <div class="bg-black rounded-2xl p-6 text-center">
           <div class="text-5xl mb-4">1️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">Choose Number</h3>
+          <h3 class="text-2xl font-bold mb-3">
+            Choose Number
+          </h3>
         </div>
 
         <div class="bg-black rounded-2xl p-6 text-center">
           <div class="text-5xl mb-4">2️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">Enter Coins</h3>
+          <h3 class="text-2xl font-bold mb-3">
+            Enter Coins
+          </h3>
         </div>
 
         <div class="bg-black rounded-2xl p-6 text-center">
           <div class="text-5xl mb-4">3️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">Wait For Draw</h3>
+          <h3 class="text-2xl font-bold mb-3">
+            Wait For Draw
+          </h3>
         </div>
 
         <div class="bg-black rounded-2xl p-6 text-center">
           <div class="text-5xl mb-4">4️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">Win Rewards</h3>
+          <h3 class="text-2xl font-bold mb-3">
+            Win Rewards
+          </h3>
         </div>
 
       </div>
@@ -199,18 +307,112 @@
 
   </section>
 
+  <!-- SCRIPT -->
+
   <script>
 
-    // Numbers
+    // SUPABASE
 
-    const numbersDiv = document.getElementById("numbers");
-    const selectedDiv = document.getElementById("selected");
+    const supabaseUrl =
+      "https://meqzyznfpiqitdrxsxax.supabase.co";
+
+    const supabaseKey =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcXp5em5mcGlxaXRkcnhzeGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxODQxNTgsImV4cCI6MjA5Mzc2MDE1OH0.IU0Q_EE3-6ozwhxJN5VVMWTDS00hYGbHm751yH2c47c";
+
+    const supabaseClient =
+      supabase.createClient(
+        supabaseUrl,
+        supabaseKey
+      );
+
+    // SIGNUP
+
+    async function signup(){
+
+      const email =
+        document.getElementById("email").value;
+
+      const password =
+        document.getElementById("password").value;
+
+      const { error } =
+        await supabaseClient.auth.signUp({
+          email,
+          password,
+        });
+
+      if(error){
+        alert(error.message);
+      } else {
+        alert("Signup Successful");
+      }
+    }
+
+    // LOGIN
+
+    async function login(){
+
+      const email =
+        document.getElementById("email").value;
+
+      const password =
+        document.getElementById("password").value;
+
+      const { error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+      if(error){
+        alert(error.message);
+      } else {
+
+        alert("Login Successful");
+
+        document.getElementById(
+          "authScreen"
+        ).style.display = "none";
+      }
+    }
+
+    // LOGOUT
+
+    async function logout(){
+
+      await supabaseClient.auth.signOut();
+
+      location.reload();
+    }
+
+    // CHECK SESSION
+
+    supabaseClient.auth.getSession()
+    .then(({ data }) => {
+
+      if(data.session){
+
+        document.getElementById(
+          "authScreen"
+        ).style.display = "none";
+      }
+    });
+
+    // NUMBER GRID
+
+    const numbersDiv =
+      document.getElementById("numbers");
+
+    const selectedDiv =
+      document.getElementById("selected");
 
     for(let i=0;i<100;i++){
 
-      const num = i.toString().padStart(2,"0");
+      const num =
+        i.toString().padStart(2,"0");
 
-      const btn = document.createElement("button");
+      const btn =
+        document.createElement("button");
 
       btn.innerText = num;
 
@@ -218,22 +420,28 @@
         "bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
 
       btn.onclick = () => {
+
         selectedDiv.innerText = num;
       };
 
       numbersDiv.appendChild(btn);
     }
 
-    // Reward
+    // REWARD CALCULATION
 
-    const coinsInput = document.getElementById("coins");
-    const winText = document.getElementById("win");
+    const coinsInput =
+      document.getElementById("coins");
+
+    const winText =
+      document.getElementById("win");
 
     coinsInput.addEventListener("input", () => {
-      winText.innerText = coinsInput.value * 90;
+
+      winText.innerText =
+        coinsInput.value * 90;
     });
 
-    // Countdown
+    // COUNTDOWN TIMER
 
     function updateTimer(){
 
@@ -246,16 +454,25 @@
       target.setSeconds(0);
 
       if(now > target){
-        target.setDate(target.getDate()+1);
+        target.setDate(
+          target.getDate()+1
+        );
       }
 
       const diff = target - now;
 
-      const hrs = Math.floor(diff / 1000 / 60 / 60);
-      const mins = Math.floor(diff / 1000 / 60) % 60;
-      const secs = Math.floor(diff / 1000) % 60;
+      const hrs =
+        Math.floor(diff / 1000 / 60 / 60);
 
-      document.getElementById("timer").innerText =
+      const mins =
+        Math.floor(diff / 1000 / 60) % 60;
+
+      const secs =
+        Math.floor(diff / 1000) % 60;
+
+      document.getElementById(
+        "timer"
+      ).innerText =
         `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
     }
 
