@@ -314,7 +314,48 @@ PLACE BET
 window.openReports = function(){
   window.location.href = "reports.html";
 }
-    
+    // --- Fetch latest balance from balance_ledger and update view ---
+async function loadLatestBalance() {
+  // Get current session & userId
+  const {
+    data: { session },
+    error: sessionError
+  } = await supabase.auth.getSession();
+
+  if (sessionError || !session) {
+    console.log("User not logged in");
+    window.location.href = "index.html";
+    return;
+  }
+
+  const userId = session.user.id;
+
+  // Fetch latest balance for this user from balance_ledger
+  const { data: latestBalance, error } = await supabase
+    .from('balance_ledger')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.log("Error fetching latest balance:", error.message);
+    return;
+  }
+
+  // Update Balance card and coins input
+  const balance = latestBalance ? latestBalance.balance : 0;
+
+  const balanceElement = document.getElementById('balanceText');
+  const coinsInput = document.getElementById('coins');
+
+  if(balanceElement) balanceElement.innerText = balance + " Coins";
+  if(coinsInput) coinsInput.value = balance;
+}
+
+// Call this after page load or after login check
+await loadLatestBalance();
     // LOAD RECENT RESULTS & TODAY'S WINNER
 async function loadRecentResults(){
     const { data: results, error } = await supabase
