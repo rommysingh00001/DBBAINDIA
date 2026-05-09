@@ -90,7 +90,7 @@
                   </span>
 
                   <span class="text-green-400 text-3xl font-black">
-                    ${user.balance}
+                    ${user.balance || 0}
                   </span>
                 </p>
 
@@ -100,7 +100,7 @@
 
             <div>
 
-              <!-- CREDIT BALANCE -->
+              <!-- CREDIT -->
 
               <input
               id="credit-${user.id}"
@@ -114,7 +114,7 @@
               CREDIT BALANCE
               </button>
 
-              <!-- DEBIT BALANCE -->
+              <!-- DEBIT -->
 
               <input
               id="debit-${user.id}"
@@ -171,27 +171,41 @@
       // GET USER
 
       const {
-        data: currentUser
+        data: currentUser,
+        error
       } = await supabase
         .from("users")
         .select("*")
         .eq("id", userId)
         .single();
 
+      if(error){
+
+        alert(error.message);
+        return;
+      }
+
       const currentBalance =
-  parseInt(currentUser.balance) || 0;
+        Number(currentUser.balance) || 0;
 
       const newBalance =
         currentBalance + amount;
 
       // UPDATE BALANCE
 
-      await supabase
-        .from("users")
-        .update({
-          balance: newBalance
-        })
-        .eq("id", userId);
+      const { error: updateError } =
+        await supabase
+          .from("users")
+          .update({
+            balance: newBalance
+          })
+          .eq("id", userId);
+
+      if(updateError){
+
+        alert(updateError.message);
+        return;
+      }
 
       // SAVE DEPOSIT HISTORY
 
@@ -207,7 +221,7 @@
 
       alert("Balance Credited Successfully");
 
-      loadUsers();
+      await loadUsers();
     }
 
     // DEBIT BALANCE
@@ -231,15 +245,22 @@
       // GET USER
 
       const {
-        data: currentUser
+        data: currentUser,
+        error
       } = await supabase
         .from("users")
         .select("*")
         .eq("id", userId)
         .single();
 
+      if(error){
+
+        alert(error.message);
+        return;
+      }
+
       const currentBalance =
-  parseInt(currentUser.balance) || 0;
+        Number(currentUser.balance) || 0;
 
       // CHECK BALANCE
 
@@ -254,12 +275,19 @@
 
       // UPDATE BALANCE
 
-      await supabase
-        .from("users")
-        .update({
-          balance: newBalance
-        })
-        .eq("id", userId);
+      const { error: updateError } =
+        await supabase
+          .from("users")
+          .update({
+            balance: newBalance
+          })
+          .eq("id", userId);
+
+      if(updateError){
+
+        alert(updateError.message);
+        return;
+      }
 
       // SAVE WITHDRAW HISTORY
 
@@ -275,7 +303,7 @@
 
       alert("Balance Debited Successfully");
 
-      loadUsers();
+      await loadUsers();
     }
 
     // VIEW USER RECORD
