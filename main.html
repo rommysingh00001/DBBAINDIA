@@ -1,3 +1,6 @@
+# main.html
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,18 +18,18 @@
 
   <!-- HEADER -->
 
-  <header class="border-b border-gray-800 bg-black">
+  <header class="sticky top-0 z-50 border-b border-gray-800 bg-black/90 backdrop-blur">
 
     <div class="max-w-7xl mx-auto flex justify-between items-center px-5 py-4">
 
       <div>
 
-        <h1 class="text-4xl font-black">
+        <h1 class="text-4xl font-black leading-none">
           <span class="text-yellow-400">DBBA</span>
           <span class="text-green-400">INDIA</span>
         </h1>
 
-        <p class="text-gray-400 text-sm">
+        <p class="text-gray-400 text-sm mt-1">
           Predict • Play • Win
         </p>
 
@@ -34,13 +37,13 @@
 
       <div class="flex items-center gap-4">
 
-        <div class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700">
+        <div class="bg-gray-900 border border-gray-700 px-5 py-3 rounded-2xl">
 
           <p class="text-gray-400 text-sm">
             Balance
           </p>
 
-          <h2 class="text-2xl font-bold text-yellow-400">
+          <h2 class="text-yellow-400 text-2xl font-black">
             12,500 Coins
           </h2>
 
@@ -48,7 +51,7 @@
 
         <button
         onclick="logout()"
-        class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
+        class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-black">
         Logout
         </button>
 
@@ -58,9 +61,45 @@
 
   </header>
 
+  <!-- HERO -->
+
+  <section class="max-w-7xl mx-auto px-5 pt-8 pb-5">
+
+    <div class="bg-gradient-to-r from-yellow-500 to-green-500 rounded-3xl p-8 text-black relative overflow-hidden">
+
+      <div class="relative z-10">
+
+        <h2 class="text-5xl font-black mb-3">
+          WIN 90X REWARD
+        </h2>
+
+        <p class="text-xl font-bold mb-6">
+          Pick any number between 00 - 99 and win huge virtual rewards daily.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+
+          <div class="bg-black text-white px-5 py-3 rounded-2xl font-black">
+            Daily Draw : 09:15 AM
+          </div>
+
+          <div class="bg-white px-5 py-3 rounded-2xl font-black">
+            100% Virtual Coins
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="absolute -right-10 -bottom-10 w-56 h-56 bg-white/10 rounded-full"></div>
+
+    </div>
+
+  </section>
+
   <!-- TOP CARDS -->
 
-  <section class="max-w-7xl mx-auto px-5 py-8">
+  <section class="max-w-7xl mx-auto px-5 py-5">
 
     <div class="grid md:grid-cols-3 gap-5">
 
@@ -92,7 +131,7 @@
       <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
         <p class="text-gray-400 mb-3">
-          Reward
+          Reward Multiplier
         </p>
 
         <h2 class="text-5xl font-black text-green-400">
@@ -105,21 +144,29 @@
 
   </section>
 
-  <!-- MAIN -->
+  <!-- MAIN SECTION -->
 
-  <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
+  <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_360px] gap-6 py-5">
 
-    <!-- NUMBERS -->
+    <!-- NUMBER BOARD -->
 
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
       <div class="flex justify-between items-center mb-6">
 
-        <h2 class="text-3xl font-black">
-          Choose Your Number
-        </h2>
+        <div>
 
-        <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">
+          <h2 class="text-3xl font-black">
+            Choose Your Number
+          </h2>
+
+          <p class="text-gray-400 mt-1">
+            Select any lucky number from 00 to 99
+          </p>
+
+        </div>
+
+        <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400 font-bold">
           Virtual Game
         </div>
 
@@ -132,7 +179,7 @@
 
     <!-- BET SLIP -->
 
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 h-fit">
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 h-fit sticky top-28">
 
       <h2 class="text-3xl font-black text-yellow-400 mb-6">
         Bet Slip
@@ -176,16 +223,174 @@
         90000
         </h2>
 
-        <p class="text-green-400 mt-2">
+        <p class="text-green-400 mt-2 font-bold">
           90x Reward
         </p>
 
       </div>
 
       <button
-      class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
+      class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl transition">
       PLACE BET
       </button>
+
+    </div>
+
+  </section>
+
+  <!-- HOW TO PLAY -->
+
+  <section class="max-w-7xl mx-auto px-5 py-5">
+
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
+
+      <h2 class="text-4xl font-black text-yellow-400 mb-8">
+        How To Play
+      </h2>
+
+      <div class="grid md:grid-cols-4 gap-5">
+
+        <div class="bg-black border border-gray-800 rounded-2xl p-5">
+
+          <div class="text-5xl font-black text-green-400 mb-4">
+            1
+          </div>
+
+          <h3 class="text-xl font-black mb-2">
+            Choose Number
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+            Pick any number from 00 to 99 from the prediction board.
+          </p>
+
+        </div>
+
+        <div class="bg-black border border-gray-800 rounded-2xl p-5">
+
+          <div class="text-5xl font-black text-green-400 mb-4">
+            2
+          </div>
+
+          <h3 class="text-xl font-black mb-2">
+            Add Coins
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+            Enter virtual coins amount you want to place on your number.
+          </p>
+
+        </div>
+
+        <div class="bg-black border border-gray-800 rounded-2xl p-5">
+
+          <div class="text-5xl font-black text-green-400 mb-4">
+            3
+          </div>
+
+          <h3 class="text-xl font-black mb-2">
+            Wait For Draw
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+            Daily draw result is announced every morning at 09:15 AM.
+          </p>
+
+        </div>
+
+        <div class="bg-black border border-gray-800 rounded-2xl p-5">
+
+          <div class="text-5xl font-black text-green-400 mb-4">
+            4
+          </div>
+
+          <h3 class="text-xl font-black mb-2">
+            Win Reward
+          </h3>
+
+          <p class="text-gray-400 leading-7">
+            If your selected number matches the result, you win 90x reward.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- RECENT RESULTS -->
+
+  <section class="max-w-7xl mx-auto px-5 py-5 pb-16">
+
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
+
+      <div class="flex justify-between items-center mb-8">
+
+        <h2 class="text-4xl font-black text-yellow-400">
+          Recent Results
+        </h2>
+
+        <div class="bg-green-500/10 text-green-400 border border-green-500/20 px-4 py-2 rounded-xl font-bold">
+          Last 10 Draws
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
+
+        <div class="bg-black border border-yellow-400 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Today</p>
+          <h2 class="text-4xl font-black text-yellow-400">47</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Yesterday</p>
+          <h2 class="text-4xl font-black text-green-400">12</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">88</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">03</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">29</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">51</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">64</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">90</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">25</h2>
+        </div>
+
+        <div class="bg-black border border-gray-700 rounded-2xl p-5 text-center">
+          <p class="text-gray-500 text-sm mb-2">Draw</p>
+          <h2 class="text-4xl font-black text-green-400">71</h2>
+        </div>
+
+      </div>
 
     </div>
 
@@ -197,24 +402,20 @@
       supabase
     } from "./supabase.js";
 
-    // CHECK LOGIN
-
     const {
       data: { session }
     } = await supabase.auth.getSession();
 
     if(!session){
 
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
-
-    // LOGOUT
 
     window.logout = async function(){
 
       await supabase.auth.signOut();
 
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
 
     // NUMBER GRID
@@ -273,6 +474,7 @@
       target.setSeconds(0);
 
       if(now > target){
+
         target.setDate(
           target.getDate()+1
         );
@@ -297,9 +499,5 @@
 
     updateTimer();
 
-    setInterval(updateTimer,1000);
-
-  </script>
-
-</body>
-</html>
+    setInterval(updateTi
+```
