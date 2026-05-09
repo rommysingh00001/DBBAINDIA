@@ -53,26 +53,7 @@
         document.getElementById(
           "adminPassword"
         ).value;
-async function announceResult(){
-    const value = document.getElementById("resultInput").value;
-    if(!value){
-        alert("Enter winning number");
-        return;
-    }
 
-    // INSERT into results table
-    const { data, error } = await supabase
-        .from("results")
-        .insert([{ winning_number: value }]);
-
-    if(error){
-        alert("Error: " + error.message);
-        return;
-    }
-
-    alert("Result announced: " + value);
-    document.getElementById("resultInput").value = "";
-}
       // ONLY YOUR ADMIN EMAIL
 
       if(
