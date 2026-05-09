@@ -509,27 +509,7 @@
       location.reload();
     }
 
-    // SESSION CHECK
-
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
-
-    if(session){
-
-      const loginDone =
-        localStorage.getItem(
-          "manualLogin"
-        );
-
-      if(loginDone === "true"){
-
-        document.getElementById(
-          "authScreen"
-        ).style.display = "none";
-      }
-    }
-
+    
     // NUMBER GRID
 
     const numbersDiv =
