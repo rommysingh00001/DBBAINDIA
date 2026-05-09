@@ -31,7 +31,7 @@
         data
       } = await supabase
         .from("users")
-        .select("*");
+        .select("*") .order("created_at", { ascending: false });
 
       const usersList =
         document.getElementById(
