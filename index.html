@@ -457,12 +457,11 @@
           }
         ]);
 
-      alert("Account Created");
+      await supabase.auth.signOut();
 
-      document.getElementById(
-        "authScreen"
-      ).style.display = "none";
-    }
+alert("Account Created Successfully");
+
+showLogin();
 
     // LOGIN
 
