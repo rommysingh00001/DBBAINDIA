@@ -431,11 +431,25 @@ if(userData){
     const winText =
       document.getElementById("win");
 
-    coinsInput.addEventListener("input", () => {
+    function updatePotentialWin(){
 
-      winText.innerText =
-        coinsInput.value * 90;
-    });
+  const coins =
+    parseInt(coinsInput.value) || 0;
+
+  winText.innerText =
+    coins * 90;
+}
+
+// LIVE UPDATE
+
+coinsInput.addEventListener(
+  "input",
+  updatePotentialWin
+);
+
+// DEFAULT LOAD
+
+updatePotentialWin();
 
     // TIMER
 
