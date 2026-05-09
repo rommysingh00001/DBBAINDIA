@@ -370,9 +370,9 @@ const {
   .single();
 
 if(userData){
-
-  // HEADER BALANCE
-
+  // HEADER BALANCE -> override with ledger
+  await loadLatestBalance();
+}
   document.getElementById(
     "balanceText"
   ).innerText =
