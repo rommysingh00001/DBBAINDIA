@@ -179,7 +179,7 @@
         .single();
 
       const currentBalance =
-        currentUser.balance || 0;
+  parseInt(currentUser.balance) || 0;
 
       const newBalance =
         currentBalance + amount;
@@ -239,7 +239,7 @@
         .single();
 
       const currentBalance =
-        currentUser.balance || 0;
+  parseInt(currentUser.balance) || 0;
 
       // CHECK BALANCE
 
