@@ -10,58 +10,15 @@
 
 <h1 class="text-5xl font-black text-yellow-400 mb-6">ADMIN PANEL</h1>
 
-<!-- Top Buttons -->
-<div class="flex gap-4 mb-6">
-  <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Result</button>
-  <button onclick="showReports()" class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold">Past Bets Report</button>
-  <button onclick="showUsers()" class="bg-blue-500 hover:bg-blue-400 px-5 py-3 rounded-2xl font-bold">Manage Users</button>
-</div>
-
 <!-- ANNOUNCE RESULT SECTION -->
-<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Result</h2>
-  <input type="text" id="resultInput" placeholder="Today's Winner" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
+  <input type="text" id="resultInput" placeholder="Enter Today's Winner" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
   <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
 </div>
 
-<!-- PAST BETS REPORT -->
-<div id="reportsSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-green-400 mb-4">Past Bets Report</h2>
-  
-  <label class="mb-2 block text-gray-400 font-bold">Select Date:</label>
-  <input type="date" id="reportDate" class="bg-black border border-gray-700 rounded-2xl p-3 mb-4" onchange="loadReports()"/>
-
-  <h3 class="text-2xl font-bold text-yellow-400 mb-2">Number-wise Total Coins</h3>
-  <div class="overflow-x-auto mb-6">
-    <table class="min-w-full divide-y divide-gray-700">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 text-left text-gray-400">Number</th>
-          <th class="px-4 py-2 text-left text-gray-400">Total Coins</th>
-        </tr>
-      </thead>
-      <tbody id="numberReport" class="divide-y divide-gray-700"></tbody>
-    </table>
-  </div>
-
-  <h3 class="text-2xl font-bold text-yellow-400 mb-2">User-wise Bets</h3>
-  <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-700">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 text-left text-gray-400">User</th>
-          <th class="px-4 py-2 text-left text-gray-400">Number</th>
-          <th class="px-4 py-2 text-left text-gray-400">Coins</th>
-          <th class="px-4 py-2 text-left text-gray-400">Date & Time</th>
-        </tr>
-      </thead>
-      <tbody id="userBetsReport" class="divide-y divide-gray-700"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- MANAGE USERS -->
-<div id="usersSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+<!-- MANAGE USERS SECTION -->
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
   <h2 class="text-3xl font-black text-blue-400 mb-4">Manage Users</h2>
 
   <div class="overflow-x-auto">
@@ -86,45 +43,6 @@ import { supabase } from "./supabase.js";
 
 let allUsers = [];
 
-// SHOW/HIDE SECTIONS
-function showAnnounce(){
-  document.getElementById("announceSection").classList.remove("hidden");
-  document.getElementById("reportsSection").classList.add("hidden");
-  document.getElementById("usersSection").classList.add("hidden");
-}
-function showReports(){
-  document.getElementById("reportsSection").classList.remove("hidden");
-  document.getElementById("announceSection").classList.add("hidden");
-  document.getElementById("usersSection").classList.add("hidden");
-}
-function showUsers(){
-  document.getElementById("usersSection").classList.remove("hidden");
-  document.getElementById("announceSection").classList.add("hidden");
-  document.getElementById("reportsSection").classList.add("hidden");
-  loadUsers();
-}
-
-// ANNOUNCE RESULT
-async function announceResult(){
-    const value = document.getElementById("resultInput").value;
-    if(!value){
-        alert("Enter Today's Winner");
-        return;
-    }
-
-    const { data, error } = await supabase
-        .from("results")
-        .insert([{ winning_number: value, created_at: new Date().toISOString() }]);
-
-    if(error){
-        alert("Error: "+error.message);
-        return;
-    }
-
-    alert("Result announced: "+value);
-    document.getElementById("resultInput").value = "";
-}
-
 // LOAD USERS
 async function loadUsers(){
   const { data: users } = await supabase.from("users").select("*");
@@ -143,7 +61,7 @@ function renderUsers(users){
       <td class="px-4 py-2">${user.full_name}</td>
       <td class="px-4 py-2">${user.email}</td>
       <td class="px-4 py-2">${user.phone}</td>
-      <td class="px-4 py-2">${user.balance||0}</td>
+      <td class="px-4 py-2" id="balance-${user.id}">${user.balance||0}</td>
       <td class="px-4 py-2 space-x-2">
         <input type="number" id="credit-${user.id}" placeholder="Credit" class="bg-black border border-green-500 rounded-2xl p-2 w-20"/>
         <button onclick="creditBalance('${user.id}')" class="bg-green-500 px-3 py-1 rounded-xl font-bold">Credit</button>
@@ -161,55 +79,35 @@ async function creditBalance(userId){
   if(!amount || amount <=0){ alert("Enter valid amount"); return; }
   const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
   const newBalance = (Number(user.balance)||0) + amount;
-  await supabase.from("users").update({ balance: newBalance }).eq("id",userId);
+  await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
   await supabase.from("deposits").insert([{ user_id:userId, amount, status:"credited by admin", created_at:new Date().toISOString() }]);
-  loadUsers();
+  document.getElementById(`balance-${userId}`).innerText = newBalance;
 }
 
 // DEBIT BALANCE
 async function debitBalance(userId){
   const amount = parseInt(document.getElementById(`debit-${userId}`).value);
-  if(!amount || amount<=0){ alert("Enter valid amount"); return; }
+  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
   const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
   if(amount > (Number(user.balance)||0)){ alert("Insufficient balance"); return; }
   const newBalance = (Number(user.balance)||0) - amount;
-  await supabase.from("users").update({ balance: newBalance }).eq("id",userId);
+  await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
   await supabase.from("withdraws").insert([{ user_id:userId, amount, status:"debited by admin", created_at:new Date().toISOString() }]);
-  loadUsers();
+  document.getElementById(`balance-${userId}`).innerText = newBalance;
 }
 
-// LOAD REPORTS
-async function loadReports(){
-  const date = document.getElementById("reportDate").value;
-  if(!date) return;
-
-  const { data: bets } = await supabase.from("bets").select("*").gte("created_at", date+"T00:00:00").lte("created_at", date+"T23:59:59");
-  const numberTotals = {};
-  bets.forEach(bet => { numberTotals[bet.selected_number] = (numberTotals[bet.selected_number]||0)+bet.coins; });
-
-  const numberReport = document.getElementById("numberReport");
-  numberReport.innerHTML = "";
-  Object.keys(numberTotals).forEach(num=>{
-    const row = document.createElement("tr");
-    row.innerHTML = `<td class="px-4 py-2">${num}</td><td class="px-4 py-2">${numberTotals[num]}</td>`;
-    numberReport.appendChild(row);
-  });
-
-  const userBetsReport = document.getElementById("userBetsReport");
-  userBetsReport.innerHTML = "";
-  bets.forEach(bet=>{
-    const dateTime = new Date(bet.created_at).toLocaleString();
-    userBetsReport.innerHTML += `<tr>
-      <td class="px-4 py-2">${bet.user_id}</td>
-      <td class="px-4 py-2">${bet.selected_number}</td>
-      <td class="px-4 py-2">${bet.coins}</td>
-      <td class="px-4 py-2">${dateTime}</td>
-    </tr>`;
-  });
+// ANNOUNCE RESULT
+async function announceResult(){
+  const value = document.getElementById("resultInput").value;
+  if(!value){ alert("Enter Today's Winner"); return; }
+  const { data, error } = await supabase.from("results").insert([{ winning_number:value, created_at:new Date().toISOString() }]);
+  if(error){ alert("Error: "+error.message); return; }
+  alert("Result announced: "+value);
+  document.getElementById("resultInput").value = "";
 }
 
 // INIT
-window.onload = ()=>{ showAnnounce(); };
+window.onload=()=>{ loadUsers(); };
 </script>
 
 </body>
