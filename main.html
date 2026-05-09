@@ -34,7 +34,7 @@
 
       <div class="flex items-center gap-4">
 
-        <div class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700">
+        <div onclick="openHistory()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
 
           <p class="text-gray-400 text-sm">
             Balance
@@ -492,6 +492,55 @@ updatePotentialWin();
     setInterval(updateTimer,1000);
 
   </script>
+<!-- HISTORY POPUP -->
 
+<div id="historyPopup"
+class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-5">
+
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl w-full max-w-3xl p-6 max-h-[90vh] overflow-auto">
+
+    <div class="flex justify-between items-center mb-6">
+
+      <h2 class="text-4xl font-black text-yellow-400">
+        My History
+      </h2>
+
+      <button
+      onclick="closeHistory()"
+      class="bg-red-500 px-4 py-2 rounded-xl font-bold">
+      X
+      </button>
+
+    </div>
+
+    <!-- TRANSACTIONS -->
+
+    <div class="mb-10">
+
+      <h3 class="text-3xl font-black mb-5">
+        My Transactions
+      </h3>
+
+      <div id="transactionsList"
+      class="space-y-3"></div>
+
+    </div>
+
+    <!-- BETS -->
+
+    <div>
+
+      <h3 class="text-3xl font-black mb-5">
+        My Bets
+      </h3>
+
+      <div id="betsList"
+      class="space-y-3"></div>
+
+    </div>
+
+  </div>
+
+</div>
 </body>
 </html>
