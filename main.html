@@ -575,18 +575,22 @@ async function(){
 
     transactionsBox.innerHTML += `
 
-      <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
+  <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 flex justify-between items-center">
 
-        <p class="text-red-400 text-xl font-black">
-          Withdraw -${w.amount}
-        </p>
+    <div>
 
-        <p class="text-gray-400">
-          ${w.status}
-        </p>
+      <p class="text-gray-400 text-sm">
+        Withdraw
+      </p>
 
-      </div>
-    `;
+      <h2 class="text-4xl font-black text-red-400">
+        -${w.amount}
+      </h2>
+
+    </div>
+
+  </div>
+`;
   });
 
   // BETS HTML
