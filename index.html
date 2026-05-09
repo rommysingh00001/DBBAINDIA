@@ -16,94 +16,96 @@
   <!-- AUTH SCREEN -->
 
   <div id="authScreen"
-    class="fixed inset-0 bg-black z-50 flex items-center justify-center p-5 overflow-auto">
+  class="fixed inset-0 bg-black z-50 flex items-center justify-center p-5 overflow-auto">
 
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
 
-      <h2 class="text-4xl font-black text-center mb-2">
-        <span class="text-yellow-400">DBBA</span>
-        <span class="text-green-400">INDIA</span>
-      </h2>
+      <!-- LOGIN PAGE -->
 
-      <p class="text-center text-gray-400 mb-6">
-        Create Account or Login
-      </p>
+      <div id="loginPage">
 
-      <!-- SIGNUP -->
+        <h2 class="text-4xl font-black text-center mb-2">
+          <span class="text-yellow-400">DBBA</span>
+          <span class="text-green-400">INDIA</span>
+        </h2>
 
-      <div id="signupBox">
-
-        <input
-          id="fullName"
-          type="text"
-          placeholder="Full Name"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+        <p class="text-center text-gray-400 mb-6">
+          Login To Continue
+        </p>
 
         <input
-          id="phone"
-          type="text"
-          placeholder="Phone Number"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+        id="loginInput"
+        type="text"
+        placeholder="Email or Phone Number"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
 
         <input
-          id="email"
-          type="email"
-          placeholder="Email Address"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
-
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
+        id="loginPassword"
+        type="password"
+        placeholder="Password"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
 
         <button
-          onclick="signup()"
-          class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
-          CREATE ACCOUNT
+        onclick="login()"
+        class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4">
+        LOGIN
         </button>
 
-        <p class="text-center text-gray-400">
-          Already have account?
-          <span
-            onclick="showLogin()"
-            class="text-yellow-400 cursor-pointer">
-            Login
-          </span>
-        </p>
+        <button
+        onclick="openSignup()"
+        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">
+        CREATE ACCOUNT
+        </button>
 
       </div>
 
-      <!-- LOGIN -->
+      <!-- SIGNUP PAGE -->
 
-      <div id="loginBox" class="hidden">
+      <div id="signupPage" class="hidden">
+
+        <h2 class="text-4xl font-black text-center mb-2">
+          Create Account
+        </h2>
+
+        <p class="text-center text-gray-400 mb-6">
+          Join DBBA INDIA
+        </p>
 
         <input
-          id="loginInput"
-          type="text"
-          placeholder="Email or Phone Number"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+        id="fullName"
+        type="text"
+        placeholder="Full Name"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
 
         <input
-          id="loginPassword"
-          type="password"
-          placeholder="Password"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
+        id="phone"
+        type="text"
+        placeholder="Phone Number"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+
+        <input
+        id="email"
+        type="email"
+        placeholder="Email Address"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+
+        <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
 
         <button
-          onclick="login()"
-          class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4">
-          LOGIN
+        onclick="signup()"
+        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
+        CREATE ACCOUNT
         </button>
 
-        <p class="text-center text-gray-400">
-          Create new account?
-          <span
-            onclick="showSignup()"
-            class="text-green-400 cursor-pointer">
-            Signup
-          </span>
-        </p>
+        <button
+        onclick="closeSignup()"
+        class="w-full bg-gray-700 hover:bg-gray-600 text-white font-black py-4 rounded-2xl">
+        BACK TO LOGIN
+        </button>
 
       </div>
 
@@ -145,9 +147,9 @@
         </div>
 
         <button
-          onclick="logout()"
-          class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
-          Logout
+        onclick="logout()"
+        class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
+        Logout
         </button>
 
       </div>
@@ -181,8 +183,8 @@
         </p>
 
         <h2 id="timer"
-          class="text-5xl font-black text-green-400">
-          00:00:00
+        class="text-5xl font-black text-green-400">
+        00:00:00
         </h2>
 
       </div>
@@ -207,7 +209,7 @@
 
   <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
 
-    <!-- NUMBER GRID -->
+    <!-- NUMBERS -->
 
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
@@ -224,7 +226,7 @@
       </div>
 
       <div id="numbers"
-        class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
+      class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
 
     </div>
 
@@ -243,8 +245,8 @@
         </p>
 
         <div id="selected"
-          class="bg-black border border-gray-700 rounded-2xl p-5 text-center text-6xl font-black text-green-400">
-          00
+        class="bg-black border border-gray-700 rounded-2xl p-5 text-center text-6xl font-black text-green-400">
+        00
         </div>
 
       </div>
@@ -256,10 +258,10 @@
         </p>
 
         <input
-          id="coins"
-          type="number"
-          value="1000"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
+        id="coins"
+        type="number"
+        value="1000"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
 
       </div>
 
@@ -270,8 +272,8 @@
         </p>
 
         <h2 id="win"
-          class="text-5xl font-black text-yellow-400">
-          90000
+        class="text-5xl font-black text-yellow-400">
+        90000
         </h2>
 
         <p class="text-green-400 mt-2">
@@ -281,85 +283,13 @@
       </div>
 
       <button
-        class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
-        PLACE BET
+      class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
+      PLACE BET
       </button>
 
     </div>
 
   </section>
-
-  <!-- RESULTS -->
-
-  <section class="max-w-7xl mx-auto px-5 pb-10">
-
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-
-      <h2 class="text-3xl font-black mb-6">
-        Recent Results
-      </h2>
-
-      <div class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
-
-        <div class="bg-black rounded-2xl p-5 text-center">12</div>
-        <div class="bg-black rounded-2xl p-5 text-center">48</div>
-        <div class="bg-black rounded-2xl p-5 text-center">03</div>
-        <div class="bg-black rounded-2xl p-5 text-center">77</div>
-        <div class="bg-black rounded-2xl p-5 text-center">21</div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- HOW TO PLAY -->
-
-  <section class="max-w-7xl mx-auto px-5 pb-20">
-
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
-
-      <h2 class="text-4xl font-black text-center text-yellow-400 mb-10">
-        How To Play
-      </h2>
-
-      <div class="grid md:grid-cols-4 gap-5">
-
-        <div class="bg-black rounded-2xl p-6 text-center">
-          <div class="text-5xl mb-4">1️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">
-            Choose Number
-          </h3>
-        </div>
-
-        <div class="bg-black rounded-2xl p-6 text-center">
-          <div class="text-5xl mb-4">2️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">
-            Enter Coins
-          </h3>
-        </div>
-
-        <div class="bg-black rounded-2xl p-6 text-center">
-          <div class="text-5xl mb-4">3️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">
-            Wait For Draw
-          </h3>
-        </div>
-
-        <div class="bg-black rounded-2xl p-6 text-center">
-          <div class="text-5xl mb-4">4️⃣</div>
-          <h3 class="text-2xl font-bold mb-3">
-            Win Rewards
-          </h3>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- SCRIPT -->
 
   <script type="module">
 
@@ -381,27 +311,29 @@
         supabaseKey
       );
 
-    // TOGGLE
+    // OPEN SIGNUP
 
-    window.showLogin = function(){
+    window.openSignup = function(){
 
       document.getElementById(
-        "signupBox"
+        "loginPage"
       ).classList.add("hidden");
 
       document.getElementById(
-        "loginBox"
+        "signupPage"
       ).classList.remove("hidden");
     }
 
-    window.showSignup = function(){
+    // CLOSE SIGNUP
+
+    window.closeSignup = function(){
 
       document.getElementById(
-        "loginBox"
+        "signupPage"
       ).classList.add("hidden");
 
       document.getElementById(
-        "signupBox"
+        "loginPage"
       ).classList.remove("hidden");
     }
 
@@ -459,9 +391,10 @@
 
       await supabase.auth.signOut();
 
-alert("Account Created Successfully");
+      alert("Account Created Successfully");
 
-showLogin();
+      closeSignup();
+    }
 
     // LOGIN
 
@@ -511,8 +444,6 @@ showLogin();
 
       } else {
 
-        alert("Login Successful");
-
         document.getElementById(
           "authScreen"
         ).style.display = "none";
@@ -528,7 +459,7 @@ showLogin();
       location.reload();
     }
 
-    // SESSION
+    // SESSION CHECK
 
     const {
       data: { session }
