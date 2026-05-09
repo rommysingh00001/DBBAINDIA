@@ -10,16 +10,16 @@
 
 <h1 class="text-5xl font-black text-yellow-400 mb-6">ADMIN PANEL</h1>
 
-<!-- TOP SECTIONS: Users & Today's Winner -->
+<!-- Top Buttons -->
 <div class="flex gap-4 mb-6">
   <button onclick="showUsers()" class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold">Manage Users</button>
-  <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today’s Winner</button>
+  <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today's Winner</button>
 </div>
 
-<!-- MANAGE USERS -->
-  
+<!-- USERS SECTION -->
 <div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-green-400 mb-4">Manage Users’ Balance</h2>
+  <h2 class="text-3xl font-black text-blue-400 mb-4">Manage Users</h2>
+
   <div class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-700">
       <thead>
@@ -37,11 +37,11 @@
   </div>
 </div>
 
-<!-- ANNOUNCE TODAY'S WINNER -->
+<!-- ANNOUNCE WINNER SECTION -->
 <div id="announceSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today’s Winner</h2>
-  <input type="text" id="winnerInput" placeholder="Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceWinner()">Announce</button>
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
+  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
 </div>
 
 <script type="module">
@@ -49,13 +49,12 @@ import { supabase } from "./supabase.js";
 
 let allUsers = [];
 
-// SHOW/HIDE SECTIONS
+// SHOW SECTIONS
 function showUsers(){
   document.getElementById("usersSection").classList.remove("hidden");
   document.getElementById("announceSection").classList.add("hidden");
   loadUsers();
 }
-
 function showAnnounce(){
   document.getElementById("announceSection").classList.remove("hidden");
   document.getElementById("usersSection").classList.add("hidden");
@@ -63,16 +62,17 @@ function showAnnounce(){
 
 // LOAD USERS
 async function loadUsers(){
-  const { data: users } = await supabase.from("users").select("*");
+  const { data: users, error } = await supabase.from("users").select("*");
+  if(error){ alert(error.message); return; }
   allUsers = users;
   renderUsers(users);
 }
 
-// RENDER USERS
+// RENDER USERS TABLE
 function renderUsers(users){
   const usersList = document.getElementById("usersList");
   usersList.innerHTML = "";
-  users.forEach((user, index)=>{
+  users.forEach((user,index)=>{
     const row = document.createElement("tr");
     row.innerHTML = `
       <td class="px-4 py-2">${index+1}</td>
@@ -92,67 +92,41 @@ function renderUsers(users){
 }
 
 // CREDIT BALANCE
-async function creditBalance(userId){
+window.creditBalance = async function(userId){
   const amount = parseInt(document.getElementById(`credit-${userId}`).value);
   if(!amount || amount <=0){ alert("Enter valid amount"); return; }
-
-  // Fetch user
-  const { data: user } = await supabase.from("users").select("*").eq("id", userId).single();
+  const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
   const newBalance = (Number(user.balance)||0) + amount;
-
-  // Update balance
-  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
-
-  // Record in deposits
-  await supabase.from("deposits").insert([{ 
-    user_id:userId, 
-    amount, 
-    status:"credited by admin", 
-    created_at:new Date().toISOString() 
-  }]);
-
-  loadUsers(); // refresh user table
+  await supabase.from("users").update({ balance: newBalance }).eq("id",userId);
+  await supabase.from("deposits").insert([{ user_id:userId, amount, status:"credited by admin", created_at:new Date().toISOString() }]);
+  loadUsers();
 }
 
 // DEBIT BALANCE
-async function debitBalance(userId){
+window.debitBalance = async function(userId){
   const amount = parseInt(document.getElementById(`debit-${userId}`).value);
-  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
-
-  const { data: user } = await supabase.from("users").select("*").eq("id", userId).single();
+  if(!amount || amount<=0){ alert("Enter valid amount"); return; }
+  const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
   if(amount > (Number(user.balance)||0)){ alert("Insufficient balance"); return; }
-
   const newBalance = (Number(user.balance)||0) - amount;
-
-  // Update balance
-  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
-
-  // Record in withdraws
-  await supabase.from("withdraws").insert([{ 
-    user_id:userId, 
-    amount, 
-    status:"debited by admin", 
-    created_at:new Date().toISOString() 
-  }]);
-
-  loadUsers(); // refresh user table
+  await supabase.from("users").update({ balance: newBalance }).eq("id",userId);
+  await supabase.from("withdraws").insert([{ user_id:userId, amount, status:"debited by admin", created_at:new Date().toISOString() }]);
+  loadUsers();
 }
 
 // ANNOUNCE TODAY'S WINNER
-async function announceWinner(){
-  const value = document.getElementById("winnerInput").value;
-  if(!value){ alert("Enter winning number"); return; }
+window.announceResult = async function(){
+  const value = document.getElementById("resultInput").value;
+  if(!value){ alert("Enter Winning Number"); return; }
 
-  const { data, error } = await supabase.from("results").insert([{ winning_number: value }]);
-  if(error){ alert("Failed: "+error.message); return; }
+  const { data, error } = await supabase.from("results").insert([{ winning_number: value, created_at: new Date().toISOString() }]);
+  if(error){ alert("Error: "+error.message); return; }
 
-  alert("Today's winner announced: "+value);
-  document.getElementById("winnerInput").value = "";
+  alert("Result announced: "+value);
+  document.getElementById("resultInput").value = "";
 }
 
-window.onload = () => {
-  showUsers(); // show users section by default
-};
+window.onload = ()=>{ showUsers(); };
 </script>
 
 </body>
