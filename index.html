@@ -509,7 +509,31 @@
       location.reload();
     }
 
-    
+    // SESSION CHECK
+
+    // ALWAYS SHOW LOGIN PAGE FIRST
+
+document.getElementById(
+  "authScreen"
+).style.display = "flex";
+
+// CHECK ACTIVE SESSION
+
+const {
+  data: { session }
+} = await supabase.auth.getSession();
+
+// IF USER MANUALLY LOGGED IN
+
+if(
+  session &&
+  localStorage.getItem("manualLogin") === "true"
+){
+
+  document.getElementById(
+    "authScreen"
+  ).style.display = "none";
+}
     // NUMBER GRID
 
     const numbersDiv =
