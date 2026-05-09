@@ -107,19 +107,16 @@ function showUsers(){
 // ANNOUNCE RESULT
 async function announceResult() {
     const value = document.getElementById("resultInput").value;
-    if(!value){ 
-        alert("Please enter today's winner"); 
-        return; 
-    }
+    if(!value){ alert("Enter today's winner"); return; }
 
-    // INSERT INTO Supabase results table
     const { data, error } = await supabase
         .from("results")
-        .insert([{ winning_number: value }]);
+        .insert([{ winning_number: value }]); // column name must match table
 
-    if(error){ 
-        alert("Failed to announce result: " + error.message); 
-        return; 
+    if(error){
+        alert("Failed: " + error.message);
+        console.log(error);
+        return;
     }
 
     alert("Result announced: " + value);
