@@ -247,12 +247,16 @@
 
     <!-- BET SLIP -->
 
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 mt-20 lg:mt-32">
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 mt-32 lg:mt-40">
 
       <h2 class="text-3xl font-black text-yellow-400 mb-6">
         Bet Slip
       </h2>
-
+<!-- TODAY WINNER -->
+<div class="bg-black border border-yellow-400 rounded-2xl p-4 mb-6 text-center">
+  <p class="text-gray-400 mb-1">Today’s Winner</p>
+  <h2 id="todayWinner" class="text-3xl font-black text-yellow-400">--</h2>
+</div>
       <div class="mb-5">
 
         <p class="text-gray-400 mb-2">
@@ -388,7 +392,25 @@ if(userData){
 
       window.location.href = "index.html";
     }
+// LOAD TODAY WINNER
+async function loadTodayWinner() {
+  const { data: resultData } = await supabase
+    .from("announced_results") // table jahan admin announce karega
+    .select("*")
+    .order("id", { ascending: false })
+    .limit(1)
+    .single();
+  
+  if(resultData && resultData.number !== undefined){
+    document.getElementById("todayWinner").innerText = resultData.number;
+  }
+}
 
+// INIT
+window.onload = async () => {
+  loadTodayWinner(); // show today’s winner
+  updatePotentialWin();
+};
     // NUMBER GRID
 
     const numbersDiv =
