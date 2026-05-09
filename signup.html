@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Signup - DBBA INDIA</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
+
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
+
+    <h2 class="text-4xl font-black text-center mb-2">
+      Create Account
+    </h2>
+
+    <p class="text-center text-gray-400 mb-6">
+      Join DBBA INDIA
+    </p>
+
+    <input
+    id="fullName"
+    type="text"
+    placeholder="Full Name"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+
+    <input
+    id="phone"
+    type="text"
+    placeholder="Phone Number"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+
+    <input
+    id="email"
+    type="email"
+    placeholder="Email Address"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+
+    <input
+    id="password"
+    type="password"
+    placeholder="Password"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
+
+    <button
+    onclick="signup()"
+    class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
+    CREATE ACCOUNT
+    </button>
+
+    <a href="login.html"
+    class="block text-center text-yellow-400 font-bold">
+    Already Have Account?
+    </a>
+
+  </div>
+
+  <script type="module">
+
+    import {
+      supabase
+    } from "./supabase.js";
+
+    window.signup = async function(){
+
+      const fullName =
+        document.getElementById("fullName").value.trim();
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value.trim();
+
+      if(
+        !fullName ||
+        !phone ||
+        !email ||
+        !password
+      ){
+        alert("Please fill all fields");
+        return;
+      }
+
+      const { data, error } =
+        await supabase.auth.signUp({
+          email,
+          password
+        });
+
+      if(error){
+
+        alert(error.message);
+        return;
+      }
+
+      const userId =
+        data.user.id;
+
+      await supabase
+        .from("users")
+        .insert([
+          {
+            id: userId,
+            full_name: fullName,
+            phone: phone,
+            email: email
+          }
+        ]);
+
+      await supabase.auth.signOut();
+
+      alert(
+        "Account Created Successfully!"
+      );
+
+      window.location.href = "login.html";
+    }
+
+  </script>
+
+</body>
+</html>
