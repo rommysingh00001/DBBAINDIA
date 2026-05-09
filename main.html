@@ -322,8 +322,6 @@ async function loadRecentResults(){
         .order("created_at", { ascending: false })
         .limit(10);
 
-    if(error) return console.error(error);
-
     const resultsGrid = document.getElementById("resultsGrid");
     resultsGrid.innerHTML = "";
 
@@ -337,11 +335,11 @@ async function loadRecentResults(){
         resultsGrid.appendChild(div);
     });
 
-    // Display the latest result as Today's Winner
     if(results.length > 0){
         document.getElementById("todayWinner").innerText = results[0].winning_number;
     }
 }
+window.onload = loadRecentResults;
 
 // Call it on page load
 window.onload = loadRecentResults;
