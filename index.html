@@ -293,7 +293,9 @@
 
   <script type="module">
 
-    
+    import {
+      supabase
+    } from "./supabase.js";
 
     // OPEN SIGNUP
 
@@ -326,16 +328,18 @@
     window.signup = async function(){
 
       const fullName =
-        document.getElementById("fullName").value;
+        document.getElementById("fullName").value.trim();
 
       const phone =
-        document.getElementById("phone").value;
+        document.getElementById("phone").value.trim();
 
       const email =
-        document.getElementById("email").value;
+        document.getElementById("email").value.trim();
 
       const password =
-        document.getElementById("password").value;
+        document.getElementById("password").value.trim();
+
+      // VALIDATION
 
       if(
         !fullName ||
@@ -346,6 +350,8 @@
         alert("Please fill all fields");
         return;
       }
+
+      // CREATE ACCOUNT
 
       const { data, error } =
         await supabase.auth.signUp({
@@ -359,21 +365,30 @@
         return;
       }
 
+      // SAVE USER DATA
+
       const userId =
         data.user.id;
 
-      await supabase
-        .from("users")
-        .insert([
-          {
-            id: userId,
-            full_name: fullName,
-            phone: phone,
-            email: email
-          }
-        ]);
+      const { error: dbError } =
+        await supabase
+          .from("users")
+          .insert([
+            {
+              id: userId,
+              full_name: fullName,
+              phone: phone,
+              email: email
+            }
+          ]);
 
-      // FORCE LOGOUT AFTER SIGNUP
+      if(dbError){
+
+        alert(dbError.message);
+        return;
+      }
+
+      // FORCE LOGOUT
 
       await supabase.auth.signOut();
 
@@ -381,9 +396,39 @@
         "manualLogin"
       );
 
-      alert("Account Created Successfully");
+      // SUCCESS MESSAGE
+
+      alert(
+        "Account Created Successfully! Please Login."
+      );
+
+      // OPEN LOGIN PAGE
 
       closeSignup();
+
+      // AUTO FILL LOGIN
+
+      document.getElementById(
+        "loginInput"
+      ).value = email;
+
+      // CLEAR SIGNUP FORM
+
+      document.getElementById(
+        "fullName"
+      ).value = "";
+
+      document.getElementById(
+        "phone"
+      ).value = "";
+
+      document.getElementById(
+        "email"
+      ).value = "";
+
+      document.getElementById(
+        "password"
+      ).value = "";
     }
 
     // LOGIN
@@ -393,12 +438,18 @@
       const input =
         document.getElementById(
           "loginInput"
-        ).value;
+        ).value.trim();
 
       const password =
         document.getElementById(
           "loginPassword"
-        ).value;
+        ).value.trim();
+
+      if(!input || !password){
+
+        alert("Please fill all fields");
+        return;
+      }
 
       let email = input;
 
