@@ -361,23 +361,16 @@ window.onload = async function() {
 const userId =
   session.user.id;
 
-const { data: ledgerData, error: ledgerError } = await supabase
-  .from("balance_ledger")
+const {
+  data: userData
+} = await supabase
+  .from("users")
   .select("*")
-  .eq("user_id", userId)
-  .order("created_at", { ascending: false })
-  .limit(1)
+  .eq("id", userId)
   .single();
 
-let currentBalance = 0;
+if(userData){
 
-if(ledgerData){
-  currentBalance = ledgerData.balance;
-}
-
-document.getElementById("balanceText").innerText = currentBalance + " Coins";
-document.getElementById("coins").value = currentBalance;
-    
   // HEADER BALANCE
 
   document.getElementById(
