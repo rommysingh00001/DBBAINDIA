@@ -1,466 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-
   <title>Admin Dashboard</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-
 <body class="bg-[#050816] text-white p-8">
 
   <h1 class="text-5xl font-black text-yellow-400 mb-8">
     ADMIN PANEL
   </h1>
 
-  <div id="usersList"
-  class="grid gap-5"></div>
+  <!-- TOP BUTTONS -->
+  <div class="flex gap-4 mb-6">
+    <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-bold">
+      Announce Result
+    </button>
+
+    <button onclick="showUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-bold">
+      Users
+    </button>
+
+    <button onclick="showReports()" class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-bold">
+      Reports
+    </button>
+  </div>
+
+  <!-- ANNOUNCE RESULT SECTION -->
+  <div id="announceSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+    <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Result</h2>
+    <p class="text-gray-400 mb-4">Placeholder: Admin can announce draw results here.</p>
+    <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+    <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">
+      Announce
+    </button>
+  </div>
+
+  <!-- USERS SECTION -->
+  <div id="usersSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+    <h2 class="text-3xl font-black text-yellow-400 mb-4">Users List</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-700">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 text-left text-gray-400">Sr. No.</th>
+            <th class="px-4 py-2 text-left text-gray-400">Name</th>
+            <th class="px-4 py-2 text-left text-gray-400">Email</th>
+            <th class="px-4 py-2 text-left text-gray-400">Phone</th>
+            <th class="px-4 py-2 text-left text-gray-400">Balance</th>
+          </tr>
+        </thead>
+        <tbody id="usersList" class="divide-y divide-gray-700">
+          <!-- Users will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REPORTS SECTION -->
+  <div id="reportsSection" class="hidden bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+    <h2 class="text-3xl font-black text-yellow-400 mb-4">Reports</h2>
+    <p class="text-gray-400 mb-4">Placeholder: My Transactions and My Bets will be displayed here.</p>
+  </div>
 
   <script type="module">
+    import { supabase } from "./supabase.js";
 
-    import {
-      supabase
-    } from "./supabase.js";
+    // SHOW/HIDE SECTIONS
+    function showAnnounce(){
+      document.getElementById("announceSection").classList.remove("hidden");
+      document.getElementById("usersSection").classList.add("hidden");
+      document.getElementById("reportsSection").classList.add("hidden");
+    }
+
+    function showUsers(){
+      document.getElementById("announceSection").classList.add("hidden");
+      document.getElementById("usersSection").classList.remove("hidden");
+      document.getElementById("reportsSection").classList.add("hidden");
+      loadUsers();
+    }
+
+    function showReports(){
+      document.getElementById("announceSection").classList.add("hidden");
+      document.getElementById("usersSection").classList.add("hidden");
+      document.getElementById("reportsSection").classList.remove("hidden");
+    }
+
+    // ANNOUNCE RESULT FUNCTION (placeholder)
+    async function announceResult(){
+      const value = document.getElementById("resultInput").value;
+      if(!value) { alert("Enter winning number"); return; }
+      alert("Result announced: " + value);
+      document.getElementById("resultInput").value = "";
+    }
 
     // LOAD USERS
-
     async function loadUsers(){
-
-      const {
-        data
-      } = await supabase
-        .from("users")
-        .select("*") .order("created_at", { ascending: false });
-
-      const usersList =
-        document.getElementById(
-          "usersList"
-        );
-
+      const { data: users } = await supabase.from("users").select("*");
+      const usersList = document.getElementById("usersList");
       usersList.innerHTML = "";
-
-      data.forEach(user => {
-
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "bg-gray-900 border border-gray-800 rounded-3xl p-6";
-
-        div.innerHTML = `
-
-          <div class="grid lg:grid-cols-2 gap-8">
-
-            <div>
-
-              <h2 class="text-3xl font-black text-yellow-400 mb-4">
-                ${user.full_name}
-              </h2>
-
-              <div class="space-y-3 text-lg">
-
-                <p>
-                  <span class="text-gray-400">
-                    Email :
-                  </span>
-
-                  ${user.email}
-                </p>
-
-                <p>
-                  <span class="text-gray-400">
-                    Phone :
-                  </span>
-
-                  ${user.phone}
-                </p>
-
-                <p>
-                  <span class="text-gray-400">
-                    Password :
-                  </span>
-
-                  ${user.password}
-                </p>
-
-                <p>
-                  <span class="text-gray-400">
-                    Balance :
-                  </span>
-
-                  <span class="text-green-400 text-3xl font-black">
-                    ${Number(user.balance ?? 0)}
-                  </span>
-                </p>
-
-              </div>
-
-            </div>
-
-            <div>
-
-              <!-- CREDIT -->
-
-              <input
-              id="credit-${user.id}"
-              type="number"
-              placeholder="Credit Balance"
-              class="bg-black border border-green-500 rounded-2xl p-4 w-full mb-4 text-white"/>
-
-              <button
-              onclick="creditBalance('${user.id}')"
-              class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-6">
-              CREDIT BALANCE
-              </button>
-
-              <!-- DEBIT -->
-
-              <input
-              id="debit-${user.id}"
-              type="number"
-              placeholder="Debit Balance"
-              class="bg-black border border-red-500 rounded-2xl p-4 w-full mb-4 text-white"/>
-
-              <button
-              onclick="debitBalance('${user.id}')"
-              class="bg-red-500 hover:bg-red-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-6">
-              DEBIT BALANCE
-              </button>
-
-              <!-- VIEW RECORD -->
-
-              <button
-              onclick="viewUserData('${user.id}')"
-              class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-4 rounded-2xl w-full">
-              VIEW USER RECORD
-              </button>
-
-            </div>
-
-          </div>
-
-          <div id="userData-${user.id}"
-          class="hidden mt-8 bg-black rounded-2xl p-5 border border-gray-800">
-
-          </div>
+      users.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="px-4 py-2">${index+1}</td>
+          <td class="px-4 py-2">${user.full_name}</td>
+          <td class="px-4 py-2">${user.email}</td>
+          <td class="px-4 py-2">${user.phone}</td>
+          <td class="px-4 py-2">${user.balance || 0}</td>
         `;
-
-        usersList.appendChild(div);
+        usersList.appendChild(row);
       });
     }
-
-    // CREDIT BALANCE
-
-    window.creditBalance =
-    async function(userId){
-
-      const amount =
-        parseInt(
-          document.getElementById(
-            `credit-${userId}`
-          ).value
-        );
-
-      if(!amount || amount <= 0){
-
-        alert("Enter valid amount");
-        return;
-      }
-
-      // GET USER
-
-      const {
-        data: currentUser,
-        error
-      } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if(error){
-
-        alert(error.message);
-        return;
-      }
-
-      const currentBalance =
-        Number(currentUser.balance) || 0;
-
-      const newBalance =
-        currentBalance + amount;
-
-      // UPDATE BALANCE
-
-      const { data: updatedUser, error: updateError } =
-  await supabase
-    .from("users")
-    .update({
-      balance: Number(newBalance)
-    })
-    .eq("id", userId)
-    .select()
-    .maybeSingle();
-
-      if(updateError){
-
-        alert(updateError.message);
-        return;
-      }
-
-      // SAVE DEPOSIT HISTORY
-
-      await supabase
-        .from("deposits")
-        .insert([
-          {
-            user_id: userId,
-            amount: amount,
-            status: "credited by admin"
-          }
-        ]);
-
-      alert("Balance Credited Successfully");
-
-      await loadUsers();
-    }
-
-    // DEBIT BALANCE
-
-    window.debitBalance =
-    async function(userId){
-
-      const amount =
-        parseInt(
-          document.getElementById(
-            `debit-${userId}`
-          ).value
-        );
-
-      if(!amount || amount <= 0){
-
-        alert("Enter valid amount");
-        return;
-      }
-
-      // GET USER
-
-      const {
-        data: currentUser,
-        error
-      } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if(error){
-
-        alert(error.message);
-        return;
-      }
-
-      const currentBalance =
-        Number(currentUser.balance) || 0;
-
-      // CHECK BALANCE
-
-      if(amount > currentBalance){
-
-        alert("Insufficient Balance");
-        return;
-      }
-
-      const newBalance =
-        currentBalance - amount;
-
-      // UPDATE BALANCE
-
-      const { data: updatedUser, error: updateError } =
-  await supabase
-    .from("users")
-    .update({
-      balance: Number(newBalance)
-    })
-    .eq("id", userId)
-    .select()
-    .maybeSingle();
-
-      if(updateError){
-
-        alert(updateError.message);
-        return;
-      }
-
-      // SAVE WITHDRAW HISTORY
-
-      await supabase
-        .from("withdraws")
-        .insert([
-          {
-            user_id: userId,
-            amount: amount,
-            status: "debited by admin"
-          }
-        ]);
-
-      alert("Balance Debited Successfully");
-
-      await loadUsers();
-    }
-
-    // VIEW USER RECORD
-
-    window.viewUserData =
-    async function(userId){
-
-      const box =
-        document.getElementById(
-          `userData-${userId}`
-        );
-
-      box.classList.remove("hidden");
-
-      // BETS
-
-      const {
-        data: bets
-      } = await supabase
-        .from("bets")
-        .select("*")
-        .eq("user_id", userId);
-
-      // DEPOSITS
-
-      const {
-        data: deposits
-      } = await supabase
-        .from("deposits")
-        .select("*")
-        .eq("user_id", userId);
-
-      // WITHDRAWS
-
-      const {
-        data: withdraws
-      } = await supabase
-        .from("withdraws")
-        .select("*")
-        .eq("user_id", userId);
-
-      box.innerHTML = `
-
-        <h2 class="text-3xl font-black text-yellow-400 mb-6">
-          USER RECORD
-        </h2>
-
-        <!-- BETS -->
-
-        <div class="mb-8">
-
-          <h3 class="text-2xl font-black mb-4">
-            Bets
-          </h3>
-
-          ${
-            bets.length
-            ?
-            bets.map(bet => `
-              <div class="bg-gray-900 rounded-2xl p-4 mb-3">
-
-                <p>
-                  Number :
-                  ${bet.selected_number}
-                </p>
-
-                <p>
-                  Coins :
-                  ${bet.coins}
-                </p>
-
-                <p>
-                  Win :
-                  ${bet.potential_win}
-                </p>
-
-              </div>
-            `).join("")
-            :
-            `<p class="text-gray-400">No Bets Found</p>`
-          }
-
-        </div>
-
-        <!-- DEPOSITS -->
-
-        <div class="mb-8">
-
-          <h3 class="text-2xl font-black mb-4 text-green-400">
-            Deposits
-          </h3>
-
-          ${
-            deposits.length
-            ?
-            deposits.map(dep => `
-              <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-3">
-
-                <p>
-                  Amount :
-                  +${dep.amount}
-                </p>
-
-                <p>
-                  Status :
-                  ${dep.status}
-                </p>
-
-              </div>
-            `).join("")
-            :
-            `<p class="text-gray-400">No Deposits Found</p>`
-          }
-
-        </div>
-
-        <!-- WITHDRAWS -->
-
-        <div>
-
-          <h3 class="text-2xl font-black mb-4 text-red-400">
-            Withdraws
-          </h3>
-
-          ${
-            withdraws.length
-            ?
-            withdraws.map(w => `
-              <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-3">
-
-                <p>
-                  Amount :
-                  -${w.amount}
-                </p>
-
-                <p>
-                  Status :
-                  ${w.status}
-                </p>
-
-              </div>
-            `).join("")
-            :
-            `<p class="text-gray-400">No Withdraws Found</p>`
-          }
-
-        </div>
-      `;
-    }
-
-    // START
-
-    loadUsers();
 
   </script>
 
