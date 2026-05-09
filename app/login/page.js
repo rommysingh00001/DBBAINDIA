@@ -32,7 +32,7 @@ localStorage.setItem(
 JSON.stringify(data)
 );
 
-router.push("/dashboard");
+window.location.href = "/dashboard";
 
 }
 
