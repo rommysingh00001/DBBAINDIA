@@ -64,22 +64,18 @@
         return;
       }
 
-      const {
-        error
-      } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      // YOUR SECRET ADMIN PASSWORD
 
-      if(error){
+if(password !== "rommykadbbaindia"){
 
-        alert(error.message);
+  alert("Wrong Password");
+  return;
+}
 
-      } else {
+// LOGIN SUCCESS
 
-        window.location.href =
-          "dashboard.html";
-      }
+window.location.href =
+  "dashboard.html";
     }
 
   </script>
