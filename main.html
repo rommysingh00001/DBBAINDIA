@@ -34,33 +34,18 @@
 
       <div class="flex items-center gap-4">
 
-        <div onclick="openHistory()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
-
-  <p class="text-gray-400 text-sm">
-    Balance
-  </p>
-
-  <h2 id="balanceText"
-  class="text-2xl font-bold text-yellow-400">
-    0 Coins
-  </h2>
-
-  <p class="text-green-400 text-xs mt-1">
-    View History
-  </p>
-
+        
+<div onclick="openReports()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
+  <p class="text-gray-400 text-sm">Balance</p>
+  <h2 id="balanceText" class="text-2xl font-bold text-yellow-400">0 Coins</h2>
+  <p class="text-green-400 text-xs mt-1">View Reports</p>
 </div>
-        <button
-        onclick="logout()"
-        class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
-        Logout
-        </button>
 
-      </div>
-
-    </div>
-
-  </header>
+<script>
+  function openReports(){
+    window.location.href = "reports.html";
+  }
+</script>
 
   <!-- HERO -->
 
