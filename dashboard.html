@@ -20,7 +20,7 @@
 <!-- ANNOUNCE RESULT SECTION -->
 <div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
   <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Result</h2>
-  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <input type="text" id="resultInput" placeholder="Today's Winner" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
   <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
 </div>
 
@@ -108,7 +108,7 @@ function showUsers(){
 async function announceResult(){
     const value = document.getElementById("resultInput").value;
     if(!value){
-        alert("Enter winning number");
+        alert("Today's Winner");
         return;
     }
 
@@ -216,7 +216,7 @@ window.onload = ()=>{ showAnnounce(); };
 async function announceResult() {
     const value = document.getElementById("resultInput").value;
     if(!value){ 
-        alert("Enter winning number"); 
+        alert("Today's Winner"); 
         return; 
     }
 
