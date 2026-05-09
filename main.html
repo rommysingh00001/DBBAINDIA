@@ -420,8 +420,10 @@ async function loadTodayWinner() {
 
 // INIT
 window.onload = async () => {
-  loadTodayWinner(); // show today’s winner
-  updatePotentialWin();
+    await loadRecentResults();    // load last 10 results
+    await loadTodayWinner();      // today's winner
+    await loadLatestBalance();    // latest balance from balance_ledger
+    updatePotentialWin();         // calculate potential win
 };
     // NUMBER GRID
 
