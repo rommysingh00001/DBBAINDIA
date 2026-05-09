@@ -125,3 +125,124 @@
 
   </div>
 `;
+window.viewUserData =
+async function(userId){
+
+  const box =
+    document.getElementById(
+      `userData-${userId}`
+    );
+
+  box.classList.remove("hidden");
+
+  // BETS
+
+  const {
+    data: bets
+  } = await supabase
+    .from("bets")
+    .select("*")
+    .eq("user_id", userId);
+
+  // DEPOSITS
+
+  const {
+    data: deposits
+  } = await supabase
+    .from("deposits")
+    .select("*")
+    .eq("user_id", userId);
+
+  // WITHDRAWS
+
+  const {
+    data: withdraws
+  } = await supabase
+    .from("withdraws")
+    .select("*")
+    .eq("user_id", userId);
+
+  box.innerHTML = `
+
+    <h2 class="text-3xl font-black text-yellow-400 mb-6">
+      USER RECORD
+    </h2>
+
+    <div class="mb-8">
+
+      <h3 class="text-2xl font-black mb-4">
+        Bets
+      </h3>
+
+      ${
+        bets.map(bet => `
+          <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+
+            Number :
+            ${bet.selected_number}
+
+            <br>
+
+            Coins :
+            ${bet.coins}
+
+            <br>
+
+            Win :
+            ${bet.potential_win}
+
+          </div>
+        `).join("")
+      }
+
+    </div>
+
+    <div class="mb-8">
+
+      <h3 class="text-2xl font-black mb-4">
+        Deposits
+      </h3>
+
+      ${
+        deposits.map(dep => `
+          <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+
+            Amount :
+            ${dep.amount}
+
+            <br>
+
+            Status :
+            ${dep.status}
+
+          </div>
+        `).join("")
+      }
+
+    </div>
+
+    <div>
+
+      <h3 class="text-2xl font-black mb-4">
+        Withdraws
+      </h3>
+
+      ${
+        withdraws.map(w => `
+          <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+
+            Amount :
+            ${w.amount}
+
+            <br>
+
+            Status :
+            ${w.status}
+
+          </div>
+        `).join("")
+      }
+
+    </div>
+  `;
+}
