@@ -79,7 +79,7 @@ function showReports(){
   document.getElementById("reportsSection").classList.remove("hidden");
 }
 
-// ANNOUNCE RESULT FUNCTION (placeholder)
+// ANNOUNCE RESULT FUNCTION
 async function announceResult(){
   const value = document.getElementById("resultInput").value;
   if(!value){ alert("Enter winning number"); return; }
@@ -105,12 +105,13 @@ function renderUsers(users){
       <td class="px-4 py-2">${user.full_name}</td>
       <td class="px-4 py-2">${user.email}</td>
       <td class="px-4 py-2">${user.phone}</td>
-      <td class="px-4 py-2">${user.balance || 0}</td>
+      <td class="px-4 py-2" id="balance-${user.id}">${user.balance || 0}</td>
       <td class="px-4 py-2 space-x-2">
         <input type="number" id="credit-${user.id}" placeholder="Credit" class="bg-black border border-green-500 rounded-2xl p-2 w-20"/>
         <button onclick="creditBalance('${user.id}')" class="bg-green-500 px-3 py-1 rounded-xl font-bold">Credit</button>
         <input type="number" id="debit-${user.id}" placeholder="Debit" class="bg-black border border-red-500 rounded-2xl p-2 w-20"/>
         <button onclick="debitBalance('${user.id}')" class="bg-red-500 px-3 py-1 rounded-xl font-bold">Debit</button>
+        <button onclick="updateUserBalance('${user.id}')" class="bg-yellow-400 px-3 py-1 rounded-xl font-bold">Update</button>
       </td>
     `;
     usersList.appendChild(row);
@@ -123,65 +124,7 @@ function filterUsers(){
   const filtered = allUsers.filter(u => u.full_name.toLowerCase().includes(search));
   renderUsers(filtered);
 }
-// CREDIT BALANCE
-async function creditBalance(userId){
-  const amount = parseInt(document.getElementById(`credit-${userId}`).value);
-  if(!amount || amount <= 0){ alert("Enter valid amount"); return; }
 
-  const { data: currentUser } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  const newBalance = (Number(currentUser.balance)||0) + amount;
-
-  await supabase
-    .from("users")
-    .update({ balance: newBalance })
-    .eq("id", userId);
-
-  // Record deposit
-  await supabase
-    .from("deposits")
-    .insert([{ user_id:userId, amount:amount, status:"credited by admin"}]);
-
-  // Update balance in table immediately
-  document.querySelector(`#usersList tr td:nth-child(5)`).innerText = newBalance;
-
-  loadUsers(); // reload table to keep everything consistent
-}
-
-// DEBIT BALANCE
-async function debitBalance(userId){
-  const amount = parseInt(document.getElementById(`debit-${userId}`).value);
-  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
-
-  const { data: currentUser } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  if(amount > (Number(currentUser.balance)||0)){ alert("Insufficient balance"); return; }
-
-  const newBalance = (Number(currentUser.balance)||0) - amount;
-
-  await supabase
-    .from("users")
-    .update({ balance: newBalance })
-    .eq("id", userId);
-
-  // Record withdraw
-  await supabase
-    .from("withdraws")
-    .insert([{ user_id:userId, amount:amount, status:"debited by admin"}]);
-
-  // Update balance in table immediately
-  document.querySelector(`#usersList tr td:nth-child(5)`).innerText = newBalance;
-
-  loadUsers(); // reload table to keep everything consistent
-}
 // CREDIT BALANCE
 async function creditBalance(userId){
   const amount = parseInt(document.getElementById(`credit-${userId}`).value);
@@ -190,7 +133,8 @@ async function creditBalance(userId){
   const newBalance = (Number(currentUser.balance)||0) + amount;
   await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
   await supabase.from("deposits").insert([{ user_id:userId, amount:amount, status:"credited by admin"}]);
-  loadUsers();
+  document.getElementById(`balance-${userId}`).innerText = newBalance;
+  document.getElementById(`credit-${userId}`).value = '';
 }
 
 // DEBIT BALANCE
@@ -202,12 +146,19 @@ async function debitBalance(userId){
   const newBalance = (Number(currentUser.balance)||0) - amount;
   await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
   await supabase.from("withdraws").insert([{ user_id:userId, amount:amount, status:"debited by admin"}]);
-  loadUsers();
+  document.getElementById(`balance-${userId}`).innerText = newBalance;
+  document.getElementById(`debit-${userId}`).value = '';
 }
 
-// INIT
-window.onload = () => { showUsers(); };
+// UPDATE BUTTON (if you want combined effect)
+async function updateUserBalance(userId){
+  const credit = parseInt(document.getElementById(`credit-${userId}`).value) || 0;
+  const debit = parseInt(document.getElementById(`debit-${userId}`).value) || 0;
+  if(credit>0) await creditBalance(userId);
+  if(debit>0) await debitBalance(userId);
+}
 
+window.onload = () => { showUsers(); };
 </script>
 </body>
 </html>
