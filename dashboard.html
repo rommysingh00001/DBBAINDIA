@@ -58,7 +58,7 @@
                 ${user.full_name}
               </h2>
 
-              <div class="space-y-2 text-lg">
+              <div class="space-y-3 text-lg">
 
                 <p>
                   <span class="text-gray-400">
@@ -89,7 +89,7 @@
                     Balance :
                   </span>
 
-                  <span class="text-green-400">
+                  <span class="text-green-400 text-3xl font-black">
                     ${user.balance}
                   </span>
                 </p>
@@ -100,21 +100,39 @@
 
             <div>
 
+              <!-- CREDIT BALANCE -->
+
               <input
-              id="balance-${user.id}"
+              id="credit-${user.id}"
               type="number"
-              placeholder="Enter New Balance"
-              class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+              placeholder="Credit Balance"
+              class="bg-black border border-green-500 rounded-2xl p-4 w-full mb-4 text-white"/>
 
               <button
-              onclick="updateBalance('${user.id}')"
-              class="bg-yellow-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-4">
-              UPDATE BALANCE
+              onclick="creditBalance('${user.id}')"
+              class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-6">
+              CREDIT BALANCE
               </button>
+
+              <!-- DEBIT BALANCE -->
+
+              <input
+              id="debit-${user.id}"
+              type="number"
+              placeholder="Debit Balance"
+              class="bg-black border border-red-500 rounded-2xl p-4 w-full mb-4 text-white"/>
+
+              <button
+              onclick="debitBalance('${user.id}')"
+              class="bg-red-500 hover:bg-red-400 text-black font-black px-5 py-4 rounded-2xl w-full mb-6">
+              DEBIT BALANCE
+              </button>
+
+              <!-- VIEW RECORD -->
 
               <button
               onclick="viewUserData('${user.id}')"
-              class="bg-green-500 text-black font-black px-5 py-4 rounded-2xl w-full">
+              class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-4 rounded-2xl w-full">
               VIEW USER RECORD
               </button>
 
@@ -132,19 +150,25 @@
       });
     }
 
-    // UPDATE BALANCE
+    // CREDIT BALANCE
 
-    window.updateBalance =
+    window.creditBalance =
     async function(userId){
 
-      const value =
+      const amount =
         parseInt(
           document.getElementById(
-            `balance-${userId}`
+            `credit-${userId}`
           ).value
         );
 
-      // GET CURRENT BALANCE
+      if(!amount || amount <= 0){
+
+        alert("Enter valid amount");
+        return;
+      }
+
+      // GET USER
 
       const {
         data: currentUser
@@ -154,49 +178,102 @@
         .eq("id", userId)
         .single();
 
-      const oldBalance =
-        currentUser.balance;
+      const currentBalance =
+        currentUser.balance || 0;
+
+      const newBalance =
+        currentBalance + amount;
 
       // UPDATE BALANCE
 
       await supabase
         .from("users")
         .update({
-          balance: value
+          balance: newBalance
         })
         .eq("id", userId);
 
-      // CREDIT HISTORY
+      // SAVE DEPOSIT HISTORY
 
-      if(value > oldBalance){
+      await supabase
+        .from("deposits")
+        .insert([
+          {
+            user_id: userId,
+            amount: amount,
+            status: "credited by admin"
+          }
+        ]);
 
-        await supabase
-          .from("deposits")
-          .insert([
-            {
-              user_id: userId,
-              amount: value - oldBalance,
-              status: "credited by admin"
-            }
-          ]);
+      alert("Balance Credited Successfully");
+
+      loadUsers();
+    }
+
+    // DEBIT BALANCE
+
+    window.debitBalance =
+    async function(userId){
+
+      const amount =
+        parseInt(
+          document.getElementById(
+            `debit-${userId}`
+          ).value
+        );
+
+      if(!amount || amount <= 0){
+
+        alert("Enter valid amount");
+        return;
       }
 
-      // DEBIT HISTORY
+      // GET USER
 
-      if(value < oldBalance){
+      const {
+        data: currentUser
+      } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
-        await supabase
-          .from("withdraws")
-          .insert([
-            {
-              user_id: userId,
-              amount: oldBalance - value,
-              status: "debited by admin"
-            }
-          ]);
+      const currentBalance =
+        currentUser.balance || 0;
+
+      // CHECK BALANCE
+
+      if(amount > currentBalance){
+
+        alert("Insufficient Balance");
+        return;
       }
 
-      alert("Balance Updated");
+      const newBalance =
+        currentBalance - amount;
+
+      // UPDATE BALANCE
+
+      await supabase
+        .from("users")
+        .update({
+          balance: newBalance
+        })
+        .eq("id", userId);
+
+      // SAVE WITHDRAW HISTORY
+
+      await supabase
+        .from("withdraws")
+        .insert([
+          {
+            user_id: userId,
+            amount: amount,
+            status: "debited by admin"
+          }
+        ]);
+
+      alert("Balance Debited Successfully");
 
       loadUsers();
     }
@@ -246,6 +323,8 @@
           USER RECORD
         </h2>
 
+        <!-- BETS -->
+
         <div class="mb-8">
 
           <h3 class="text-2xl font-black mb-4">
@@ -253,72 +332,94 @@
           </h3>
 
           ${
+            bets.length
+            ?
             bets.map(bet => `
               <div class="bg-gray-900 rounded-2xl p-4 mb-3">
 
-                Number :
-                ${bet.selected_number}
+                <p>
+                  Number :
+                  ${bet.selected_number}
+                </p>
 
-                <br>
+                <p>
+                  Coins :
+                  ${bet.coins}
+                </p>
 
-                Coins :
-                ${bet.coins}
-
-                <br>
-
-                Win :
-                ${bet.potential_win}
+                <p>
+                  Win :
+                  ${bet.potential_win}
+                </p>
 
               </div>
             `).join("")
+            :
+            `<p class="text-gray-400">No Bets Found</p>`
           }
 
         </div>
 
+        <!-- DEPOSITS -->
+
         <div class="mb-8">
 
-          <h3 class="text-2xl font-black mb-4">
+          <h3 class="text-2xl font-black mb-4 text-green-400">
             Deposits
           </h3>
 
           ${
+            deposits.length
+            ?
             deposits.map(dep => `
-              <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+              <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-3">
 
-                Amount :
-                ${dep.amount}
+                <p>
+                  Amount :
+                  +${dep.amount}
+                </p>
 
-                <br>
-
-                Status :
-                ${dep.status}
+                <p>
+                  Status :
+                  ${dep.status}
+                </p>
 
               </div>
             `).join("")
+            :
+            `<p class="text-gray-400">No Deposits Found</p>`
           }
 
         </div>
 
+        <!-- WITHDRAWS -->
+
         <div>
 
-          <h3 class="text-2xl font-black mb-4">
+          <h3 class="text-2xl font-black mb-4 text-red-400">
             Withdraws
           </h3>
 
           ${
+            withdraws.length
+            ?
             withdraws.map(w => `
-              <div class="bg-gray-900 rounded-2xl p-4 mb-3">
+              <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-3">
 
-                Amount :
-                ${w.amount}
+                <p>
+                  Amount :
+                  -${w.amount}
+                </p>
 
-                <br>
-
-                Status :
-                ${w.status}
+                <p>
+                  Status :
+                  ${w.status}
+                </p>
 
               </div>
             `).join("")
+            :
+            `<p class="text-gray-400">No Withdraws Found</p>`
           }
 
         </div>
