@@ -106,11 +106,24 @@ function showUsers(){
 
 // ANNOUNCE RESULT
 async function announceResult(){
-  const number = document.getElementById("resultInput").value;
-  if(!number){ alert("Enter a number"); return; }
-  await supabase.from("recent_result").insert([{ number, created_at: new Date().toISOString() }]);
-  document.getElementById("announceMsg").innerText = `Result ${number} announced!`;
-  document.getElementById("resultInput").value = "";
+    const value = document.getElementById("resultInput").value;
+    if(!value){
+        alert("Enter winning number");
+        return;
+    }
+
+    // INSERT into results table
+    const { data, error } = await supabase
+        .from("results")
+        .insert([{ winning_number: value }]);
+
+    if(error){
+        alert("Error: " + error.message);
+        return;
+    }
+
+    alert("Result announced: " + value);
+    document.getElementById("resultInput").value = "";
 }
 
 // LOAD USERS
