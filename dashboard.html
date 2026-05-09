@@ -10,14 +10,15 @@
 
 <h1 class="text-5xl font-black text-yellow-400 mb-6">ADMIN PANEL</h1>
 
-<!-- Top Buttons -->
-<div class="flex gap-4 mb-6">
-  <button onclick="showUsers()" class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold">Manage Users</button>
-  <button onclick="showAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today's Winner</button>
+<!-- ANNOUNCE WINNER SECTION -->
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
+  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <button id="announceBtn" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl">Announce</button>
 </div>
 
 <!-- MANAGE USERS SECTION -->
-<div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6 hidden">
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
   <h2 class="text-3xl font-black text-blue-400 mb-4">Manage Users</h2>
   <div class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-700">
@@ -36,28 +37,10 @@
   </div>
 </div>
 
-<!-- ANNOUNCE WINNER SECTION -->
-<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6 hidden">
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
-  <input type="text" id="resultInput" placeholder="Enter Winning Number" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button id="announceBtn" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl">Announce</button>
-</div>
-
 <script type="module">
 import { supabase } from "./supabase.js";
 
 let allUsers = [];
-
-// SHOW SECTIONS
-function showUsers(){
-  document.getElementById("usersSection").classList.remove("hidden");
-  document.getElementById("announceSection").classList.add("hidden");
-  loadUsers();
-}
-function showAnnounce(){
-  document.getElementById("announceSection").classList.remove("hidden");
-  document.getElementById("usersSection").classList.add("hidden");
-}
 
 // LOAD USERS
 async function loadUsers(){
@@ -71,7 +54,7 @@ async function loadUsers(){
 function renderUsers(users){
   const usersList = document.getElementById("usersList");
   usersList.innerHTML = "";
-  users.forEach((user, index)=>{
+  users.forEach((user,index)=>{
     const row = document.createElement("tr");
     row.innerHTML = `
       <td class="px-4 py-2">${index+1}</td>
@@ -124,8 +107,8 @@ async function announceResult(){
 }
 
 // INIT
-window.onload=()=>{ 
-  showUsers(); 
+window.onload = ()=>{
+  loadUsers();
   document.getElementById("announceBtn").addEventListener("click", announceResult);
 };
 </script>
