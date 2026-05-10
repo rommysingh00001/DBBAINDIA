@@ -46,7 +46,16 @@
       Daily Reports
 
     </button>
+<!-- HEADER BUTTONS KE ANDAR YE BUTTON ADD KARO -->
 
+<button
+  onclick="logoutAdmin()"
+  class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-2xl font-black">
+
+  Logout
+
+</button>
+    
   </div>
 
 </div>
@@ -841,6 +850,17 @@ window.onload = async ()=>{
 }
 
 </script>
+<!-- SCRIPT KE LAST ME YE FUNCTION ADD KARO -->
 
+<script>
+
+window.logoutAdmin = async function(){
+
+  await supabase.auth.signOut();
+
+  window.location.href = "login.html";
+}
+
+</script>
 </body>
 </html>
