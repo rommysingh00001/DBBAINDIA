@@ -413,9 +413,13 @@ async function loadLatestBalance() {
 
   const latestBalance = data[0].balance;
 
-  // ONLY HEADER BALANCE UPDATE
+  // UPDATE HEADER BALANCE
   document.getElementById("balanceText").innerText =
     latestBalance + " Coins";
+
+  // ENTER COINS WILL USE SAME BALANCE
+  document.getElementById("coins").value =
+    latestBalance;
 }
 }
 // CALL THIS AFTER USER DATA LOAD
