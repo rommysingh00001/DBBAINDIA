@@ -496,7 +496,7 @@ window.creditBalance = async function(userId){
   .from("balance_ledger")
   .insert([{
     user_id:userId,
-    type:"credit",
+    change_type:"credit",
     amount:amount,
     balance_after:newBalance,
     created_at:new Date().toISOString()
@@ -551,7 +551,7 @@ window.debitBalance = async function(userId){
   .from("balance_ledger")
   .insert([{
     user_id:userId,
-    type:"debit",
+    change_type:"debit",
     amount:amount,
     balance_after:newBalance,
     created_at:new Date().toISOString()
