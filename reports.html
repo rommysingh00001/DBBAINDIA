@@ -458,7 +458,7 @@ window.showBets = async function(){
 
   bets.forEach(bet => {
 
-    let resultText = bet.coins + " Coins";
+    let resultText = `${bet.coins} Coins`;
     let resultColor = "text-yellow-400 font-black";
 
     let statusText = "Pending";
@@ -467,7 +467,7 @@ window.showBets = async function(){
     if(bet.status === "win"){
 
       resultText =
-        bet.potential_win + " Won";
+  `+${bet.potential_win}`;
 
       resultColor =
         "text-green-400 font-black";
@@ -482,7 +482,7 @@ window.showBets = async function(){
     if(bet.status === "lose"){
 
       resultText =
-        bet.coins + " Lost";
+  `-${bet.coins}`;
 
       resultColor =
         "text-red-400 font-black";
