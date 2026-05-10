@@ -156,23 +156,41 @@
       // DATE FILTER
       if(fromDate){
 
-        filteredBets =
-          filteredBets.filter(bet =>
-            new Date(bet.created_at) >= new Date(fromDate)
-          );
+  filteredBets =
+    filteredBets.filter(bet => {
 
-      }
+      const betDate =
+        new Date(bet.created_at)
+        .toLocaleDateString(
+          "en-CA",
+          {
+            timeZone:"Asia/Kolkata"
+          }
+        );
 
-      if(toDate){
+      return betDate >= fromDate;
 
-        const endDate = new Date(toDate);
-        endDate.setHours(23,59,59,999);
+    });
+}
 
-        filteredBets =
-          filteredBets.filter(bet =>
-            new Date(bet.created_at) <= endDate
-          );
+if(toDate){
 
+  filteredBets =
+    filteredBets.filter(bet => {
+
+      const betDate =
+        new Date(bet.created_at)
+        .toLocaleDateString(
+          "en-CA",
+          {
+            timeZone:"Asia/Kolkata"
+          }
+        );
+
+      return betDate <= toDate;
+
+    });
+}
       }
 
       // STATUS FILTER
