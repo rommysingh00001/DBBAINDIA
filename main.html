@@ -349,7 +349,7 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4 mb-10">
         selectedDiv.innerText;
 
       const coins =
-        parseInt(coinsInput.value) || 0;
+  Number(coinsInput.value.trim()) || 0;
 
       if(coins <= 0){
         alert("Enter valid coins");
@@ -374,14 +374,28 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4 mb-10">
       }
 
       const currentBalance =
-        Number(userData.balance || 0);
+  parseFloat(userData.balance) || 0;
 
       // CHECK BALANCE
-      if(coins > currentBalance){
-        alert("Insufficient Balance");
-        placeBtn.disabled = false;
-        return;
-      }
+      if(coins <= 0){
+
+  alert("Enter valid coins");
+
+  placeBtn.disabled = false;
+
+  return;
+}
+
+if(coins > currentBalance){
+
+  alert(
+    `Insufficient Balance\n\nAvailable : ${currentBalance} Coins`
+  );
+
+  placeBtn.disabled = false;
+
+  return;
+}
 
       // NEW BALANCE
       const newBalance =
