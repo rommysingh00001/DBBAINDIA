@@ -51,7 +51,7 @@
 
 </div>
 
-<!-- ANNOUNCE SECTION -->
+<!-- ANNOUNCE -->
 <div
 id="announceSection"
 class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
@@ -80,7 +80,7 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
 </div>
 
-<!-- USERS SECTION -->
+<!-- USERS -->
 <div
 id="usersSection"
 class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
@@ -88,6 +88,55 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
   <h2 class="text-3xl font-black text-green-400 mb-6">
     Manage Users
   </h2>
+
+  <!-- USER FILTERS -->
+  <div class="grid md:grid-cols-4 gap-4 mb-6">
+
+    <input
+      type="text"
+      id="userNameFilter"
+      placeholder="Search Name"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+    <input
+      type="text"
+      id="userEmailFilter"
+      placeholder="Search Email"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+    <input
+      type="text"
+      id="userPhoneFilter"
+      placeholder="Search Phone"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+    <input
+      type="number"
+      id="userBalanceFilter"
+      placeholder="Minimum Balance"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+  </div>
+
+  <div class="flex gap-4 mb-6">
+
+    <button
+      onclick="applyUserFilters()"
+      class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-3 rounded-2xl">
+
+      Apply User Filters
+
+    </button>
+
+    <button
+      onclick="clearUserFilters()"
+      class="bg-red-500 hover:bg-red-400 text-white font-black px-5 py-3 rounded-2xl">
+
+      Clear Filters
+
+    </button>
+
+  </div>
 
   <div class="overflow-x-auto">
 
@@ -118,7 +167,7 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
 </div>
 
-<!-- REPORT SECTION -->
+<!-- REPORTS -->
 <div
 id="reportsSection"
 class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
@@ -199,28 +248,22 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 
     <div class="bg-black border border-gray-800 rounded-3xl p-6">
       <p class="text-gray-400 mb-2">Total Bets</p>
-      <h2 id="totalBets" class="text-4xl font-black text-yellow-400">
-        0
-      </h2>
+      <h2 id="totalBets" class="text-4xl font-black text-yellow-400">0</h2>
     </div>
 
     <div class="bg-black border border-gray-800 rounded-3xl p-6">
       <p class="text-gray-400 mb-2">Total Coins</p>
-      <h2 id="totalCoins" class="text-4xl font-black text-green-400">
-        0
-      </h2>
+      <h2 id="totalCoins" class="text-4xl font-black text-green-400">0</h2>
     </div>
 
     <div class="bg-black border border-gray-800 rounded-3xl p-6">
       <p class="text-gray-400 mb-2">Winning Bets</p>
-      <h2 id="winningBets" class="text-4xl font-black text-blue-400">
-        0
-      </h2>
+      <h2 id="winningBets" class="text-4xl font-black text-blue-400">0</h2>
     </div>
 
   </div>
 
-  <!-- REPORT TABLE -->
+  <!-- TABLE -->
   <div class="overflow-x-auto">
 
     <table class="min-w-full divide-y divide-gray-700">
@@ -255,6 +298,7 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 import { supabase } from "./supabase.js";
 
 let allBetData = [];
+let allUsersData = [];
 
 // SCROLL
 window.scrollToUsers = () => {
@@ -281,6 +325,14 @@ async function loadUsers(){
     .select("*")
     .order("created_at",{ascending:false});
 
+  allUsersData = users;
+
+  renderUsers(users);
+}
+
+// RENDER USERS
+function renderUsers(users){
+
   const usersList =
     document.getElementById("usersList");
 
@@ -292,21 +344,10 @@ async function loadUsers(){
 
       <tr>
 
-        <td class="px-4 py-3">
-          ${index+1}
-        </td>
-
-        <td class="px-4 py-3">
-          ${user.full_name || "-"}
-        </td>
-
-        <td class="px-4 py-3">
-          ${user.email || "-"}
-        </td>
-
-        <td class="px-4 py-3">
-          ${user.phone || "-"}
-        </td>
+        <td class="px-4 py-3">${index+1}</td>
+        <td class="px-4 py-3">${user.full_name || "-"}</td>
+        <td class="px-4 py-3">${user.email || "-"}</td>
+        <td class="px-4 py-3">${user.phone || "-"}</td>
 
         <td
         class="px-4 py-3 text-yellow-400 font-black"
@@ -360,14 +401,70 @@ async function loadUsers(){
   });
 }
 
+// USER FILTERS
+window.applyUserFilters = function(){
+
+  const name =
+    document.getElementById("userNameFilter")
+    .value.toLowerCase();
+
+  const email =
+    document.getElementById("userEmailFilter")
+    .value.toLowerCase();
+
+  const phone =
+    document.getElementById("userPhoneFilter")
+    .value.toLowerCase();
+
+  const balance =
+    parseInt(
+      document.getElementById("userBalanceFilter").value
+    ) || 0;
+
+  const filtered =
+    allUsersData.filter(user=>{
+
+      const fullName =
+        (user.full_name || "").toLowerCase();
+
+      const userEmail =
+        (user.email || "").toLowerCase();
+
+      const userPhone =
+        (user.phone || "").toLowerCase();
+
+      const userBalance =
+        Number(user.balance) || 0;
+
+      return (
+
+        (!name || fullName.includes(name)) &&
+        (!email || userEmail.includes(email)) &&
+        (!phone || userPhone.includes(phone)) &&
+        (userBalance >= balance)
+
+      );
+    });
+
+  renderUsers(filtered);
+}
+
+window.clearUserFilters = function(){
+
+  document.getElementById("userNameFilter").value="";
+  document.getElementById("userEmailFilter").value="";
+  document.getElementById("userPhoneFilter").value="";
+  document.getElementById("userBalanceFilter").value="";
+
+  renderUsers(allUsersData);
+}
+
 // CREDIT
 window.creditBalance = async function(userId){
 
   const amount =
     parseInt(
-      document
-      .getElementById(`credit-${userId}`)
-      .value
+      document.getElementById(`credit-${userId}`).value
     );
 
   if(!amount || amount <= 0){
@@ -417,9 +514,7 @@ window.debitBalance = async function(userId){
 
   const amount =
     parseInt(
-      document
-      .getElementById(`debit-${userId}`)
-      .value
+      document.getElementById(`debit-${userId}`).value
     );
 
   if(!amount || amount <= 0){
@@ -473,10 +568,8 @@ window.debitBalance = async function(userId){
 window.announceResult = async function(){
 
   const value =
-    document
-    .getElementById("resultInput")
-    .value
-    .trim();
+    document.getElementById("resultInput")
+    .value.trim();
 
   if(!value){
     alert("Enter winning number");
@@ -664,36 +757,27 @@ function renderFilteredData(data){
   .innerText = totalWins;
 }
 
-// APPLY FILTERS
+// REPORT FILTERS
 window.applyFilters = function(){
 
   const user =
-    document
-    .getElementById("filterUser")
-    .value
-    .toLowerCase();
+    document.getElementById("filterUser")
+    .value.toLowerCase();
 
   const email =
-    document
-    .getElementById("filterEmail")
-    .value
-    .toLowerCase();
+    document.getElementById("filterEmail")
+    .value.toLowerCase();
 
   const number =
-    document
-    .getElementById("filterNumber")
-    .value
-    .toLowerCase();
+    document.getElementById("filterNumber")
+    .value.toLowerCase();
 
   const status =
-    document
-    .getElementById("filterStatus")
-    .value
-    .toLowerCase();
+    document.getElementById("filterStatus")
+    .value.toLowerCase();
 
   const date =
-    document
-    .getElementById("filterDate")
+    document.getElementById("filterDate")
     .value;
 
   let filtered =
@@ -735,7 +819,7 @@ window.applyFilters = function(){
   renderFilteredData(filtered);
 }
 
-// CLEAR FILTERS
+// CLEAR REPORT FILTERS
 window.clearFilters = function(){
 
   document.getElementById("filterUser").value="";
