@@ -281,8 +281,13 @@ class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-n
   </div>
 
   <div id="historyGrid"
-  class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
-  </div>
+class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
+</div>
+
+<div id="emptyHistory"
+class="text-center text-gray-500 mt-8 text-lg">
+  Select date & click filter
+</div>
 
 </div>
 
@@ -644,13 +649,17 @@ window.loadHistory = async function(){
 
   historyGrid.innerHTML = "";
 
+document.getElementById(
+  "emptyHistory"
+).style.display = "none";
+
   if(!data || data.length===0){
 
     historyGrid.innerHTML = `
-      <div class="text-red-400 font-bold">
-        No history found
-      </div>
-    `;
+  <div class="text-red-400 font-bold col-span-full text-center">
+    No history found
+  </div>
+`;
 
     return;
   }
