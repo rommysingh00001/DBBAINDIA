@@ -377,24 +377,31 @@ if(userData){
 
   
 }
-    // LOAD LATEST BALANCE FROM BALANCE LEDGER
-async function loadLatestBalance() {
+    // USER ID from session
+const userId = session.user.id;
 
-  const { data: latestBalance, error } = await supabase
+// Function to load latest ledger balance
+async function loadLedgerBalance() {
+  const { data: latest, error } = await supabase
     .from("balance_ledger")
-    .select("*")
+    .select("balance_after")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
 
   if(error){
-    console.log(error);
-    return;
+    console.log("Ledger fetch error:", error.message);
+    return 0;
   }
 
-  const balance =
-    latestBalance?.balance || 0;
+  const balance = latest?.balance_after || 0;
+  document.getElementById("balanceText").innerText = balance + " Coins";
+  return balance;
+}
+
+// Initial load
+let currentBalance = await loadLedgerBalance();
 
   // HEADER BALANCE UPDATE
   document.getElementById(
