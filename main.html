@@ -284,7 +284,10 @@ class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-n
 class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
 </div>
 
-
+<div id="emptyHistory"
+class="text-center text-gray-500 mt-8 text-lg">
+  Select date & click filter
+</div>
 
 </div>
 
@@ -640,16 +643,17 @@ window.loadHistory = async function(){
     .gte("created_at", fromDate)
     .lte("created_at", toDate + "T23:59:59")
     .order("created_at",{ascending:false});
-  const filteredData = data.slice(10);
 
   const historyGrid =
     document.getElementById("historyGrid");
 
   historyGrid.innerHTML = "";
 
+document.getElementById(
+  "emptyHistory"
+).style.display = "none";
 
-
-  if(!filteredData || filteredData.length===0){
+  if(!data || data.length===0){
 
     historyGrid.innerHTML = `
   <div class="text-red-400 font-bold col-span-full text-center">
@@ -660,7 +664,7 @@ window.loadHistory = async function(){
     return;
   }
 
-  filteredData.forEach(r => {
+  data.forEach(r => {
 
     const div =
       document.createElement("div");
