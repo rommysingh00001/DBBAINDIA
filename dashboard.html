@@ -1,169 +1,759 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <title>Admin Panel - DBBA INDIA</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
+
 <body class="bg-[#050816] text-white p-8">
 
-<h1 class="text-5xl font-black text-yellow-400 mb-6">ADMIN PANEL</h1>
+<h1 class="text-5xl font-black text-yellow-400 mb-6">
+ADMIN PANEL
+</h1>
 
-<!-- Top Buttons: Scroll to section -->
-<div class="flex gap-4 mb-6">
-  <button onclick="scrollToUsers()" class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold">Manage Users</button>
-  <button onclick="scrollToAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold">Announce Today's Winner</button>
+<!-- TOP BUTTONS -->
+<div class="flex gap-4 mb-6 flex-wrap">
+
+  <button
+  onclick="scrollToUsers()"
+  class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold text-black">
+  Manage Users
+  </button>
+
+  <button
+  onclick="scrollToAnnounce()"
+  class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold text-black">
+  Announce Today's Winner
+  </button>
+
+  <button
+  onclick="scrollToDailyReport()"
+  class="bg-blue-500 hover:bg-blue-400 px-5 py-3 rounded-2xl font-bold text-black">
+  Daily Report
+  </button>
+
 </div>
 
-<!-- ANNOUNCE WINNER SECTION -->
-<div id="announceSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">Announce Today's Winner</h2>
-  <input type="text" id="resultInput" placeholder="Enter Today's Winner" class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
-  <button class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl" onclick="announceResult()">Announce</button>
+<!-- ANNOUNCE WINNER -->
+<div
+id="announceSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+
+  <h2 class="text-3xl font-black text-yellow-400 mb-4">
+    Announce Today's Winner
+  </h2>
+
+  <input
+  type="text"
+  id="resultInput"
+  placeholder="Enter Today's Winner"
+  class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+
+  <button
+  class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl"
+  onclick="announceResult()">
+  Announce Result
+  </button>
+
 </div>
 
-<!-- MANAGE USERS SECTION -->
-<div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
-  <h2 class="text-3xl font-black text-blue-400 mb-4">Manage Users</h2>
+<!-- USERS -->
+<div
+id="usersSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+
+  <h2 class="text-3xl font-black text-blue-400 mb-4">
+    Manage Users
+  </h2>
 
   <div class="overflow-x-auto">
+
     <table class="min-w-full divide-y divide-gray-700">
+
       <thead>
+
         <tr>
-          <th class="px-4 py-2 text-left text-gray-400">Sr. No.</th>
-          <th class="px-4 py-2 text-left text-gray-400">Name</th>
-          <th class="px-4 py-2 text-left text-gray-400">Email</th>
-          <th class="px-4 py-2 text-left text-gray-400">Phone</th>
-          <th class="px-4 py-2 text-left text-gray-400">Balance</th>
-          <th class="px-4 py-2 text-left text-gray-400">Actions</th>
+
+          <th class="px-4 py-2 text-left text-gray-400">
+            Sr. No.
+          </th>
+
+          <th class="px-4 py-2 text-left text-gray-400">
+            Name
+          </th>
+
+          <th class="px-4 py-2 text-left text-gray-400">
+            Email
+          </th>
+
+          <th class="px-4 py-2 text-left text-gray-400">
+            Phone
+          </th>
+
+          <th class="px-4 py-2 text-left text-gray-400">
+            Balance
+          </th>
+
+          <th class="px-4 py-2 text-left text-gray-400">
+            Actions
+          </th>
+
         </tr>
+
       </thead>
-      <tbody id="usersList" class="divide-y divide-gray-700"></tbody>
+
+      <tbody
+      id="usersList"
+      class="divide-y divide-gray-700"></tbody>
+
     </table>
+
   </div>
+
+</div>
+
+<!-- DAILY REPORT -->
+<div
+id="dailyReportSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+
+  <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+
+    <h2 class="text-3xl font-black text-green-400">
+      Daily Betting Report
+    </h2>
+
+    <input
+    type="date"
+    id="reportDate"
+    class="bg-black border border-gray-700 rounded-2xl p-3"/>
+
+  </div>
+
+  <!-- NUMBER REPORT -->
+  <div class="mb-10">
+
+    <h3 class="text-2xl font-black text-yellow-400 mb-4">
+      Number Wise Total Bets
+    </h3>
+
+    <div class="overflow-x-auto">
+
+      <table class="min-w-full divide-y divide-gray-700">
+
+        <thead>
+
+          <tr>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              Number
+            </th>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              Total Coins
+            </th>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              Total Bets
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody
+        id="dailyReportTable"
+        class="divide-y divide-gray-700"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- USER BET REPORT -->
+  <div>
+
+    <h3 class="text-2xl font-black text-blue-400 mb-4">
+      User Betting Details
+    </h3>
+
+    <div class="overflow-x-auto">
+
+      <table class="min-w-full divide-y divide-gray-700">
+
+        <thead>
+
+          <tr>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              User
+            </th>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              Number
+            </th>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              Coins
+            </th>
+
+            <th class="px-4 py-2 text-left text-gray-400">
+              Date & Time
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody
+        id="userBetReportTable"
+        class="divide-y divide-gray-700"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
 </div>
 
 <script type="module">
+
 import { supabase } from "./supabase.js";
 
 let allUsers = [];
 
-// Scroll functions
-window.scrollToUsers = () => document.getElementById("usersSection").scrollIntoView({ behavior:"smooth" });
-window.scrollToAnnounce = () => document.getElementById("announceSection").scrollIntoView({ behavior:"smooth" });
+// SCROLL
+window.scrollToUsers = () => {
+  document
+  .getElementById("usersSection")
+  .scrollIntoView({behavior:"smooth"});
+}
+
+window.scrollToAnnounce = () => {
+  document
+  .getElementById("announceSection")
+  .scrollIntoView({behavior:"smooth"});
+}
+
+window.scrollToDailyReport = () => {
+  document
+  .getElementById("dailyReportSection")
+  .scrollIntoView({behavior:"smooth"});
+}
 
 // LOAD USERS
 async function loadUsers(){
-  const { data: users, error } = await supabase.from("users").select("*");
-  if(error){ alert(error.message); return; }
+
+  const { data:users, error } =
+    await supabase
+    .from("users")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
   allUsers = users;
+
   renderUsers(users);
 }
 
 // RENDER USERS
 function renderUsers(users){
-  const usersList = document.getElementById("usersList");
+
+  const usersList =
+    document.getElementById("usersList");
+
   usersList.innerHTML = "";
-  users.forEach((user, index)=>{
-    const row = document.createElement("tr");
+
+  users.forEach((user,index)=>{
+
+    const row =
+      document.createElement("tr");
+
     row.innerHTML = `
-      <td class="px-4 py-2">${index+1}</td>
-      <td class="px-4 py-2">${user.full_name}</td>
-      <td class="px-4 py-2">${user.email}</td>
-      <td class="px-4 py-2">${user.phone}</td>
-      <td class="px-4 py-2" id="balance-${user.id}">${user.balance||0}</td>
-      <td class="px-4 py-2 space-x-2">
-        <input type="number" id="credit-${user.id}" placeholder="Credit" class="bg-black border border-green-500 rounded-2xl p-2 w-20"/>
-        <button onclick="creditBalance('${user.id}')" class="bg-green-500 px-3 py-1 rounded-xl font-bold">Credit</button>
-        <input type="number" id="debit-${user.id}" placeholder="Debit" class="bg-black border border-red-500 rounded-2xl p-2 w-20"/>
-        <button onclick="debitBalance('${user.id}')" class="bg-red-500 px-3 py-1 rounded-xl font-bold">Debit</button>
+
+      <td class="px-4 py-2">
+        ${index+1}
+      </td>
+
+      <td class="px-4 py-2">
+        ${user.full_name || "-"}
+      </td>
+
+      <td class="px-4 py-2">
+        ${user.email || "-"}
+      </td>
+
+      <td class="px-4 py-2">
+        ${user.phone || "-"}
+      </td>
+
+      <td
+      class="px-4 py-2 text-yellow-400 font-bold"
+      id="balance-${user.id}">
+        ${user.balance || 0}
+      </td>
+
+      <td class="px-4 py-2 space-y-2">
+
+        <div class="flex gap-2">
+
+          <input
+          type="number"
+          id="credit-${user.id}"
+          placeholder="Credit"
+          class="bg-black border border-green-500 rounded-2xl p-2 w-24"/>
+
+          <button
+          onclick="creditBalance('${user.id}')"
+          class="bg-green-500 px-3 py-2 rounded-xl font-bold text-black">
+          Credit
+          </button>
+
+        </div>
+
+        <div class="flex gap-2">
+
+          <input
+          type="number"
+          id="debit-${user.id}"
+          placeholder="Debit"
+          class="bg-black border border-red-500 rounded-2xl p-2 w-24"/>
+
+          <button
+          onclick="debitBalance('${user.id}')"
+          class="bg-red-500 px-3 py-2 rounded-xl font-bold text-white">
+          Debit
+          </button>
+
+        </div>
+
       </td>
     `;
+
     usersList.appendChild(row);
+
   });
+
 }
 
-// CREDIT BALANCE
+// CREDIT
 window.creditBalance = async function(userId){
-  const amount = parseInt(document.getElementById(`credit-${userId}`).value);
-  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
 
-  const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
-  const newBalance = (Number(user.balance)||0) + amount;
+  const amount =
+    parseInt(
+      document
+      .getElementById(`credit-${userId}`)
+      .value
+    );
 
-  // Update users table
-  await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
+  if(!amount || amount <= 0){
+    alert("Enter valid amount");
+    return;
+  }
 
-  // Insert into deposits table
-  await supabase.from("deposits").insert([{
+  const { data:user } =
+    await supabase
+    .from("users")
+    .select("*")
+    .eq("id",userId)
+    .single();
+
+  const currentBalance =
+    Number(user.balance) || 0;
+
+  const newBalance =
+    currentBalance + amount;
+
+  // UPDATE USER BALANCE
+  await supabase
+  .from("users")
+  .update({
+    balance:newBalance
+  })
+  .eq("id",userId);
+
+  // DEPOSIT HISTORY
+  await supabase
+  .from("deposits")
+  .insert([{
     user_id:userId,
-    amount,
-    status:"credited by admin",
+    amount:amount,
+    status:"credited",
     created_at:new Date().toISOString()
   }]);
 
-  // Insert into balance_ledger
-  await supabase.from("balance_ledger").insert([{
-    user_id: userId,
-    change_type: "credit",
-    amount: amount,
-    balance_after: newBalance,
-    created_at: new Date().toISOString()
+  // BALANCE LEDGER
+  await supabase
+  .from("balance_ledger")
+  .insert([{
+    user_id:userId,
+    type:"credit",
+    amount:amount,
+    balance_after:newBalance,
+    created_at:new Date().toISOString()
   }]);
 
-  // Update balance in dashboard
-  document.getElementById(`balance-${userId}`).innerText = newBalance;
+  document.getElementById(
+    `balance-${userId}`
+  ).innerText = newBalance;
+
+  alert("Balance Credited Successfully");
+
 }
 
-// DEBIT BALANCE
+// DEBIT
 window.debitBalance = async function(userId){
-  const amount = parseInt(document.getElementById(`debit-${userId}`).value);
-  if(!amount || amount <=0){ alert("Enter valid amount"); return; }
 
-  const { data: user } = await supabase.from("users").select("*").eq("id",userId).single();
-  if(amount > (Number(user.balance)||0)){ alert("Insufficient balance"); return; }
+  const amount =
+    parseInt(
+      document
+      .getElementById(`debit-${userId}`)
+      .value
+    );
 
-  const newBalance = (Number(user.balance)||0) - amount;
+  if(!amount || amount <= 0){
+    alert("Enter valid amount");
+    return;
+  }
 
-  // Update users table
-  await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
+  const { data:user } =
+    await supabase
+    .from("users")
+    .select("*")
+    .eq("id",userId)
+    .single();
 
-  // Insert into withdraws table
-  await supabase.from("withdraws").insert([{
+  const currentBalance =
+    Number(user.balance) || 0;
+
+  if(amount > currentBalance){
+    alert("Insufficient Balance");
+    return;
+  }
+
+  const newBalance =
+    currentBalance - amount;
+
+  // UPDATE USER BALANCE
+  await supabase
+  .from("users")
+  .update({
+    balance:newBalance
+  })
+  .eq("id",userId);
+
+  // WITHDRAW HISTORY
+  await supabase
+  .from("withdraws")
+  .insert([{
     user_id:userId,
-    amount,
-    status:"debited by admin",
+    amount:amount,
+    status:"debited",
     created_at:new Date().toISOString()
   }]);
 
-  // Insert into balance_ledger
-  await supabase.from("balance_ledger").insert([{
-    user_id: userId,
-    change_type: "debit",
-    amount: amount,
-    balance_after: newBalance,
-    created_at: new Date().toISOString()
+  // BALANCE LEDGER
+  await supabase
+  .from("balance_ledger")
+  .insert([{
+    user_id:userId,
+    type:"debit",
+    amount:amount,
+    balance_after:newBalance,
+    created_at:new Date().toISOString()
   }]);
 
-  // Update balance in dashboard
-  document.getElementById(`balance-${userId}`).innerText = newBalance;
+  document.getElementById(
+    `balance-${userId}`
+  ).innerText = newBalance;
+
+  alert("Balance Debited Successfully");
+
 }
 
-// ANNOUNCE TODAY'S WINNER
+// ANNOUNCE RESULT
 window.announceResult = async function(){
-  const value = document.getElementById("resultInput").value;
-  if(!value){ alert("Enter Today's Winner"); return; }
 
-  const { data, error } = await supabase.from("results").insert([{ winning_number:value, created_at:new Date().toISOString() }]);
-  if(error){ alert("Error: "+error.message); return; }
+  const value =
+    document
+    .getElementById("resultInput")
+    .value
+    .trim();
 
-  alert("Result announced: "+value);
-  document.getElementById("resultInput").value = "";
+  if(!value){
+    alert("Enter today's winner");
+    return;
+  }
+
+  // SAVE RESULT
+  const { error } =
+    await supabase
+    .from("results")
+    .insert([{
+      winning_number:value,
+      created_at:new Date().toISOString()
+    }]);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  // UPDATE BET STATUS
+  const { data:bets=[] } =
+    await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  for(const bet of bets){
+
+    // WINNER
+    if(
+      bet.selected_number === value
+    ){
+
+      const { data:user } =
+        await supabase
+        .from("users")
+        .select("*")
+        .eq("id",bet.user_id)
+        .single();
+
+      const currentBalance =
+        Number(user.balance) || 0;
+
+      const newBalance =
+        currentBalance +
+        Number(bet.potential_win);
+
+      // UPDATE USER BALANCE
+      await supabase
+      .from("users")
+      .update({
+        balance:newBalance
+      })
+      .eq("id",bet.user_id);
+
+      // UPDATE BET
+      await supabase
+      .from("bets")
+      .update({
+        status:"win"
+      })
+      .eq("id",bet.id);
+
+      // BALANCE LEDGER
+      await supabase
+      .from("balance_ledger")
+      .insert([{
+        user_id:bet.user_id,
+        type:"win",
+        amount:bet.potential_win,
+        balance_after:newBalance,
+        created_at:new Date().toISOString()
+      }]);
+
+    }
+
+    // LOSER
+    else{
+
+      await supabase
+      .from("bets")
+      .update({
+        status:"lose"
+      })
+      .eq("id",bet.id);
+
+    }
+
+  }
+
+  alert("Result Announced Successfully");
+
+  document.getElementById(
+    "resultInput"
+  ).value = "";
+
 }
+
+// DAILY REPORT
+async function loadDailyReport(){
+
+  const reportDate =
+    document.getElementById("reportDate")
+    .value;
+
+  let query =
+    supabase
+    .from("bets")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(reportDate){
+
+    query =
+      query
+      .gte(
+        "created_at",
+        reportDate
+      )
+      .lte(
+        "created_at",
+        reportDate + "T23:59:59"
+      );
+  }
+
+  const { data:bets=[] } =
+    await query;
+
+  // NUMBER REPORT
+  const reportMap = {};
+
+  bets.forEach(bet => {
+
+    if(!reportMap[bet.selected_number]){
+
+      reportMap[bet.selected_number] = {
+        totalCoins:0,
+        totalBets:0
+      };
+    }
+
+    reportMap[
+      bet.selected_number
+    ].totalCoins += Number(bet.coins);
+
+    reportMap[
+      bet.selected_number
+    ].totalBets += 1;
+
+  });
+
+  const reportTable =
+    document.getElementById(
+      "dailyReportTable"
+    );
+
+  reportTable.innerHTML = "";
+
+  Object.keys(reportMap).forEach(number => {
+
+    reportTable.innerHTML += `
+      <tr class="border-b border-gray-700">
+
+        <td class="px-4 py-3 text-yellow-400 font-bold">
+          ${number}
+        </td>
+
+        <td class="px-4 py-3">
+          ${reportMap[number].totalCoins}
+        </td>
+
+        <td class="px-4 py-3">
+          ${reportMap[number].totalBets}
+        </td>
+
+      </tr>
+    `;
+
+  });
+
+  // USER BET REPORT
+  const userTable =
+    document.getElementById(
+      "userBetReportTable"
+    );
+
+  userTable.innerHTML = "";
+
+  for(const bet of bets){
+
+    const { data:user } =
+      await supabase
+      .from("users")
+      .select("*")
+      .eq("id",bet.user_id)
+      .single();
+
+    userTable.innerHTML += `
+      <tr class="border-b border-gray-700">
+
+        <td class="px-4 py-3">
+          ${user?.full_name || "-"}
+        </td>
+
+        <td class="px-4 py-3 text-yellow-400 font-bold">
+          ${bet.selected_number}
+        </td>
+
+        <td class="px-4 py-3">
+          ${bet.coins}
+        </td>
+
+        <td class="px-4 py-3">
+          ${new Date(
+            bet.created_at
+          ).toLocaleString(
+            "en-IN",
+            {
+              timeZone:"Asia/Kolkata",
+              day:"2-digit",
+              month:"short",
+              year:"numeric",
+              hour:"2-digit",
+              minute:"2-digit"
+            }
+          )}
+        </td>
+
+      </tr>
+    `;
+
+  }
+
+}
+
+// REPORT DATE FILTER
+document
+.getElementById("reportDate")
+.addEventListener(
+  "change",
+  loadDailyReport
+);
 
 // INIT
-window.onload = () => { loadUsers(); };
+window.onload = async () => {
+
+  // TODAY DATE
+  const today =
+    new Date()
+    .toISOString()
+    .split("T")[0];
+
+  document.getElementById(
+    "reportDate"
+  ).value = today;
+
+  await loadUsers();
+
+  await loadDailyReport();
+
+}
+
 </script>
 
 </body>
