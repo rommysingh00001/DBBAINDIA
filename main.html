@@ -170,30 +170,60 @@
     }
 
     // --- PLACE BET ---
-    document.getElementById("placeBetBtn").addEventListener("click", async () => {
-      const number = selectedDiv.innerText;
-      const coins = parseInt(coinsInput.value) || 0;
-      const currentBalance = await loadLatestBalance();
+document.getElementById("placeBetBtn").addEventListener("click", async () => {
 
-      if(coins <= 0 || coins > currentBalance){
-        alert("Insufficient Balance");
-        return;
-      }
+  const number = selectedDiv.innerText;
+  const coins = parseInt(coinsInput.value) || 0;
 
-      const { error } = await supabase.from("bets").insert([{
-        user_id: userId,
-        selected_number: number,
-        coins: coins,
-        potential_win: coins * 90,
-        status: 'pending'
-      }]);
+  // CURRENT BALANCE FROM LEDGER
+  const currentBalance = await loadLatestBalance();
 
-      if(error){ alert("Error placing bet: "+error.message); return; }
+  // CHECK BALANCE
+  if(coins <= 0 || coins > currentBalance){
+    alert("Insufficient Balance");
+    return;
+  }
 
-      alert("Bet placed successfully!");
-      coinsInput.value = 0;
-      loadLatestBalance();
-    });
+  // SAVE BET
+  const { error } = await supabase
+    .from("bets")
+    .insert([{
+      user_id: userId,
+      selected_number: number,
+      coins: coins,
+      potential_win: coins * 90,
+      status: "pending"
+    }]);
+
+  if(error){
+    alert("Error placing bet: " + error.message);
+    return;
+  }
+
+  // NEW BALANCE
+  const newBalance = currentBalance - coins;
+
+  // SAVE NEW BALANCE IN LEDGER
+  await supabase
+    .from("balance_ledger")
+    .insert([{
+      user_id: userId,
+      type: "bet",
+      amount: coins,
+      balance_after: newBalance,
+      created_at: new Date().toISOString()
+    }]);
+
+  // UPDATE HEADER BALANCE
+  balanceText.innerText = newBalance + " Coins";
+
+  // RESET INPUT
+  coinsInput.value = 0;
+  updatePotentialWin();
+
+  alert("Bet placed successfully!");
+
+});
 
     // --- NUMBER GRID ---
     for(let i=0;i<100;i++){
