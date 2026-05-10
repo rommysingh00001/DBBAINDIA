@@ -181,6 +181,23 @@ window.goBack = () => {
   window.location.href = "main.html";
 }
 
+function formatIndianTime(dateString){
+
+  return new Date(dateString).toLocaleString(
+    "en-IN",
+    {
+      timeZone:"Asia/Kolkata",
+      day:"2-digit",
+      month:"short",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit",
+      hour12:true
+    }
+  );
+}
+
 function getDateFilter(){
 
   const fromDate =
@@ -350,17 +367,7 @@ window.showTransactions = async function(){
       <tr class="border-b border-gray-700">
 
         <td class="p-3">
-          ${new Date(t.created_at).toLocaleString(
-            "en-IN",
-            {
-              timeZone:"Asia/Kolkata",
-              day:"2-digit",
-              month:"short",
-              year:"numeric",
-              hour:"2-digit",
-              minute:"2-digit"
-            }
-          )}
+          ${formatIndianTime(t.created_at)}
         </td>
 
         <td class="p-3 ${color} font-bold">
@@ -447,7 +454,10 @@ window.showBets = async function(){
     let statusText = "Pending";
     let statusColor = "text-yellow-400";
 
-    if(bet.status === "win"){
+    if(
+      bet.result === "win" ||
+      bet.status === "win"
+    ){
 
       resultText =
         "+" + bet.potential_win;
@@ -462,7 +472,10 @@ window.showBets = async function(){
         "text-green-400";
     }
 
-    if(bet.status === "lose"){
+    if(
+      bet.result === "lose" ||
+      bet.status === "lose"
+    ){
 
       resultText =
         "-" + bet.coins;
@@ -477,38 +490,11 @@ window.showBets = async function(){
         "text-red-400";
     }
 
-    if(
-      bet.status === "pending" ||
-      !bet.status
-    ){
-
-      resultText = "Pending";
-
-      resultColor =
-        "text-yellow-400";
-
-      statusText =
-        "Pending";
-
-      statusColor =
-        "text-yellow-400";
-    }
-
     table.innerHTML += `
       <tr class="border-b border-gray-700">
 
         <td class="p-3">
-          ${new Date(bet.created_at).toLocaleString(
-            "en-IN",
-            {
-              timeZone:"Asia/Kolkata",
-              day:"2-digit",
-              month:"short",
-              year:"numeric",
-              hour:"2-digit",
-              minute:"2-digit"
-            }
-          )}
+          ${formatIndianTime(bet.created_at)}
         </td>
 
         <td class="p-3 font-bold text-yellow-400">
