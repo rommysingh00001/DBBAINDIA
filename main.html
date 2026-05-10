@@ -695,8 +695,27 @@ window.closeHistory = function(){
 
 placeBetBtn.addEventListener("click", async () => {
   const number = selectedDiv.innerText;
-  const coins = parseInt(coinsInput.value) || 0;
-  if(coins <= 0) { alert("Enter valid coins"); return; }
+const coins = parseInt(coinsInput.value) || 0;
+
+// CURRENT BALANCE
+const currentBalance =
+  parseInt(
+    document.getElementById("balanceText")
+    .innerText
+    .replace(" Coins","")
+  ) || 0;
+
+// INVALID OR ZERO
+if(coins <= 0){
+  alert("Insufficient Balance");
+  return;
+}
+
+// MORE THAN AVAILABLE BALANCE
+if(coins > currentBalance){
+  alert("Insufficient Balance");
+  return;
+}
 
   // Supabase insert
   const { data: betData, error } = await supabase
