@@ -375,10 +375,8 @@ if(userData){
 
   // AUTO FILL ENTER COINS
 
-  document.getElementById(
-    "coins"
-  ).value =
-    userData.balance;
+  document.getElementById("balanceText").innerText =
+balance + " Coins";
 }
     // LOAD LATEST BALANCE FROM BALANCE LEDGER
 async function loadLatestBalance() {
@@ -417,10 +415,7 @@ async function loadLatestBalance() {
   document.getElementById("balanceText").innerText =
     latestBalance + " Coins";
 
-  // ENTER COINS WILL USE SAME BALANCE
-  document.getElementById("coins").value =
-    latestBalance;
-}
+  
 }
 // CALL THIS AFTER USER DATA LOAD
 await loadLatestBalance();
