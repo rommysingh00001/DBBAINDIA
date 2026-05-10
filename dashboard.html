@@ -175,7 +175,104 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
   </div>
 
 </div>
+<!-- LIVE NUMBER EXPOSURE -->
+<div
+id="numberGridSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+
+    <h2 class="text-3xl font-black text-pink-400">
+      Live Number Exposure
+    </h2>
+
+    <button
+      onclick="loadPendingNumberGrid()"
+      class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black">
+
+      Refresh Grid
+
+    </button>
+
+  </div>
+
+  <div
+    id="numberGrid"
+    class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
+  </div>
+
+</div>
+
+<!-- PNL -->
+<div
+id="pnlSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
+
+  <h2 class="text-3xl font-black text-orange-400 mb-6">
+    Profit & Loss Analytics
+  </h2>
+
+  <div class="grid md:grid-cols-3 gap-4 mb-6">
+
+    <input
+      type="date"
+      id="pnlFromDate"
+      class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+
+    <input
+      type="date"
+      id="pnlToDate"
+      class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+
+    <button
+      onclick="loadPNLReport()"
+      class="bg-orange-500 hover:bg-orange-400 text-black font-black rounded-2xl p-4">
+
+      Generate Report
+
+    </button>
+
+  </div>
+
+  <div class="overflow-x-auto">
+
+    <table class="min-w-full divide-y divide-gray-700">
+
+      <thead>
+
+        <tr>
+
+          <th class="px-4 py-3 text-left text-gray-400">
+            From
+          </th>
+
+          <th class="px-4 py-3 text-left text-gray-400">
+            To
+          </th>
+
+          <th class="px-4 py-3 text-left text-gray-400">
+            Gross Revenue
+          </th>
+
+          <th class="px-4 py-3 text-left text-gray-400">
+            Payout Expense
+          </th>
+
+          <th class="px-4 py-3 text-left text-gray-400">
+            Profit / Loss
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="pnlTableBody"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
 <!-- REPORTS -->
 <div
 id="reportsSection"
@@ -883,12 +980,184 @@ window.logoutAdmin = async function(){
     alert("Logout Failed");
   }
 }
+  // NUMBER GRID
+window.loadPendingNumberGrid = async function(){
+
+  const { data:bets=[] } =
+    await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  const totals = {};
+
+  for(let i=0;i<=99;i++){
+
+    const key =
+      i.toString().padStart(2,"0");
+
+    totals[key] = 0;
+  }
+
+  bets.forEach(bet=>{
+
+    const number =
+      String(bet.selected_number || "")
+      .padStart(2,"0");
+
+    totals[number] +=
+      Number(bet.coins || 0);
+
+  });
+
+  const grid =
+    document.getElementById("numberGrid");
+
+  grid.innerHTML = "";
+
+  Object.keys(totals).forEach(number=>{
+
+    const amount = totals[number];
+
+    grid.innerHTML += `
+
+      <div
+      class="bg-black border border-gray-700 rounded-2xl p-4 text-center">
+
+        <h2 class="text-3xl font-black text-yellow-400 mb-2">
+          ${number}
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-1">
+          Total Bet Amount
+        </p>
+
+        <p class="
+          text-2xl
+          font-black
+          ${amount > 0
+            ? "text-green-400"
+            : "text-gray-600"}
+        ">
+
+          ₹${amount}
+
+        </p>
+
+      </div>
+
+    `;
+  });
+}
+
+// PNL REPORT
+window.loadPNLReport = async function(){
+
+  const fromDate =
+    document.getElementById("pnlFromDate").value;
+
+  const toDate =
+    document.getElementById("pnlToDate").value;
+
+  let query =
+    supabase
+    .from("bets")
+    .select("*");
+
+  if(fromDate){
+
+    query =
+      query.gte(
+        "created_at",
+        fromDate + "T00:00:00"
+      );
+  }
+
+  if(toDate){
+
+    query =
+      query.lte(
+        "created_at",
+        toDate + "T23:59:59"
+      );
+  }
+
+  const { data:bets=[] } =
+    await query;
+
+  let grossRevenue = 0;
+
+  let payoutExpense = 0;
+
+  bets.forEach(bet=>{
+
+    grossRevenue +=
+      Number(bet.coins || 0);
+
+    if(bet.status === "win"){
+
+      payoutExpense +=
+        Number(bet.potential_win || 0);
+
+    }
+
+  });
+
+  const pnl =
+    grossRevenue - payoutExpense;
+
+  const tbody =
+    document.getElementById("pnlTableBody");
+
+  tbody.innerHTML = `
+
+    <tr>
+
+      <td class="px-4 py-4">
+        ${fromDate || "-"}
+      </td>
+
+      <td class="px-4 py-4">
+        ${toDate || "-"}
+      </td>
+
+      <td class="px-4 py-4 text-green-400 font-black">
+        ₹${grossRevenue}
+      </td>
+
+      <td class="px-4 py-4 text-yellow-400 font-black">
+        ₹${payoutExpense}
+      </td>
+
+      <td class="
+        px-4
+        py-4
+        font-black
+        ${pnl >= 0
+          ? "text-green-400"
+          : "text-red-400"}
+      ">
+
+        ${pnl >= 0 ? "+" : "-"}
+
+        ₹${Math.abs(pnl)}
+
+      </td>
+
+    </tr>
+
+  `;
+}
 // INIT
 window.onload = async ()=>{
 
   await loadUsers();
 
   await loadAllBetData();
+
+  await loadPendingNumberGrid();
+
+await loadPNLReport();
 
 }
 </script>
