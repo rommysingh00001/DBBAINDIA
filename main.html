@@ -387,14 +387,14 @@
 
       // SAVE LEDGER
       await supabase
-      .from("balance_ledger")
-      .insert([{
-        user_id:userId,
-        type:"bet",
-        amount:coins,
-        balance_after:newBalance,
-        created_at:new Date().toISOString()
-      }]);
+.from("balance_ledger")
+.insert([{
+  user_id:userId,
+  change_type:"bet",
+  amount:coins,
+  balance_after:newBalance,
+  created_at:new Date().toISOString()
+}]);
 
       // UPDATE UI
       balanceText.innerText =
