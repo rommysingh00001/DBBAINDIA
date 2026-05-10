@@ -60,34 +60,6 @@
 
 </div>
 
-<!-- ANNOUNCE -->
-<div
-id="announceSection"
-class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
-
-  <h2 class="text-3xl font-black text-yellow-400 mb-5">
-    Announce Today's Winner
-  </h2>
-
-  <div class="flex gap-4 flex-wrap">
-
-    <input
-      type="text"
-      id="resultInput"
-      placeholder="Enter Winning Number"
-      class="bg-black border border-gray-700 rounded-2xl p-4 flex-1 outline-none"/>
-
-    <button
-      onclick="announceResult()"
-      class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-6 py-4 rounded-2xl">
-
-      ANNOUNCE
-
-    </button>
-
-  </div>
-
-</div>
 
 <!-- USERS -->
 <div
@@ -198,6 +170,25 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
   <div
     id="numberGrid"
+    <div class="mt-8 text-center">
+
+  <h2
+    id="selectedNumberText"
+    class="text-4xl font-black text-pink-400 mb-5">
+
+    Selected Number : --
+
+  </h2>
+
+  <button
+    onclick="announceSelectedResult()"
+    class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl">
+
+    ANNOUNCE RESULT
+
+  </button>
+
+</div>
     class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
   </div>
 
@@ -405,6 +396,7 @@ import { supabase } from "./supabase.js";
 
 let allBetData = [];
 let allUsersData = [];
+  let selectedWinningNumber = null;
 
 // SCROLL
 window.scrollToUsers = () => {
@@ -1022,7 +1014,18 @@ window.loadPendingNumberGrid = async function(){
     grid.innerHTML += `
 
       <div
-      class="bg-black border border-gray-700 rounded-2xl p-4 text-center">
+      onclick="selectWinningNumber('${number}')"
+      class="
+      bg-black
+      border
+      border-gray-700
+      rounded-2xl
+      p-4
+      text-center
+      cursor-pointer
+      hover:border-pink-500
+      hover:scale-105
+      transition">
 
         <h2 class="text-3xl font-black text-yellow-400 mb-2">
           ${number}
@@ -1149,6 +1152,107 @@ window.loadPNLReport = async function(){
     </tr>
 
   `;
+}
+  // SELECT NUMBER
+window.selectWinningNumber = function(number){
+
+  selectedWinningNumber = number;
+
+  document.getElementById(
+    "selectedNumberText"
+  ).innerText =
+    "Selected Number : " + number;
+
+}
+
+// ANNOUNCE SELECTED RESULT
+window.announceSelectedResult = async function(){
+
+  if(!selectedWinningNumber){
+
+    alert("Select Number First");
+    return;
+  }
+
+  await supabase
+  .from("results")
+  .insert([{
+    winning_number:selectedWinningNumber,
+    created_at:new Date().toISOString()
+  }]);
+
+  const { data:bets=[] } =
+    await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  for(const bet of bets){
+
+    if(
+      bet.selected_number ===
+      selectedWinningNumber
+    ){
+
+      const { data:user } =
+        await supabase
+        .from("users")
+        .select("*")
+        .eq("id",bet.user_id)
+        .single();
+
+      const currentBalance =
+        Number(user.balance) || 0;
+
+      const newBalance =
+        currentBalance +
+        Number(bet.potential_win);
+
+      await supabase
+      .from("users")
+      .update({
+        balance:newBalance
+      })
+      .eq("id",bet.user_id);
+
+      await supabase
+      .from("bets")
+      .update({
+        status:"win"
+      })
+      .eq("id",bet.id);
+
+    } else {
+
+      await supabase
+      .from("bets")
+      .update({
+        status:"lose"
+      })
+      .eq("id",bet.id);
+
+    }
+
+  }
+
+  alert(
+    "Result Announced : " +
+    selectedWinningNumber
+  );
+
+  selectedWinningNumber = null;
+
+  document.getElementById(
+    "selectedNumberText"
+  ).innerText =
+    "Selected Number : --";
+
+  await loadPendingNumberGrid();
+
+  await loadPNLReport();
+
+  await loadAllBetData();
+
 }
 // INIT
 window.onload = async ()=>{
