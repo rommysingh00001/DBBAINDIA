@@ -6,55 +6,352 @@
   <title>My Bets - DBBA INDIA</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#050816] text-white p-8">
 
-  <h1 class="text-5xl font-black text-yellow-400 mb-8">My Bets</h1>
+<body class="bg-[#050816] text-white p-5 md:p-8">
 
-  <div id="betsList" class="space-y-4"></div>
+  <!-- HEADER -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
 
-  <button onclick="goBack()" class="mt-8 bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold">
-    Back
-  </button>
+    <div>
+      <h1 class="text-5xl font-black text-yellow-400">
+        My Bets
+      </h1>
+
+      <p class="text-gray-400 mt-2">
+        View all your betting history
+      </p>
+    </div>
+
+    <button
+      onclick="goBack()"
+      class="bg-green-500 hover:bg-green-400 text-black px-6 py-3 rounded-2xl font-black">
+      Back
+    </button>
+
+  </div>
+
+  <!-- FILTERS -->
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-8">
+
+    <h2 class="text-2xl font-black text-yellow-400 mb-5">
+      Filters
+    </h2>
+
+    <div class="grid md:grid-cols-4 gap-4">
+
+      <div>
+        <p class="text-gray-400 mb-2">From Date</p>
+        <input
+          type="date"
+          id="fromDate"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+      </div>
+
+      <div>
+        <p class="text-gray-400 mb-2">To Date</p>
+        <input
+          type="date"
+          id="toDate"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+      </div>
+
+      <div>
+        <p class="text-gray-400 mb-2">Status</p>
+
+        <select
+          id="statusFilter"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none">
+
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="win">You Win</option>
+          <option value="lose">You Lose</option>
+
+        </select>
+      </div>
+
+      <div class="flex items-end">
+        <button
+          onclick="loadBets()"
+          class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-3 rounded-2xl">
+          Apply Filter
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="grid md:grid-cols-3 gap-5 mb-8">
+
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
+      <p class="text-gray-400 mb-2">Total Bets</p>
+      <h2 id="totalBets" class="text-4xl font-black text-yellow-400">
+        0
+      </h2>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
+      <p class="text-gray-400 mb-2">Total Coins</p>
+      <h2 id="totalCoins" class="text-4xl font-black text-green-400">
+        0
+      </h2>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
+      <p class="text-gray-400 mb-2">Winning Bets</p>
+      <h2 id="winningBets" class="text-4xl font-black text-blue-400">
+        0
+      </h2>
+    </div>
+
+  </div>
+
+  <!-- BETS -->
+  <div id="betsList" class="space-y-5"></div>
 
   <script type="module">
+
     import { supabase } from "./supabase.js";
 
     async function loadBets(){
-      const { data: { session } } = await supabase.auth.getSession();
-      if(!session) return window.location.href="index.html";
+
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if(!session){
+        window.location.href = "index.html";
+        return;
+      }
+
       const userId = session.user.id;
 
-      const { data: bets } = await supabase.from("bets").select("*").eq("user_id", userId).order("id",{ascending:false});
+      const {
+        data: bets,
+        error
+      } = await supabase
+        .from("bets")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending:false });
 
-      const betsDiv = document.getElementById("betsList");
+      if(error){
+        alert(error.message);
+        return;
+      }
+
+      const fromDate =
+        document.getElementById("fromDate").value;
+
+      const toDate =
+        document.getElementById("toDate").value;
+
+      const statusFilter =
+        document.getElementById("statusFilter").value;
+
+      let filteredBets = bets || [];
+
+      // DATE FILTER
+      if(fromDate){
+
+        filteredBets =
+          filteredBets.filter(bet =>
+            new Date(bet.created_at) >= new Date(fromDate)
+          );
+
+      }
+
+      if(toDate){
+
+        const endDate = new Date(toDate);
+        endDate.setHours(23,59,59,999);
+
+        filteredBets =
+          filteredBets.filter(bet =>
+            new Date(bet.created_at) <= endDate
+          );
+
+      }
+
+      // STATUS FILTER
+      if(statusFilter){
+
+        filteredBets =
+          filteredBets.filter(bet =>
+            bet.status === statusFilter
+          );
+
+      }
+
+      // SUMMARY
+      document.getElementById("totalBets").innerText =
+        filteredBets.length;
+
+      const totalCoins =
+        filteredBets.reduce(
+          (sum, bet) =>
+            sum + Number(bet.coins || 0),
+          0
+        );
+
+      document.getElementById("totalCoins").innerText =
+        totalCoins;
+
+      const winningBets =
+        filteredBets.filter(
+          bet => bet.status === "win"
+        ).length;
+
+      document.getElementById("winningBets").innerText =
+        winningBets;
+
+      // RENDER
+      const betsDiv =
+        document.getElementById("betsList");
+
       betsDiv.innerHTML = "";
 
-      bets.forEach(bet => {
-        const dt = new Date(bet.created_at).toLocaleString();
-        const result = bet.status === "win" ? `+${bet.potential_win}` : `-${bet.coins}`;
-        const color = bet.status === "win" ? "text-green-400" : "text-red-400";
+      if(filteredBets.length === 0){
 
-        betsDiv.innerHTML += `
-          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="text-gray-400 text-sm">Number</p>
-                <h2 class="text-3xl font-black text-yellow-400">${bet.selected_number}</h2>
-                <p class="text-gray-400 text-xs">${dt}</p>
-              </div>
-              <div class="text-right">
-                <p class="text-gray-400 text-sm">Result</p>
-                <h2 class="text-2xl font-black ${color}">${result}</h2>
-              </div>
-            </div>
+        betsDiv.innerHTML = `
+          <div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 text-center">
+            <h2 class="text-3xl font-black text-red-400 mb-3">
+              No Bets Found
+            </h2>
+
+            <p class="text-gray-400">
+              Try changing filters
+            </p>
           </div>
         `;
+
+        return;
+      }
+
+      filteredBets.forEach(bet => {
+
+        const dt =
+          new Date(bet.created_at).toLocaleString(
+            "en-IN",
+            {
+              timeZone:"Asia/Kolkata",
+              day:"2-digit",
+              month:"short",
+              year:"numeric",
+              hour:"2-digit",
+              minute:"2-digit",
+              second:"2-digit"
+            }
+          );
+
+        let resultText = "Pending";
+        let resultColor = "text-yellow-400";
+
+        let statusText = "Pending";
+        let statusColor = "text-yellow-400";
+
+        if(bet.status === "win"){
+
+          resultText = `+${bet.potential_win}`;
+          resultColor = "text-green-400";
+
+          statusText = "You Win";
+          statusColor = "text-green-400";
+
+        }
+
+        else if(bet.status === "lose"){
+
+          resultText = `-${bet.coins}`;
+          resultColor = "text-red-400";
+
+          statusText = "You Lose";
+          statusColor = "text-red-400";
+
+        }
+
+        betsDiv.innerHTML += `
+
+          <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+
+            <div class="grid md:grid-cols-5 gap-5 items-center">
+
+              <div>
+                <p class="text-gray-400 text-sm mb-1">
+                  Number
+                </p>
+
+                <h2 class="text-4xl font-black text-yellow-400">
+                  ${bet.selected_number}
+                </h2>
+              </div>
+
+              <div>
+                <p class="text-gray-400 text-sm mb-1">
+                  Coins
+                </p>
+
+                <h2 class="text-3xl font-black">
+                  ${bet.coins}
+                </h2>
+              </div>
+
+              <div>
+                <p class="text-gray-400 text-sm mb-1">
+                  Potential Win
+                </p>
+
+                <h2 class="text-3xl font-black text-green-400">
+                  ${bet.potential_win}
+                </h2>
+              </div>
+
+              <div>
+                <p class="text-gray-400 text-sm mb-1">
+                  Result
+                </p>
+
+                <h2 class="text-3xl font-black ${resultColor}">
+                  ${resultText}
+                </h2>
+              </div>
+
+              <div>
+                <p class="text-gray-400 text-sm mb-1">
+                  Status
+                </p>
+
+                <h2 class="text-3xl font-black ${statusColor}">
+                  ${statusText}
+                </h2>
+              </div>
+
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-gray-800">
+
+              <p class="text-gray-400 text-sm">
+                ${dt}
+              </p>
+
+            </div>
+
+          </div>
+
+        `;
+
       });
+
     }
 
-    window.goBack = () => window.history.back();
+    window.goBack = function(){
+      window.history.back();
+    }
 
     loadBets();
+
   </script>
 
 </body>
