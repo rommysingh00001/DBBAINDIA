@@ -90,6 +90,19 @@
         return;
       }
 
+      // CHECK EXISTING USER
+      const { data: existingUser } =
+        await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email);
+
+      if(existingUser && existingUser.length > 0){
+        alert("User already exists");
+        return;
+      }
+
+      // SIGNUP USER
       const { data, error } =
         await supabase.auth.signUp({
           email,
@@ -97,15 +110,20 @@
         });
 
       if(error){
-
         alert(error.message);
         return;
       }
 
-      const userId =
-        data.user.id;
+      if(!data.user){
+        alert("Signup failed");
+        return;
+      }
 
-      await supabase
+      const userId = data.user.id;
+
+      // SAVE USER DATA
+      const { error: insertError } =
+        await supabase
         .from("users")
         .insert([
           {
@@ -113,16 +131,19 @@
             full_name: fullName,
             phone: phone,
             email: email,
-            password: password,
-            balance: 0
+            balance: 0,
+            created_at: new Date().toISOString()
           }
         ]);
 
+      if(insertError){
+        alert(insertError.message);
+        return;
+      }
+
       await supabase.auth.signOut();
 
-      alert(
-        "Account Created Successfully!"
-      );
+      alert("Account Created Successfully!");
 
       window.location.href = "login.html";
     }
