@@ -155,19 +155,28 @@
     const numbersDiv = document.getElementById("numbers");
 
     // --- LOAD LATEST BALANCE FROM LEDGER ---
-    async function loadLatestBalance() {
-      const { data: latestBalance } = await supabase
-        .from("balance_ledger")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+async function loadLatestBalance() {
 
-      const balance = latestBalance?.balance_after || 0;
-      balanceText.innerText = balance + " Coins";
-      return balance;
-    }
+  const { data, error } = await supabase
+    .from("balance_ledger")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  if(error){
+    console.log(error);
+    return 0;
+  }
+
+  const latestBalance = data?.[0];
+
+  const balance = latestBalance?.balance_after || 0;
+
+  balanceText.innerText = balance + " Coins";
+
+  return balance;
+}
 
     // --- PLACE BET ---
 document.getElementById("placeBetBtn").addEventListener("click", async () => {
@@ -192,7 +201,7 @@ document.getElementById("placeBetBtn").addEventListener("click", async () => {
       selected_number: number,
       coins: coins,
       potential_win: coins * 90,
-      status: "pending"
+      status: "pending", created_at:new Date().toISOString()
     }]);
 
   if(error){
@@ -286,7 +295,7 @@ document.getElementById("placeBetBtn").addEventListener("click", async () => {
         const div = document.createElement("div");
         div.className="bg-gray-900 rounded-2xl p-4 text-center";
         div.innerHTML=`<h2 class="text-3xl font-black text-yellow-400">${r.winning_number}</h2>
-        <p class="text-gray-400 text-sm">${new Date(r.created_at).toLocaleString()}</p>`;
+        <p class="text-gray-400 text-sm"> ${new Date(r.created_at).toLocaleString("en-IN",{   timeZone:"Asia/Kolkata",   day:"2-digit",   month:"short",   year:"numeric",   hour:"2-digit",   minute:"2-digit",   second:"2-digit" })} </p>`;
         resultsGrid.appendChild(div);
       });
     }
