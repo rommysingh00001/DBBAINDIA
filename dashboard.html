@@ -850,16 +850,36 @@ window.onload = async ()=>{
 }
 
 </script>
-<!-- SCRIPT KE LAST ME YE FUNCTION ADD KARO -->
+<!-- dashboard.html ME PURANA logoutAdmin FUNCTION DELETE KARKE
+YE FINAL WORKING FUNCTION PASTE KARO -->
 
 <script>
 
 window.logoutAdmin = async function(){
 
-  await supabase.auth.signOut();
+  try{
 
-  window.location.href = "login.html";
+    // SUPABASE LOGOUT
+    await supabase.auth.signOut();
+
+    // LOCAL STORAGE CLEAR
+    localStorage.clear();
+
+    // SESSION STORAGE CLEAR
+    sessionStorage.clear();
+
+    // REDIRECT
+    window.location.replace("login.html");
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Logout Failed");
+  }
 }
+
+</script>
 
 </script>
 </body>
