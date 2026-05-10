@@ -66,8 +66,8 @@
           class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none">
 
           <option value="">All</option>
-          <option value="deposit">Deposit</option>
-          <option value="withdraw">Withdraw</option>
+          <option value="credit">Deposit</option>
+          <option value="debit">Withdraw</option>
           <option value="bet">Bet</option>
           <option value="win">Win</option>
 
@@ -127,6 +127,10 @@
 
     import { supabase } from "./supabase.js";
 
+    window.goBack = () => {
+      window.history.back();
+    }
+
     async function loadTransactions(){
 
       const { data:{ session } } =
@@ -168,8 +172,7 @@
 
         transactions = transactions.filter(t => {
 
-          const d =
-            new Date(t.created_at);
+          const d = new Date(t.created_at);
 
           return d >= new Date(fromDate);
 
@@ -178,15 +181,13 @@
 
       if(toDate){
 
-        const end =
-          new Date(toDate);
+        const end = new Date(toDate);
 
         end.setHours(23,59,59,999);
 
         transactions = transactions.filter(t => {
 
-          const d =
-            new Date(t.created_at);
+          const d = new Date(t.created_at);
 
           return d <= end;
 
@@ -274,7 +275,7 @@
         let color = "";
         let bg = "";
 
-        // CREDIT
+        // CREDIT / DEPOSIT
         if(t.change_type === "credit"){
 
           title = "Deposit";
@@ -283,7 +284,7 @@
           bg = "bg-green-500/10 border-green-500/20";
         }
 
-        // DEBIT
+        // DEBIT / WITHDRAW
         if(t.change_type === "debit"){
 
           title = "Withdraw";
@@ -352,10 +353,6 @@
 
       });
 
-    }
-
-    window.goBack = () => {
-      window.history.back();
     }
 
     loadTransactions();
