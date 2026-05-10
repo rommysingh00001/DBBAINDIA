@@ -1091,6 +1091,8 @@ window.loadPNLReport = async function(){
 
   bets.forEach(bet=>{
 
+    if(bet.status === "pending") return;
+
     grossRevenue +=
       Number(bet.coins || 0);
 
