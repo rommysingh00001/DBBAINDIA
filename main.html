@@ -509,22 +509,24 @@ if(coins > currentBalance){
     // TIMER
     function updateTimer(){
 
-      const now =
-        new Date();
+  const now = new Date();
 
-      const target =
-        new Date();
+  // INDIA TIME
+  const indiaNow = new Date(
+    now.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata"
+    })
+  );
 
-      target.setHours(9,15,0);
+  const target = new Date(indiaNow);
 
-      if(now > target){
-        target.setDate(
-          target.getDate()+1
-        );
-      }
+  target.setHours(9,15,0,0);
 
-      const diff =
-        target - now;
+  if(indiaNow > target){
+    target.setDate(target.getDate()+1);
+  }
+
+  const diff = target - indiaNow;
 
       const hrs =
         Math.floor(diff/1000/60/60);
@@ -674,13 +676,14 @@ window.loadHistory = async function(){
 
       <p class="text-gray-400 text-sm mt-2">
         ${new Date(r.created_at).toLocaleDateString(
-          "en-IN",
-          {
-            day:"2-digit",
-            month:"short",
-            year:"numeric"
-          }
-        )}
+  "en-IN",
+  {
+    timeZone:"Asia/Kolkata",
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  }
+)}
       </p>
     `;
 
