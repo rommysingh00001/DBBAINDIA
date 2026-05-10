@@ -510,7 +510,21 @@ window.creditBalance = async function(userId){
     balance_after:newBalance,
     created_at:new Date().toISOString()
   }]);
+<button onclick="navigator.clipboard.writeText(document.getElementById('creditFix').innerText)" class="bg-green-500 text-black px-4 py-2 rounded-xl font-bold mb-2">
+Copy Code
+</button>
 
+<pre id="creditFix" class="bg-black p-4 rounded-2xl overflow-auto text-green-400">
+await supabase
+.from("deposits")
+.insert([{
+  user_id:userId,
+  amount:amount,
+  status:"approved",
+  created_at:new Date().toISOString()
+}]);
+</pre>
+  
   document.getElementById(
     `balance-${userId}`
   ).innerText = newBalance;
@@ -565,7 +579,20 @@ window.debitBalance = async function(userId){
     balance_after:newBalance,
     created_at:new Date().toISOString()
   }]);
+<button onclick="navigator.clipboard.writeText(document.getElementById('debitFix').innerText)" class="bg-red-500 text-white px-4 py-2 rounded-xl font-bold mb-2">
+Copy Code
+</button>
 
+<pre id="debitFix" class="bg-black p-4 rounded-2xl overflow-auto text-red-400">
+await supabase
+.from("withdraws")
+.insert([{
+  user_id:userId,
+  amount:amount,
+  status:"approved",
+  created_at:new Date().toISOString()
+}]);
+</pre>
   document.getElementById(
     `balance-${userId}`
   ).innerText = newBalance;
