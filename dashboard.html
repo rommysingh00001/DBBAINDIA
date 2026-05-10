@@ -88,45 +88,7 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
   </div>
 
 </div>
-<!-- LIVE NUMBER GRID -->
-<div
-id="liveGridSection"
-class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
-  <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-
-    <div>
-
-      <h2 class="text-3xl font-black text-green-400">
-        Live Number Grid
-      </h2>
-
-      <p class="text-gray-400 mt-2">
-        Real-time betting between 09:15:01 PM to 09:14:59 PM IST
-      </p>
-
-    </div>
-
-    <div class="bg-black border border-green-500 rounded-2xl px-5 py-3">
-
-      <p class="text-gray-400 text-sm">
-        Time Zone
-      </p>
-
-      <h2 class="text-green-400 font-black text-xl">
-        Asia/Kolkata (IST)
-      </h2>
-
-    </div>
-
-  </div>
-
-  <div
-  id="liveNumberGrid"
-  class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
-  </div>
-
-</div>
 <!-- USERS -->
 <div
 id="usersSection"
@@ -309,66 +271,7 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
     </div>
 
   </div>
-<!-- DAILY PROFIT LOSS -->
-<div class="grid md:grid-cols-4 gap-5 mb-6">
 
-  <div class="bg-black border border-gray-800 rounded-3xl p-6">
-
-    <p class="text-gray-400 mb-2">
-      Total Collection
-    </p>
-
-    <h2
-    id="totalCollection"
-    class="text-4xl font-black text-yellow-400">
-      0
-    </h2>
-
-  </div>
-
-  <div class="bg-black border border-gray-800 rounded-3xl p-6">
-
-    <p class="text-gray-400 mb-2">
-      Total Payout
-    </p>
-
-    <h2
-    id="totalPayout"
-    class="text-4xl font-black text-green-400">
-      0
-    </h2>
-
-  </div>
-
-  <div class="bg-black border border-gray-800 rounded-3xl p-6">
-
-    <p class="text-gray-400 mb-2">
-      Profit / Loss
-    </p>
-
-    <h2
-    id="profitLoss"
-    class="text-4xl font-black text-blue-400">
-      0
-    </h2>
-
-  </div>
-
-  <div class="bg-black border border-gray-800 rounded-3xl p-6">
-
-    <p class="text-gray-400 mb-2">
-      Today Winner
-    </p>
-
-    <h2
-    id="todayWinnerAdmin"
-    class="text-4xl font-black text-red-400">
-      --
-    </h2>
-
-  </div>
-
-</div>
   <!-- TABLE -->
   <div class="overflow-x-auto">
 
@@ -405,276 +308,7 @@ import { supabase } from "./supabase.js";
 
 let allBetData = [];
 let allUsersData = [];
-// LIVE GRID
-async function loadLiveGrid(){
 
-  const {
-    data:bets=[]
-  } = await supabase
-  .from("bets")
-  .select("*")
-  .eq("status","pending");
-
-  const totals = {};
-
-  for(let i=0;i<100;i++){
-
-    totals[
-      i.toString().padStart(2,"0")
-    ] = 0;
-  }
-
-  bets.forEach(bet=>{
-
-    const number =
-      String(
-        bet.selected_number
-      ).padStart(2,"0");
-
-    totals[number] +=
-      Number(bet.coins || 0);
-  });
-
-  const grid =
-    document.getElementById(
-      "liveNumberGrid"
-    );
-
-  grid.innerHTML = "";
-
-  Object.keys(totals)
-  .forEach(number=>{
-
-    const coins =
-      totals[number];
-
-    const div =
-      document.createElement("div");
-
-    div.className =
-      "bg-black border border-gray-800 rounded-2xl p-4 text-center";
-
-    div.innerHTML = `
-
-      <h2 class="text-3xl font-black text-yellow-400 mb-2">
-        ${number}
-      </h2>
-
-      <p class="text-green-400 font-black text-xl">
-        ${coins}
-      </p>
-
-      <p class="text-gray-400 text-sm">
-        Coins
-      </p>
-
-    `;
-
-    grid.appendChild(div);
-
-  });
-
-}
-
-// AUTO RESULT
-async function autoAnnounceResult(){
-
-  const now =
-    new Date(
-      new Date().toLocaleString(
-        "en-US",
-        {
-          timeZone:"Asia/Kolkata"
-        }
-      )
-    );
-
-  const hour =
-    now.getHours();
-
-  const minute =
-    now.getMinutes();
-
-  const second =
-    now.getSeconds();
-
-  if(
-    hour === 21 &&
-    minute === 15 &&
-    second === 0
-  ){
-
-    const {
-      data:bets=[]
-    } = await supabase
-    .from("bets")
-    .select("*")
-    .eq("status","pending");
-
-    const totals = {};
-
-    for(let i=0;i<100;i++){
-
-      totals[
-        i.toString().padStart(2,"0")
-      ] = 0;
-    }
-
-    bets.forEach(bet=>{
-
-      const num =
-        String(
-          bet.selected_number
-        ).padStart(2,"0");
-
-      totals[num] +=
-        Number(bet.coins || 0);
-    });
-
-    // ZERO BET NUMBERS
-    const zeroNumbers =
-      Object.keys(totals)
-      .filter(
-        num => totals[num] === 0
-      );
-
-    let winningNumber = "00";
-
-    // RANDOM ZERO BET
-    if(zeroNumbers.length > 0){
-
-      winningNumber =
-        zeroNumbers[
-          Math.floor(
-            Math.random()
-            * zeroNumbers.length
-          )
-        ];
-
-    } else {
-
-      // LOWEST BET
-      const minCoins =
-        Math.min(
-          ...Object.values(totals)
-        );
-
-      const lowestNumbers =
-        Object.keys(totals)
-        .filter(
-          num =>
-          totals[num] === minCoins
-        );
-
-      winningNumber =
-        lowestNumbers[
-          Math.floor(
-            Math.random()
-            * lowestNumbers.length
-          )
-        ];
-
-    }
-
-    document.getElementById(
-      "resultInput"
-    ).value = winningNumber;
-
-    await announceResult();
-  }
-}
-
-// PROFIT LOSS
-async function loadProfitLoss(){
-
-  const {
-    data:bets=[]
-  } = await supabase
-  .from("bets")
-  .select("*");
-
-  const {
-    data:results=[]
-  } = await supabase
-  .from("results")
-  .select("*")
-  .order(
-    "created_at",
-    { ascending:false }
-  )
-  .limit(1);
-
-  let totalCollection = 0;
-  let totalPayout = 0;
-
-  bets.forEach(bet=>{
-
-    totalCollection +=
-      Number(
-        bet.coins || 0
-      );
-
-    if(
-      bet.status === "win"
-    ){
-
-      totalPayout +=
-        Number(
-          bet.potential_win || 0
-        );
-    }
-  });
-
-  const profitLoss =
-    totalCollection - totalPayout;
-
-  document.getElementById(
-    "totalCollection"
-  ).innerText =
-    totalCollection;
-
-  document.getElementById(
-    "totalPayout"
-  ).innerText =
-    totalPayout;
-
-  document.getElementById(
-    "profitLoss"
-  ).innerText =
-    profitLoss;
-
-  document.getElementById(
-    "todayWinnerAdmin"
-  ).innerText =
-    results[0]
-      ? String(
-          results[0]
-          .winning_number
-        ).padStart(2,"0")
-      : "--";
-}
-
-// RESULT INPUT FORMAT
-document.getElementById(
-  "resultInput"
-)
-.addEventListener(
-  "input",
-  e=>{
-
-    let value =
-      e.target.value
-      .replace(/\D/g,"");
-
-    if(Number(value) > 99){
-
-      value = "99";
-    }
-
-    e.target.value =
-      value.padStart(2,"0");
-  }
-);
 // SCROLL
 window.scrollToUsers = () => {
   document.getElementById("usersSection")
@@ -958,11 +592,8 @@ await supabase
 window.announceResult = async function(){
 
   const value =
-  String(
-    document.getElementById(
-      "resultInput"
-    ).value.trim()
-  ).padStart(2,"0");
+    document.getElementById("resultInput")
+    .value.trim();
 
   if(!value){
     alert("Enter winning number");
@@ -972,8 +603,7 @@ window.announceResult = async function(){
   await supabase
   .from("results")
   .insert([{
-    winning_number:
-String(value).padStart(2,"0"),
+    winning_number:value,
     created_at:new Date().toISOString()
   }]);
 
@@ -985,14 +615,7 @@ String(value).padStart(2,"0"),
 
   for(const bet of bets){
 
-    if(
-  String(
-    bet.selected_number
-  ).padStart(2,"0")
-  ===
-  String(value)
-  .padStart(2,"0")
-){
+    if(bet.selected_number === value){
 
       const { data:user } =
         await supabase
@@ -1263,24 +886,6 @@ window.logoutAdmin = async function(){
 // INIT
 window.onload = async ()=>{
 
-  await loadUsers();
-
-  await loadAllBetData();
-
-  await loadLiveGrid();
-
-  await loadProfitLoss();
-
-}
-  setInterval(async ()=>{
-
-  await loadLiveGrid();
-
-  await loadProfitLoss();
-
-  await autoAnnounceResult();
-
-},1000);
   await loadUsers();
 
   await loadAllBetData();
