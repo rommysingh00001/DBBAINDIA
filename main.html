@@ -211,7 +211,7 @@ document.getElementById("placeBetBtn").addEventListener("click", async () => {
       type: "bet",
       amount: coins,
       balance_after: newBalance,
-      created_at: new Date().getISTTime()
+      created_at: new Date().toISOString()
     }]);
 
   // UPDATE HEADER BALANCE
