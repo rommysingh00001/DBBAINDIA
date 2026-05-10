@@ -348,14 +348,33 @@ window.onload = async function() {
     
     // CHECK LOGIN
 
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
+if(!session){
+  window.location.href = "index.html";
+}
+const userId = session.user.id;
 
-    if(!session){
+    async function showLatestBalance() {
+  const { data: latestBalance, error } = await supabase
+    .from("balance_ledger")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
 
-      window.location.href = "index.html";
-    }
+  if(error){
+    console.log(error);
+    return;
+  }
+
+  const balance = latestBalance?.balance_after || 0;
+  document.getElementById("balanceText").innerText = balance + " Coins";
+}
+
+// Call it after page load
+showLatestBalance();
+    
 // LOAD USER BALANCE
 
 const userId =
