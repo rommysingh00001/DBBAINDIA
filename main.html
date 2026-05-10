@@ -155,19 +155,29 @@
     const numbersDiv = document.getElementById("numbers");
 
     // --- LOAD LATEST BALANCE FROM LEDGER ---
-    async function loadLatestBalance() {
-      const { data: latestBalance } = await supabase
-        .from("balance_ledger")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+async function loadLatestBalance() {
 
-      const balance = latestBalance?.balance_after || 0;
-      balanceText.innerText = balance + " Coins";
-      return balance;
-    }
+  const { data, error } = await supabase
+    .from("balance_ledger")
+    .select("balance_after")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if(error){
+    console.log(error);
+    balanceText.innerText = "0 Coins";
+    return 0;
+  }
+
+  const balance = Number(data?.balance_after || 0);
+
+  // UPDATE HEADER
+  balanceText.innerText = balance + " Coins";
+
+  return balance;
+}
 
     // --- PLACE BET ---
 document.getElementById("placeBetBtn").addEventListener("click", async () => {
@@ -175,36 +185,42 @@ document.getElementById("placeBetBtn").addEventListener("click", async () => {
   const number = selectedDiv.innerText;
   const coins = parseInt(coinsInput.value) || 0;
 
-  // CURRENT BALANCE FROM LEDGER
+  // GET CURRENT BALANCE
   const currentBalance = await loadLatestBalance();
 
   // CHECK BALANCE
-  if(coins <= 0 || coins > currentBalance){
+  if(coins <= 0){
+    alert("Enter Coins");
+    return;
+  }
+
+  if(coins > currentBalance){
     alert("Insufficient Balance");
     return;
   }
 
   // SAVE BET
-  const { error } = await supabase
+  const { error: betError } = await supabase
     .from("bets")
     .insert([{
       user_id: userId,
       selected_number: number,
       coins: coins,
       potential_win: coins * 90,
-      status: "pending"
+      status: "pending",
+      created_at: getISTTime()
     }]);
 
-  if(error){
-    alert("Error placing bet: " + error.message);
+  if(betError){
+    alert("Bet Error: " + betError.message);
     return;
   }
 
   // NEW BALANCE
   const newBalance = currentBalance - coins;
 
-  // SAVE NEW BALANCE IN LEDGER
-  await supabase
+  // SAVE IN BALANCE LEDGER
+  const { error: ledgerError } = await supabase
     .from("balance_ledger")
     .insert([{
       user_id: userId,
@@ -214,7 +230,12 @@ document.getElementById("placeBetBtn").addEventListener("click", async () => {
       created_at: getISTTime()
     }]);
 
-  // UPDATE HEADER BALANCE
+  if(ledgerError){
+    alert("Ledger Error: " + ledgerError.message);
+    return;
+  }
+
+  // UPDATE HEADER
   balanceText.innerText = newBalance + " Coins";
 
   // RESET INPUT
