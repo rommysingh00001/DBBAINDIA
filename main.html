@@ -640,6 +640,7 @@ window.loadHistory = async function(){
     .gte("created_at", fromDate)
     .lte("created_at", toDate + "T23:59:59")
     .order("created_at",{ascending:false});
+  const filteredData = data.slice(10);
 
   const historyGrid =
     document.getElementById("historyGrid");
@@ -648,7 +649,7 @@ window.loadHistory = async function(){
 
 
 
-  if(!data || data.length===0){
+  if(!filteredData || filteredData.length===0){
 
     historyGrid.innerHTML = `
   <div class="text-red-400 font-bold col-span-full text-center">
@@ -659,7 +660,7 @@ window.loadHistory = async function(){
     return;
   }
 
-  data.forEach(r => {
+  filteredData.forEach(r => {
 
     const div =
       document.createElement("div");
