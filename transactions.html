@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>My Transactions - DBBA INDIA</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
-<body class="bg-[#050816] text-white p-5 md:p-8">
+<body class="bg-[#050816] text-white min-h-screen p-5 md:p-8">
 
   <!-- HEADER -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
 
     <div>
+
       <h1 class="text-4xl md:text-5xl font-black text-yellow-400">
         My Transactions
       </h1>
 
       <p class="text-gray-400 mt-2">
-        Complete transaction history
+        Complete Deposit / Withdraw / Bet History
       </p>
+
     </div>
 
     <button
       onclick="goBack()"
-      class="bg-green-500 hover:bg-green-400 text-black font-black px-6 py-3 rounded-2xl">
+      class="bg-green-500 hover:bg-green-400 text-black px-6 py-3 rounded-2xl font-black">
+
       Back
+
     </button>
 
   </div>
@@ -34,32 +41,46 @@
   <!-- FILTERS -->
   <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-8">
 
-    <h2 class="text-2xl font-black mb-5 text-yellow-400">
+    <h2 class="text-2xl font-black text-yellow-400 mb-5">
       Filters
     </h2>
 
     <div class="grid md:grid-cols-4 gap-4">
 
+      <!-- FROM DATE -->
       <div>
-        <p class="text-gray-400 mb-2">From Date</p>
+
+        <p class="text-gray-400 mb-2">
+          From Date
+        </p>
 
         <input
           type="date"
           id="fromDate"
           class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
       </div>
 
+      <!-- TO DATE -->
       <div>
-        <p class="text-gray-400 mb-2">To Date</p>
+
+        <p class="text-gray-400 mb-2">
+          To Date
+        </p>
 
         <input
           type="date"
           id="toDate"
           class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
       </div>
 
+      <!-- TYPE -->
       <div>
-        <p class="text-gray-400 mb-2">Type</p>
+
+        <p class="text-gray-400 mb-2">
+          Transaction Type
+        </p>
 
         <select
           id="typeFilter"
@@ -72,15 +93,20 @@
           <option value="win">Win</option>
 
         </select>
+
       </div>
 
+      <!-- BUTTON -->
       <div class="flex items-end">
+
         <button
           onclick="loadTransactions()"
-          class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-3 rounded-2xl">
+          class="w-full bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-2xl font-black">
 
           Apply Filters
+
         </button>
+
       </div>
 
     </div>
@@ -91,31 +117,67 @@
   <div class="grid md:grid-cols-4 gap-5 mb-8">
 
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Transactions</p>
-      <h2 id="totalTransactions" class="text-4xl font-black text-yellow-400">
+
+      <p class="text-gray-400 mb-2">
+        Total Transactions
+      </p>
+
+      <h2
+        id="totalTransactions"
+        class="text-4xl font-black text-yellow-400">
+
         0
+
       </h2>
+
     </div>
 
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Deposit</p>
-      <h2 id="totalDeposit" class="text-4xl font-black text-green-400">
+
+      <p class="text-gray-400 mb-2">
+        Total Deposit
+      </p>
+
+      <h2
+        id="totalDeposit"
+        class="text-4xl font-black text-green-400">
+
         0
+
       </h2>
+
     </div>
 
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Withdraw</p>
-      <h2 id="totalWithdraw" class="text-4xl font-black text-red-400">
+
+      <p class="text-gray-400 mb-2">
+        Total Withdraw
+      </p>
+
+      <h2
+        id="totalWithdraw"
+        class="text-4xl font-black text-red-400">
+
         0
+
       </h2>
+
     </div>
 
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Bets</p>
-      <h2 id="totalBets" class="text-4xl font-black text-blue-400">
+
+      <p class="text-gray-400 mb-2">
+        Total Bets
+      </p>
+
+      <h2
+        id="totalBets"
+        class="text-4xl font-black text-blue-400">
+
         0
+
       </h2>
+
     </div>
 
   </div>
@@ -129,7 +191,30 @@
 
     // GO BACK
     window.goBack = () => {
-      window.history.back();
+
+      window.location.href = "main.html";
+
+    }
+
+    // FORMAT INDIAN TIME
+    function formatIndianTime(dateString){
+
+      return new Date(dateString).toLocaleString("en-IN",{
+
+        timeZone: "Asia/Kolkata",
+
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+
+        hour12: true
+
+      });
+
     }
 
     // LOAD TRANSACTIONS
@@ -137,21 +222,20 @@
 
       try{
 
-        const { data:{ session }, error:sessionError } =
+        // SESSION
+        const { data:{ session } } =
           await supabase.auth.getSession();
 
-        if(sessionError){
-          console.log(sessionError);
-          return;
-        }
-
         if(!session){
+
           window.location.href = "index.html";
           return;
+
         }
 
         const userId = session.user.id;
 
+        // FILTER VALUES
         const fromDate =
           document.getElementById("fromDate").value;
 
@@ -161,7 +245,10 @@
         const typeFilter =
           document.getElementById("typeFilter").value;
 
-        // LOAD LEDGER
+        // =========================
+        // LOAD LEDGER ONLY
+        // =========================
+
         const { data: ledger, error } =
           await supabase
             .from("balance_ledger")
@@ -176,71 +263,120 @@
           alert("Unable to load transactions");
 
           return;
+
         }
 
-        let transactions = ledger || [];
+        // =========================
+        // CONVERT DATA
+        // =========================
 
-        // DATE FILTER
-        if(fromDate){
+        let transactions = [];
 
-          transactions = transactions.filter(t => {
+        (ledger || []).forEach(l => {
 
-            const d = new Date(t.created_at);
+          transactions.push({
 
-            return d >= new Date(fromDate);
+            type:
+              l.change_type || "unknown",
+
+            amount:
+              l.amount || 0,
+
+            created_at:
+              l.created_at,
+
+            balance_after:
+              l.balance_after || 0
 
           });
-        }
 
-        if(toDate){
+        });
 
-          const end = new Date(toDate);
-
-          end.setHours(23,59,59,999);
-
-          transactions = transactions.filter(t => {
-
-            const d = new Date(t.created_at);
-
-            return d <= end;
-
-          });
-        }
+        // =========================
+        // FILTERS
+        // =========================
 
         // TYPE FILTER
         if(typeFilter){
 
-          transactions = transactions.filter(t => {
+          transactions =
+            transactions.filter(t =>
+              t.type === typeFilter
+            );
 
-            return (t.change_type || t.type) === typeFilter;
-
-          });
         }
 
+        // FROM DATE
+        if(fromDate){
+
+          const start =
+            new Date(fromDate);
+
+          transactions =
+            transactions.filter(t => {
+
+              return new Date(t.created_at) >= start;
+
+            });
+
+        }
+
+        // TO DATE
+        if(toDate){
+
+          const end =
+            new Date(toDate);
+
+          end.setHours(23,59,59,999);
+
+          transactions =
+            transactions.filter(t => {
+
+              return new Date(t.created_at) <= end;
+
+            });
+
+        }
+
+        // SORT LATEST FIRST
+        transactions.sort((a,b) => {
+
+          return new Date(b.created_at) -
+                 new Date(a.created_at);
+
+        });
+
+        // =========================
         // SUMMARY
+        // =========================
+
         let totalDeposit = 0;
         let totalWithdraw = 0;
         let totalBets = 0;
 
         transactions.forEach(t => {
 
-          const currentType =
-            t.change_type || t.type;
+          if(t.type === "credit"){
 
-          if(currentType === "credit"){
-            totalDeposit += Number(t.amount || 0);
+            totalDeposit += Number(t.amount);
+
           }
 
-          if(currentType === "debit"){
-            totalWithdraw += Number(t.amount || 0);
+          if(t.type === "debit"){
+
+            totalWithdraw += Number(t.amount);
+
           }
 
-          if(currentType === "bet"){
-            totalBets += Number(t.amount || 0);
+          if(t.type === "bet"){
+
+            totalBets += Number(t.amount);
+
           }
 
         });
 
+        // UPDATE SUMMARY
         document.getElementById("totalTransactions").innerText =
           transactions.length;
 
@@ -253,84 +389,95 @@
         document.getElementById("totalBets").innerText =
           totalBets;
 
+        // =========================
         // RENDER
-        const transactionsDiv =
+        // =========================
+
+        const list =
           document.getElementById("transactionsList");
 
-        transactionsDiv.innerHTML = "";
+        list.innerHTML = "";
 
+        // EMPTY
         if(transactions.length === 0){
 
-          transactionsDiv.innerHTML = `
+          list.innerHTML = `
+
             <div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 text-center">
+
               <h2 class="text-3xl font-black text-gray-400">
                 No Transactions Found
               </h2>
+
             </div>
+
           `;
 
           return;
+
         }
 
+        // LOOP
         transactions.forEach(t => {
 
-          const currentType =
-            t.change_type || t.type;
-
-          const dt =
-            new Date(t.created_at)
-            .toLocaleString("en-IN",{
-              timeZone:"Asia/Kolkata",
-              day:"2-digit",
-              month:"short",
-              year:"numeric",
-              hour:"2-digit",
-              minute:"2-digit",
-              second:"2-digit"
-            });
-
           let title = "";
-          let amount = "";
-          let color = "";
+          let amountText = "";
+          let amountColor = "";
           let bg = "";
 
           // DEPOSIT
-          if(currentType === "credit"){
+          if(t.type === "credit"){
 
             title = "Deposit";
-            amount = `+${t.amount}`;
-            color = "text-green-400";
+
+            amountText = `+${t.amount}`;
+
+            amountColor = "text-green-400";
+
             bg = "bg-green-500/10 border-green-500/20";
+
           }
 
           // WITHDRAW
-          if(currentType === "debit"){
+          if(t.type === "debit"){
 
             title = "Withdraw";
-            amount = `-${t.amount}`;
-            color = "text-red-400";
+
+            amountText = `-${t.amount}`;
+
+            amountColor = "text-red-400";
+
             bg = "bg-red-500/10 border-red-500/20";
+
           }
 
           // BET
-          if(currentType === "bet"){
+          if(t.type === "bet"){
 
             title = "Bet Placed";
-            amount = `-${t.amount}`;
-            color = "text-yellow-400";
+
+            amountText = `-${t.amount}`;
+
+            amountColor = "text-yellow-400";
+
             bg = "bg-yellow-500/10 border-yellow-500/20";
+
           }
 
           // WIN
-          if(currentType === "win"){
+          if(t.type === "win"){
 
             title = "Winning Reward";
-            amount = `+${t.amount}`;
-            color = "text-green-400";
+
+            amountText = `+${t.amount}`;
+
+            amountColor = "text-green-400";
+
             bg = "bg-green-500/10 border-green-500/20";
+
           }
 
-          transactionsDiv.innerHTML += `
+          list.innerHTML += `
 
             <div class="${bg} border rounded-3xl p-5">
 
@@ -342,12 +489,12 @@
                     ${title}
                   </p>
 
-                  <h2 class="text-3xl font-black ${color}">
-                    ${amount}
+                  <h2 class="text-3xl font-black ${amountColor}">
+                    ${amountText}
                   </h2>
 
                   <p class="text-gray-400 text-xs mt-2">
-                    ${dt}
+                    ${formatIndianTime(t.created_at)}
                   </p>
 
                 </div>
@@ -359,7 +506,7 @@
                   </p>
 
                   <h2 class="text-2xl font-black text-white">
-                    ${t.balance_after || 0}
+                    ${t.balance_after}
                   </h2>
 
                 </div>
@@ -372,9 +519,9 @@
 
         });
 
-      }catch(err){
+      }catch(error){
 
-        console.log(err);
+        console.log(error);
 
         alert("Something went wrong");
 
@@ -382,8 +529,11 @@
 
     }
 
-    window.loadTransactions = loadTransactions;
+    // GLOBAL
+    window.loadTransactions =
+      loadTransactions;
 
+    // AUTO LOAD
     loadTransactions();
 
   </script>
