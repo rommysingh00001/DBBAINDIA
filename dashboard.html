@@ -94,9 +94,25 @@ window.creditBalance = async function(userId){
 
   // Update users table
   await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
+
   // Insert into deposits table
-  await supabase.from("deposits").insert([{ user_id:userId, amount, status:"credited by admin", created_at:new Date().toISOString() }]);
-  // Update balance in table
+  await supabase.from("deposits").insert([{
+    user_id:userId,
+    amount,
+    status:"credited by admin",
+    created_at:new Date().toISOString()
+  }]);
+
+  // Insert into balance_ledger
+  await supabase.from("balance_ledger").insert([{
+    user_id: userId,
+    change_type: "credit",
+    amount: amount,
+    balance_after: newBalance,
+    created_at: new Date().toISOString()
+  }]);
+
+  // Update balance in dashboard
   document.getElementById(`balance-${userId}`).innerText = newBalance;
 }
 
@@ -112,8 +128,25 @@ window.debitBalance = async function(userId){
 
   // Update users table
   await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
+
   // Insert into withdraws table
-  await supabase.from("withdraws").insert([{ user_id:userId, amount, status:"debited by admin", created_at:new Date().toISOString() }]);
+  await supabase.from("withdraws").insert([{
+    user_id:userId,
+    amount,
+    status:"debited by admin",
+    created_at:new Date().toISOString()
+  }]);
+
+  // Insert into balance_ledger
+  await supabase.from("balance_ledger").insert([{
+    user_id: userId,
+    change_type: "debit",
+    amount: amount,
+    balance_after: newBalance,
+    created_at: new Date().toISOString()
+  }]);
+
+  // Update balance in dashboard
   document.getElementById(`balance-${userId}`).innerText = newBalance;
 }
 
@@ -130,7 +163,7 @@ window.announceResult = async function(){
 }
 
 // INIT
-window.onload=()=>{ loadUsers(); };
+window.onload = () => { loadUsers(); };
 </script>
 
 </body>
