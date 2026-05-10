@@ -411,8 +411,7 @@ async function loadLatestBalance() {
   const latestBalance = data[0].balance;
 
   // UPDATE HEADER BALANCE
-  document.getElementById("balanceText").innerText =
-    latestBalance + " Coins";
+  document.getElementById("coins").value = balance;
 
   // ENTER COINS WILL USE SAME BALANCE
   document.getElementById("coins").value =
