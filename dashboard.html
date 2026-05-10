@@ -839,37 +839,27 @@ window.clearFilters = function(){
 
   renderFilteredData(allBetData);
 }
-
-// INIT
-window.onload = async ()=>{
-
-  await loadUsers();
-
-  await loadAllBetData();
-
-}
-
-</script>
-<!-- dashboard.html ME PURANA logoutAdmin FUNCTION DELETE KARKE
-YE FINAL WORKING FUNCTION PASTE KARO -->
-
-<script>
-
+// LOGOUT ADMIN
 window.logoutAdmin = async function(){
 
   try{
 
-    // SUPABASE LOGOUT
-    await supabase.auth.signOut();
+    const { error } =
+      await supabase.auth.signOut();
 
-    // LOCAL STORAGE CLEAR
+    if(error){
+
+      console.log(error);
+
+      alert(error.message);
+      return;
+    }
+
     localStorage.clear();
 
-    // SESSION STORAGE CLEAR
     sessionStorage.clear();
 
-    // REDIRECT
-    window.location.replace("login.html");
+    window.location.href = "login.html";
 
   }catch(err){
 
@@ -878,9 +868,14 @@ window.logoutAdmin = async function(){
     alert("Logout Failed");
   }
 }
+// INIT
+window.onload = async ()=>{
 
-</script>
+  await loadUsers();
 
+  await loadAllBetData();
+
+}
 </script>
 </body>
 </html>
