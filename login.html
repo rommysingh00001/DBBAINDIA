@@ -34,18 +34,35 @@
     id="loginPassword"
     type="password"
     placeholder="Password"
-    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-3 outline-none"/>
+
+    <!-- SHOW PASSWORD -->
+    <div class="flex items-center gap-2 mb-6">
+      <input type="checkbox" id="showPassword"/>
+      <label for="showPassword" class="text-sm text-gray-400 cursor-pointer">
+        Show Password
+      </label>
+    </div>
 
     <button
+    id="loginBtn"
     onclick="login()"
-    class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4">
+    class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4 transition">
     LOGIN
     </button>
 
     <a href="signup.html"
-    class="block text-center text-green-400 font-bold">
+    class="block text-center text-green-400 font-bold mb-4">
     Create New Account
     </a>
+
+    <div class="text-center">
+      <button
+      onclick="forgotPassword()"
+      class="text-red-400 font-bold hover:text-red-300">
+      Forgot Password?
+      </button>
+    </div>
 
   </div>
 
@@ -55,7 +72,35 @@
       supabase
     } from "./supabase.js";
 
+    // AUTO LOGIN CHECK
+    const {
+      data:{ session }
+    } = await supabase.auth.getSession();
+
+    if(session){
+      window.location.href = "main.html";
+    }
+
+    // SHOW PASSWORD
+    document
+    .getElementById("showPassword")
+    .addEventListener("change", function(){
+
+      const passInput =
+        document.getElementById("loginPassword");
+
+      passInput.type =
+        this.checked ? "text" : "password";
+    });
+
+    // LOGIN
     window.login = async function(){
+
+      const loginBtn =
+        document.getElementById("loginBtn");
+
+      loginBtn.disabled = true;
+      loginBtn.innerText = "PLEASE WAIT...";
 
       const input =
         document.getElementById(
@@ -70,19 +115,128 @@
       if(!input || !password){
 
         alert("Please fill all fields");
+
+        loginBtn.disabled = false;
+        loginBtn.innerText = "LOGIN";
+
         return;
       }
 
       let email = input;
 
+      // PHONE LOGIN SUPPORT
       if(!input.includes("@")){
 
-        const { data } =
-          await supabase
-            .from("users")
-            .select("*")
-            .eq("phone", input)
-            .single();
+        const {
+          data,
+          error
+        } = await supabase
+          .from("users")
+          .select("*")
+          .eq("phone", input)
+          .single();
+
+        if(error || !data){
+
+          alert("Phone number not found");
+
+          loginBtn.disabled = false;
+          loginBtn.innerText = "LOGIN";
+
+          return;
+        }
+
+        email = data.email;
+      }
+
+      // LOGIN
+      const {
+        data:loginData,
+        error
+      } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if(error){
+
+        alert(error.message);
+
+        loginBtn.disabled = false;
+        loginBtn.innerText = "LOGIN";
+
+        return;
+      }
+
+      // SESSION CHECK
+      const {
+        data:{ session:newSession }
+      } = await supabase.auth.getSession();
+
+      if(!newSession){
+
+        alert("Login failed");
+
+        loginBtn.disabled = false;
+        loginBtn.innerText = "LOGIN";
+
+        return;
+      }
+
+      // USER EXISTS CHECK
+      const {
+        data:userData,
+        error:userError
+      } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", newSession.user.id)
+      .single();
+
+      if(userError || !userData){
+
+        await supabase.auth.signOut();
+
+        alert("User account not found");
+
+        loginBtn.disabled = false;
+        loginBtn.innerText = "LOGIN";
+
+        return;
+      }
+
+      // SUCCESS
+      alert("Login Successful");
+
+      window.location.href = "main.html";
+    }
+
+    // FORGOT PASSWORD
+    window.forgotPassword = async function(){
+
+      const input =
+        document.getElementById(
+          "loginInput"
+        ).value.trim();
+
+      if(!input){
+
+        alert("Enter your email first");
+        return;
+      }
+
+      let email = input;
+
+      // PHONE TO EMAIL
+      if(!input.includes("@")){
+
+        const {
+          data
+        } = await supabase
+          .from("users")
+          .select("*")
+          .eq("phone", input)
+          .single();
 
         if(!data){
 
@@ -93,11 +247,16 @@
         email = data.email;
       }
 
-      const { error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+      const {
+        error
+      } = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo:
+            window.location.origin +
+            "/reset-password.html"
+        }
+      );
 
       if(error){
 
@@ -105,9 +264,20 @@
 
       } else {
 
-        window.location.href = "main.html";
+        alert("Password reset email sent");
       }
     }
+
+    // ENTER BUTTON LOGIN
+    document.addEventListener(
+      "keydown",
+      function(event){
+
+        if(event.key === "Enter"){
+          login();
+        }
+      }
+    );
 
   </script>
 
