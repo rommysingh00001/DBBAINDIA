@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8"/>
@@ -11,64 +12,80 @@
 
 </head>
 
-<body class="bg-[#050816] text-white p-8">
+<body class="bg-[#050816] text-white p-6">
 
-<h1 class="text-5xl font-black text-yellow-400 mb-6">
-ADMIN PANEL
-</h1>
+<!-- HEADER -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-8">
 
-<!-- TOP BUTTONS -->
-<div class="flex gap-4 mb-6 flex-wrap">
+  <h1 class="text-5xl font-black text-yellow-400">
+    ADMIN PANEL
+  </h1>
 
-  <button
-  onclick="scrollToUsers()"
-  class="bg-green-500 hover:bg-green-400 px-5 py-3 rounded-2xl font-bold text-black">
-  Manage Users
-  </button>
+  <div class="flex gap-4 flex-wrap">
 
-  <button
-  onclick="scrollToAnnounce()"
-  class="bg-yellow-400 hover:bg-yellow-300 px-5 py-3 rounded-2xl font-bold text-black">
-  Announce Today's Winner
-  </button>
+    <button
+      onclick="scrollToUsers()"
+      class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">
 
-  <button
-  onclick="scrollToDailyReport()"
-  class="bg-blue-500 hover:bg-blue-400 px-5 py-3 rounded-2xl font-bold text-black">
-  Daily Report
-  </button>
+      Manage Users
+
+    </button>
+
+    <button
+      onclick="scrollToAnnounce()"
+      class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">
+
+      Announce Winner
+
+    </button>
+
+    <button
+      onclick="scrollToReports()"
+      class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-black">
+
+      Daily Reports
+
+    </button>
+
+  </div>
 
 </div>
 
-<!-- ANNOUNCE WINNER -->
+<!-- ANNOUNCE SECTION -->
 <div
 id="announceSection"
-class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
-  <h2 class="text-3xl font-black text-yellow-400 mb-4">
+  <h2 class="text-3xl font-black text-yellow-400 mb-5">
     Announce Today's Winner
   </h2>
 
-  <input
-  type="text"
-  id="resultInput"
-  placeholder="Enter Today's Winner"
-  class="bg-black border border-gray-700 rounded-2xl p-4 w-full mb-4"/>
+  <div class="flex gap-4 flex-wrap">
 
-  <button
-  class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-5 py-3 rounded-2xl"
-  onclick="announceResult()">
-  Announce Result
-  </button>
+    <input
+      type="text"
+      id="resultInput"
+      placeholder="Enter Winning Number"
+      class="bg-black border border-gray-700 rounded-2xl p-4 flex-1 outline-none"/>
+
+    <button
+      onclick="announceResult()"
+      class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-6 py-4 rounded-2xl">
+
+      ANNOUNCE
+
+    </button>
+
+  </div>
 
 </div>
 
-<!-- USERS -->
+<!-- USERS SECTION -->
 <div
 id="usersSection"
-class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
-  <h2 class="text-3xl font-black text-blue-400 mb-4">
+  <h2 class="text-3xl font-black text-green-400 mb-6">
     Manage Users
   </h2>
 
@@ -80,29 +97,12 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
 
         <tr>
 
-          <th class="px-4 py-2 text-left text-gray-400">
-            Sr. No.
-          </th>
-
-          <th class="px-4 py-2 text-left text-gray-400">
-            Name
-          </th>
-
-          <th class="px-4 py-2 text-left text-gray-400">
-            Email
-          </th>
-
-          <th class="px-4 py-2 text-left text-gray-400">
-            Phone
-          </th>
-
-          <th class="px-4 py-2 text-left text-gray-400">
-            Balance
-          </th>
-
-          <th class="px-4 py-2 text-left text-gray-400">
-            Actions
-          </th>
+          <th class="px-4 py-3 text-left text-gray-400">#</th>
+          <th class="px-4 py-3 text-left text-gray-400">Name</th>
+          <th class="px-4 py-3 text-left text-gray-400">Email</th>
+          <th class="px-4 py-3 text-left text-gray-400">Phone</th>
+          <th class="px-4 py-3 text-left text-gray-400">Balance</th>
+          <th class="px-4 py-3 text-left text-gray-400">Actions</th>
 
         </tr>
 
@@ -118,107 +118,133 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-6">
 
 </div>
 
-<!-- DAILY REPORT -->
+<!-- REPORT SECTION -->
 <div
-id="dailyReportSection"
+id="reportsSection"
 class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 
-  <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+  <h2 class="text-3xl font-black text-blue-400 mb-6">
+    Daily Betting Reports
+  </h2>
 
-    <h2 class="text-3xl font-black text-green-400">
-      Daily Betting Report
+  <!-- FILTERS -->
+  <div class="bg-black border border-gray-800 rounded-3xl p-5 mb-6">
+
+    <h2 class="text-2xl font-black text-yellow-400 mb-5">
+      Advanced Filters
     </h2>
 
-    <input
-    type="date"
-    id="reportDate"
-    class="bg-black border border-gray-700 rounded-2xl p-3"/>
+    <div class="grid md:grid-cols-5 gap-4">
 
-  </div>
+      <input
+        type="text"
+        id="filterUser"
+        placeholder="Search User"
+        class="bg-gray-900 border border-gray-700 rounded-2xl p-3 outline-none"/>
 
-  <!-- NUMBER REPORT -->
-  <div class="mb-10">
+      <input
+        type="text"
+        id="filterEmail"
+        placeholder="Search Email"
+        class="bg-gray-900 border border-gray-700 rounded-2xl p-3 outline-none"/>
 
-    <h3 class="text-2xl font-black text-yellow-400 mb-4">
-      Number Wise Total Bets
-    </h3>
+      <input
+        type="text"
+        id="filterNumber"
+        placeholder="Search Number"
+        class="bg-gray-900 border border-gray-700 rounded-2xl p-3 outline-none"/>
 
-    <div class="overflow-x-auto">
+      <select
+        id="filterStatus"
+        class="bg-gray-900 border border-gray-700 rounded-2xl p-3 outline-none">
 
-      <table class="min-w-full divide-y divide-gray-700">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="win">Win</option>
+        <option value="lose">Lose</option>
 
-        <thead>
+      </select>
 
-          <tr>
+      <input
+        type="date"
+        id="filterDate"
+        class="bg-gray-900 border border-gray-700 rounded-2xl p-3 outline-none"/>
 
-            <th class="px-4 py-2 text-left text-gray-400">
-              Number
-            </th>
+    </div>
 
-            <th class="px-4 py-2 text-left text-gray-400">
-              Total Coins
-            </th>
+    <div class="flex gap-4 mt-5">
 
-            <th class="px-4 py-2 text-left text-gray-400">
-              Total Bets
-            </th>
+      <button
+        onclick="applyFilters()"
+        class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-3 rounded-2xl">
 
-          </tr>
+        Apply Filters
 
-        </thead>
+      </button>
 
-        <tbody
-        id="dailyReportTable"
-        class="divide-y divide-gray-700"></tbody>
+      <button
+        onclick="clearFilters()"
+        class="bg-red-500 hover:bg-red-400 text-white font-black px-5 py-3 rounded-2xl">
 
-      </table>
+        Clear Filters
+
+      </button>
 
     </div>
 
   </div>
 
-  <!-- USER BET REPORT -->
-  <div>
+  <!-- SUMMARY -->
+  <div class="grid md:grid-cols-3 gap-5 mb-6">
 
-    <h3 class="text-2xl font-black text-blue-400 mb-4">
-      User Betting Details
-    </h3>
-
-    <div class="overflow-x-auto">
-
-      <table class="min-w-full divide-y divide-gray-700">
-
-        <thead>
-
-          <tr>
-
-            <th class="px-4 py-2 text-left text-gray-400">
-              User
-            </th>
-
-            <th class="px-4 py-2 text-left text-gray-400">
-              Number
-            </th>
-
-            <th class="px-4 py-2 text-left text-gray-400">
-              Coins
-            </th>
-
-            <th class="px-4 py-2 text-left text-gray-400">
-              Date & Time
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody
-        id="userBetReportTable"
-        class="divide-y divide-gray-700"></tbody>
-
-      </table>
-
+    <div class="bg-black border border-gray-800 rounded-3xl p-6">
+      <p class="text-gray-400 mb-2">Total Bets</p>
+      <h2 id="totalBets" class="text-4xl font-black text-yellow-400">
+        0
+      </h2>
     </div>
+
+    <div class="bg-black border border-gray-800 rounded-3xl p-6">
+      <p class="text-gray-400 mb-2">Total Coins</p>
+      <h2 id="totalCoins" class="text-4xl font-black text-green-400">
+        0
+      </h2>
+    </div>
+
+    <div class="bg-black border border-gray-800 rounded-3xl p-6">
+      <p class="text-gray-400 mb-2">Winning Bets</p>
+      <h2 id="winningBets" class="text-4xl font-black text-blue-400">
+        0
+      </h2>
+    </div>
+
+  </div>
+
+  <!-- REPORT TABLE -->
+  <div class="overflow-x-auto">
+
+    <table class="min-w-full divide-y divide-gray-700">
+
+      <thead>
+
+        <tr>
+
+          <th class="px-4 py-3 text-left text-gray-400">User</th>
+          <th class="px-4 py-3 text-left text-gray-400">Email</th>
+          <th class="px-4 py-3 text-left text-gray-400">Number</th>
+          <th class="px-4 py-3 text-left text-gray-400">Coins</th>
+          <th class="px-4 py-3 text-left text-gray-400">Status</th>
+          <th class="px-4 py-3 text-left text-gray-400">Date & Time</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody
+      id="userBetReportTable"
+      class="divide-y divide-gray-700"></tbody>
+
+    </table>
 
   </div>
 
@@ -228,48 +254,32 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 
 import { supabase } from "./supabase.js";
 
-let allUsers = [];
+let allBetData = [];
 
 // SCROLL
 window.scrollToUsers = () => {
-  document
-  .getElementById("usersSection")
+  document.getElementById("usersSection")
   .scrollIntoView({behavior:"smooth"});
 }
 
 window.scrollToAnnounce = () => {
-  document
-  .getElementById("announceSection")
+  document.getElementById("announceSection")
   .scrollIntoView({behavior:"smooth"});
 }
 
-window.scrollToDailyReport = () => {
-  document
-  .getElementById("dailyReportSection")
+window.scrollToReports = () => {
+  document.getElementById("reportsSection")
   .scrollIntoView({behavior:"smooth"});
 }
 
 // LOAD USERS
 async function loadUsers(){
 
-  const { data:users, error } =
+  const { data:users=[] } =
     await supabase
     .from("users")
     .select("*")
     .order("created_at",{ascending:false});
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  allUsers = users;
-
-  renderUsers(users);
-}
-
-// RENDER USERS
-function renderUsers(users){
 
   const usersList =
     document.getElementById("usersList");
@@ -278,74 +288,76 @@ function renderUsers(users){
 
   users.forEach((user,index)=>{
 
-    const row =
-      document.createElement("tr");
+    usersList.innerHTML += `
 
-    row.innerHTML = `
+      <tr>
 
-      <td class="px-4 py-2">
-        ${index+1}
-      </td>
+        <td class="px-4 py-3">
+          ${index+1}
+        </td>
 
-      <td class="px-4 py-2">
-        ${user.full_name || "-"}
-      </td>
+        <td class="px-4 py-3">
+          ${user.full_name || "-"}
+        </td>
 
-      <td class="px-4 py-2">
-        ${user.email || "-"}
-      </td>
+        <td class="px-4 py-3">
+          ${user.email || "-"}
+        </td>
 
-      <td class="px-4 py-2">
-        ${user.phone || "-"}
-      </td>
+        <td class="px-4 py-3">
+          ${user.phone || "-"}
+        </td>
 
-      <td
-      class="px-4 py-2 text-yellow-400 font-bold"
-      id="balance-${user.id}">
-        ${user.balance || 0}
-      </td>
+        <td
+        class="px-4 py-3 text-yellow-400 font-black"
+        id="balance-${user.id}">
+          ${user.balance || 0}
+        </td>
 
-      <td class="px-4 py-2 space-y-2">
+        <td class="px-4 py-3 space-y-3">
 
-        <div class="flex gap-2">
+          <div class="flex gap-2">
 
-          <input
-          type="number"
-          id="credit-${user.id}"
-          placeholder="Credit"
-          class="bg-black border border-green-500 rounded-2xl p-2 w-24"/>
+            <input
+              type="number"
+              id="credit-${user.id}"
+              placeholder="Credit"
+              class="bg-black border border-green-500 rounded-2xl p-2 w-24"/>
 
-          <button
-          onclick="creditBalance('${user.id}')"
-          class="bg-green-500 px-3 py-2 rounded-xl font-bold text-black">
-          Credit
-          </button>
+            <button
+              onclick="creditBalance('${user.id}')"
+              class="bg-green-500 px-3 py-2 rounded-xl font-bold text-black">
 
-        </div>
+              Credit
 
-        <div class="flex gap-2">
+            </button>
 
-          <input
-          type="number"
-          id="debit-${user.id}"
-          placeholder="Debit"
-          class="bg-black border border-red-500 rounded-2xl p-2 w-24"/>
+          </div>
 
-          <button
-          onclick="debitBalance('${user.id}')"
-          class="bg-red-500 px-3 py-2 rounded-xl font-bold text-white">
-          Debit
-          </button>
+          <div class="flex gap-2">
 
-        </div>
+            <input
+              type="number"
+              id="debit-${user.id}"
+              placeholder="Debit"
+              class="bg-black border border-red-500 rounded-2xl p-2 w-24"/>
 
-      </td>
+            <button
+              onclick="debitBalance('${user.id}')"
+              class="bg-red-500 px-3 py-2 rounded-xl font-bold">
+
+              Debit
+
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
     `;
-
-    usersList.appendChild(row);
-
   });
-
 }
 
 // CREDIT
@@ -376,7 +388,6 @@ window.creditBalance = async function(userId){
   const newBalance =
     currentBalance + amount;
 
-  // UPDATE USER BALANCE
   await supabase
   .from("users")
   .update({
@@ -384,17 +395,6 @@ window.creditBalance = async function(userId){
   })
   .eq("id",userId);
 
-  // DEPOSIT HISTORY
-  await supabase
-  .from("deposits")
-  .insert([{
-    user_id:userId,
-    amount:amount,
-    status:"credited",
-    created_at:new Date().toISOString()
-  }]);
-
-  // BALANCE LEDGER
   await supabase
   .from("balance_ledger")
   .insert([{
@@ -409,8 +409,7 @@ window.creditBalance = async function(userId){
     `balance-${userId}`
   ).innerText = newBalance;
 
-  alert("Balance Credited Successfully");
-
+  alert("Balance Credited");
 }
 
 // DEBIT
@@ -446,7 +445,6 @@ window.debitBalance = async function(userId){
   const newBalance =
     currentBalance - amount;
 
-  // UPDATE USER BALANCE
   await supabase
   .from("users")
   .update({
@@ -454,17 +452,6 @@ window.debitBalance = async function(userId){
   })
   .eq("id",userId);
 
-  // WITHDRAW HISTORY
-  await supabase
-  .from("withdraws")
-  .insert([{
-    user_id:userId,
-    amount:amount,
-    status:"debited",
-    created_at:new Date().toISOString()
-  }]);
-
-  // BALANCE LEDGER
   await supabase
   .from("balance_ledger")
   .insert([{
@@ -479,8 +466,7 @@ window.debitBalance = async function(userId){
     `balance-${userId}`
   ).innerText = newBalance;
 
-  alert("Balance Debited Successfully");
-
+  alert("Balance Debited");
 }
 
 // ANNOUNCE RESULT
@@ -493,25 +479,17 @@ window.announceResult = async function(){
     .trim();
 
   if(!value){
-    alert("Enter today's winner");
+    alert("Enter winning number");
     return;
   }
 
-  // SAVE RESULT
-  const { error } =
-    await supabase
-    .from("results")
-    .insert([{
-      winning_number:value,
-      created_at:new Date().toISOString()
-    }]);
+  await supabase
+  .from("results")
+  .insert([{
+    winning_number:value,
+    created_at:new Date().toISOString()
+  }]);
 
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  // UPDATE BET STATUS
   const { data:bets=[] } =
     await supabase
     .from("bets")
@@ -520,10 +498,7 @@ window.announceResult = async function(){
 
   for(const bet of bets){
 
-    // WINNER
-    if(
-      bet.selected_number === value
-    ){
+    if(bet.selected_number === value){
 
       const { data:user } =
         await supabase
@@ -539,7 +514,6 @@ window.announceResult = async function(){
         currentBalance +
         Number(bet.potential_win);
 
-      // UPDATE USER BALANCE
       await supabase
       .from("users")
       .update({
@@ -547,7 +521,6 @@ window.announceResult = async function(){
       })
       .eq("id",bet.user_id);
 
-      // UPDATE BET
       await supabase
       .from("bets")
       .update({
@@ -555,7 +528,6 @@ window.announceResult = async function(){
       })
       .eq("id",bet.id);
 
-      // BALANCE LEDGER
       await supabase
       .from("balance_ledger")
       .insert([{
@@ -566,10 +538,7 @@ window.announceResult = async function(){
         created_at:new Date().toISOString()
       }]);
 
-    }
-
-    // LOSER
-    else{
+    } else {
 
       await supabase
       .from("bets")
@@ -579,124 +548,67 @@ window.announceResult = async function(){
       .eq("id",bet.id);
 
     }
-
   }
 
   alert("Result Announced Successfully");
 
-  document.getElementById(
-    "resultInput"
-  ).value = "";
+  document.getElementById("resultInput").value="";
 
+  loadAllBetData();
 }
 
-// DAILY REPORT
-async function loadDailyReport(){
-
-  const reportDate =
-    document.getElementById("reportDate")
-    .value;
-
-  let query =
-    supabase
-    .from("bets")
-    .select("*")
-    .order("created_at",{ascending:false});
-
-  if(reportDate){
-
-    query =
-      query
-      .gte(
-        "created_at",
-        reportDate
-      )
-      .lte(
-        "created_at",
-        reportDate + "T23:59:59"
-      );
-  }
+// LOAD BET DATA
+async function loadAllBetData(){
 
   const { data:bets=[] } =
-    await query;
+    await supabase
+    .from("bets")
+    .select(`
+      *,
+      users (
+        full_name,
+        email
+      )
+    `)
+    .order("created_at",{ascending:false});
 
-  // NUMBER REPORT
-  const reportMap = {};
+  allBetData = bets;
 
-  bets.forEach(bet => {
+  renderFilteredData(allBetData);
+}
 
-    if(!reportMap[bet.selected_number]){
+// RENDER DATA
+function renderFilteredData(data){
 
-      reportMap[bet.selected_number] = {
-        totalCoins:0,
-        totalBets:0
-      };
+  const table =
+    document.getElementById("userBetReportTable");
+
+  table.innerHTML = "";
+
+  let totalCoins = 0;
+  let totalWins = 0;
+
+  data.forEach(bet=>{
+
+    totalCoins += Number(bet.coins || 0);
+
+    if(bet.status === "win"){
+      totalWins++;
     }
 
-    reportMap[
-      bet.selected_number
-    ].totalCoins += Number(bet.coins);
+    table.innerHTML += `
 
-    reportMap[
-      bet.selected_number
-    ].totalBets += 1;
+      <tr>
 
-  });
-
-  const reportTable =
-    document.getElementById(
-      "dailyReportTable"
-    );
-
-  reportTable.innerHTML = "";
-
-  Object.keys(reportMap).forEach(number => {
-
-    reportTable.innerHTML += `
-      <tr class="border-b border-gray-700">
-
-        <td class="px-4 py-3 text-yellow-400 font-bold">
-          ${number}
+        <td class="px-4 py-3">
+          ${bet.users?.full_name || "-"}
         </td>
 
         <td class="px-4 py-3">
-          ${reportMap[number].totalCoins}
+          ${bet.users?.email || "-"}
         </td>
 
-        <td class="px-4 py-3">
-          ${reportMap[number].totalBets}
-        </td>
-
-      </tr>
-    `;
-
-  });
-
-  // USER BET REPORT
-  const userTable =
-    document.getElementById(
-      "userBetReportTable"
-    );
-
-  userTable.innerHTML = "";
-
-  for(const bet of bets){
-
-    const { data:user } =
-      await supabase
-      .from("users")
-      .select("*")
-      .eq("id",bet.user_id)
-      .single();
-
-    userTable.innerHTML += `
-      <tr class="border-b border-gray-700">
-
-        <td class="px-4 py-3">
-          ${user?.full_name || "-"}
-        </td>
-
-        <td class="px-4 py-3 text-yellow-400 font-bold">
+        <td class="px-4 py-3 text-yellow-400 font-black">
           ${bet.selected_number}
         </td>
 
@@ -705,52 +617,142 @@ async function loadDailyReport(){
         </td>
 
         <td class="px-4 py-3">
-          ${new Date(
-            bet.created_at
-          ).toLocaleString(
-            "en-IN",
-            {
-              timeZone:"Asia/Kolkata",
-              day:"2-digit",
-              month:"short",
-              year:"numeric",
-              hour:"2-digit",
-              minute:"2-digit"
-            }
-          )}
+
+          <span class="
+            ${bet.status==="win"
+              ?"text-green-400"
+              :bet.status==="lose"
+              ?"text-red-400"
+              :"text-yellow-400"}
+            font-black">
+
+            ${bet.status}
+
+          </span>
+
+        </td>
+
+        <td class="px-4 py-3">
+
+          ${new Date(bet.created_at)
+            .toLocaleString(
+              "en-IN",
+              {
+                timeZone:"Asia/Kolkata",
+                day:"2-digit",
+                month:"short",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+              }
+            )}
+
         </td>
 
       </tr>
+
     `;
+  });
 
-  }
+  document.getElementById("totalBets")
+  .innerText = data.length;
 
+  document.getElementById("totalCoins")
+  .innerText = totalCoins;
+
+  document.getElementById("winningBets")
+  .innerText = totalWins;
 }
 
-// REPORT DATE FILTER
-document
-.getElementById("reportDate")
-.addEventListener(
-  "change",
-  loadDailyReport
-);
+// APPLY FILTERS
+window.applyFilters = function(){
+
+  const user =
+    document
+    .getElementById("filterUser")
+    .value
+    .toLowerCase();
+
+  const email =
+    document
+    .getElementById("filterEmail")
+    .value
+    .toLowerCase();
+
+  const number =
+    document
+    .getElementById("filterNumber")
+    .value
+    .toLowerCase();
+
+  const status =
+    document
+    .getElementById("filterStatus")
+    .value
+    .toLowerCase();
+
+  const date =
+    document
+    .getElementById("filterDate")
+    .value;
+
+  let filtered =
+    allBetData.filter(bet=>{
+
+      const fullName =
+        (bet.users?.full_name || "")
+        .toLowerCase();
+
+      const userEmail =
+        (bet.users?.email || "")
+        .toLowerCase();
+
+      const betNumber =
+        (bet.selected_number || "")
+        .toLowerCase();
+
+      const betStatus =
+        (bet.status || "")
+        .toLowerCase();
+
+      const betDate =
+        new Date(bet.created_at)
+        .toISOString()
+        .split("T")[0];
+
+      return (
+
+        (!user || fullName.includes(user)) &&
+        (!email || userEmail.includes(email)) &&
+        (!number || betNumber.includes(number)) &&
+        (!status || betStatus === status) &&
+        (!date || betDate === date)
+
+      );
+
+    });
+
+  renderFilteredData(filtered);
+}
+
+// CLEAR FILTERS
+window.clearFilters = function(){
+
+  document.getElementById("filterUser").value="";
+  document.getElementById("filterEmail").value="";
+  document.getElementById("filterNumber").value="";
+  document.getElementById("filterStatus").value="";
+  document.getElementById("filterDate").value="";
+
+  renderFilteredData(allBetData);
+}
 
 // INIT
-window.onload = async () => {
-
-  // TODAY DATE
-  const today =
-    new Date()
-    .toISOString()
-    .split("T")[0];
-
-  document.getElementById(
-    "reportDate"
-  ).value = today;
+window.onload = async ()=>{
 
   await loadUsers();
 
-  await loadDailyReport();
+  await loadAllBetData();
 
 }
 
