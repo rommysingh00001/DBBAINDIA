@@ -266,16 +266,16 @@ window.showTransactions = async function(){
   if(fromDate){
 
     depositsQuery =
-      depositsQuery.gte(
-        "created_at",
-        fromDate
-      );
+  depositsQuery.gte(
+    "created_at",
+    fromDate + "T00:00:00+05:30"
+  );
 
     withdrawQuery =
-      withdrawQuery.gte(
-        "created_at",
-        fromDate
-      );
+  withdrawQuery.gte(
+    "created_at",
+    fromDate + "T00:00:00+05:30"
+  );
   }
 
   if(toDate){
@@ -283,13 +283,13 @@ window.showTransactions = async function(){
     depositsQuery =
       depositsQuery.lte(
         "created_at",
-        toDate + "T23:59:59"
+        toDate + "T23:59:59+05:30"
       );
 
     withdrawQuery =
       withdrawQuery.lte(
         "created_at",
-        toDate + "T23:59:59"
+        toDate + "T23:59:59+05:30"
       );
   }
 
@@ -420,10 +420,10 @@ window.showBets = async function(){
   if(fromDate){
 
     query =
-      query.gte(
-        "created_at",
-        fromDate
-      );
+  query.gte(
+    "created_at",
+    fromDate + "T00:00:00+05:30"
+  );
   }
 
   if(toDate){
@@ -431,7 +431,7 @@ window.showBets = async function(){
     query =
       query.lte(
         "created_at",
-        toDate + "T23:59:59"
+        toDate + "T23:59:59+05:30"
       );
   }
 
