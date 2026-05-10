@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 
@@ -14,148 +15,161 @@
 <body class="bg-[#050816] text-white">
 
 <!-- HEADER -->
+
 <header class="sticky top-0 z-50 border-b border-gray-800 bg-black p-4 flex justify-between items-center">
 
   <h1 class="text-3xl font-black text-yellow-400">
     My Reports
   </h1>
 
-  <button
-  onclick="goBack()"
-  class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
-  Back
-  </button>
+<button
+onclick="goBack()"
+class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
+Back </button>
 
 </header>
 
 <!-- MAIN -->
+
 <section class="max-w-7xl mx-auto px-5 py-8">
 
   <!-- FILTER -->
+
   <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-6">
 
-    <div class="grid md:grid-cols-4 gap-4">
+```
+<div class="grid md:grid-cols-4 gap-4">
 
-      <div>
-        <p class="mb-2 text-gray-400">
-          From Date
-        </p>
+  <div>
+    <p class="mb-2 text-gray-400">
+      From Date
+    </p>
 
-        <input
-        type="date"
-        id="fromDate"
-        class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      </div>
+    <input
+    type="date"
+    id="fromDate"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+  </div>
 
-      <div>
-        <p class="mb-2 text-gray-400">
-          To Date
-        </p>
+  <div>
+    <p class="mb-2 text-gray-400">
+      To Date
+    </p>
 
-        <input
-        type="date"
-        id="toDate"
-        class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      </div>
+    <input
+    type="date"
+    id="toDate"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+  </div>
 
-      <div class="flex items-end">
-        <button
-        onclick="applyFilter()"
-        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">
-        APPLY FILTER
-        </button>
-      </div>
+  <div class="flex items-end">
+    <button
+    onclick="applyFilter()"
+    class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">
+    APPLY FILTER
+    </button>
+  </div>
 
-      <div class="flex items-end">
-        <button
-        onclick="resetFilter()"
-        class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">
-        RESET
-        </button>
-      </div>
+  <div class="flex items-end">
+    <button
+    onclick="resetFilter()"
+    class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">
+    RESET
+    </button>
+  </div>
 
-    </div>
+</div>
+```
 
   </div>
 
   <!-- TABS -->
+
   <div class="flex gap-4 mb-6 flex-wrap">
 
-    <button
-    onclick="showTransactions()"
-    class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">
-    My Transactions
-    </button>
+```
+<button
+onclick="showTransactions()"
+class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">
+My Transactions
+</button>
 
-    <button
-    onclick="showBets()"
-    class="bg-yellow-400 hover:bg-yellow-300 px-6 py-3 rounded-2xl font-bold text-black">
-    My Bets
-    </button>
+<button
+onclick="showBets()"
+class="bg-yellow-400 hover:bg-yellow-300 px-6 py-3 rounded-2xl font-bold text-black">
+My Bets
+</button>
+```
 
   </div>
 
   <!-- TRANSACTIONS -->
+
   <div id="transactionsSection" class="hidden">
 
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
+```
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
 
-      <h2 class="text-3xl font-black mb-6 text-green-400">
-        My Transactions
-      </h2>
+  <h2 class="text-3xl font-black mb-6 text-green-400">
+    My Transactions
+  </h2>
 
-      <table class="w-full text-left border-collapse min-w-[700px]">
+  <table class="w-full text-left border-collapse min-w-[700px]">
 
-        <thead>
+    <thead>
 
-          <tr class="border-b border-gray-700">
+      <tr class="border-b border-gray-700">
 
-            <th class="p-3">Date & Time</th>
-            <th class="p-3">Type</th>
-            <th class="p-3">Coins</th>
+        <th class="p-3">Date & Time</th>
+        <th class="p-3">Type</th>
+        <th class="p-3">Coins</th>
 
-          </tr>
+      </tr>
 
-        </thead>
+    </thead>
 
-        <tbody id="transactionsTable"></tbody>
+    <tbody id="transactionsTable"></tbody>
 
-      </table>
+  </table>
 
-    </div>
+</div>
+```
 
   </div>
 
   <!-- BETS -->
+
   <div id="betsSection" class="hidden">
 
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
+```
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
 
-      <h2 class="text-3xl font-black mb-6 text-yellow-400">
-        My Bets
-      </h2>
+  <h2 class="text-3xl font-black mb-6 text-yellow-400">
+    My Bets
+  </h2>
 
-      <table class="w-full text-left border-collapse min-w-[900px]">
+  <table class="w-full text-left border-collapse min-w-[900px]">
 
-        <thead>
+    <thead>
 
-          <tr class="border-b border-gray-700">
+      <tr class="border-b border-gray-700">
 
-            <th class="p-3">Date & Time</th>
-            <th class="p-3">Number</th>
-            <th class="p-3">Coins</th>
-            <th class="p-3">Result</th>
-            <th class="p-3">Status</th>
+        <th class="p-3">Date & Time</th>
+        <th class="p-3">Number</th>
+        <th class="p-3">Coins</th>
+        <th class="p-3">Result</th>
+        <th class="p-3">Status</th>
 
-          </tr>
+      </tr>
 
-        </thead>
+    </thead>
 
-        <tbody id="betsTable"></tbody>
+    <tbody id="betsTable"></tbody>
 
-      </table>
+  </table>
 
-    </div>
+</div>
+```
 
   </div>
 
@@ -254,13 +268,13 @@ window.showTransactions = async function(){
     depositsQuery =
       depositsQuery.gte(
         "created_at",
-        fromDate + "T00:00:00"
+        fromDate
       );
 
     withdrawQuery =
       withdrawQuery.gte(
         "created_at",
-        fromDate + "T00:00:00"
+        fromDate
       );
   }
 
@@ -340,20 +354,22 @@ window.showTransactions = async function(){
 
     const color =
       isDeposit
-      ? "text-green-400"
-      : "text-red-400";
-
-    const sign =
-      isDeposit ? "+" : "-";
+      ? "text-green-400 font-black"
+      : "text-red-400 font-black";
 
     table.innerHTML += `
       <tr class="border-b border-gray-700">
 
         <td class="p-3">
-          ${new Date(t.created_at).toLocaleString(
+          ${new Date(
+            new Date(t.created_at)
+            .toLocaleString(
+              "en-US",
+              { timeZone:"Asia/Kolkata" }
+            )
+          ).toLocaleString(
             "en-IN",
             {
-              timeZone:"Asia/Kolkata",
               day:"2-digit",
               month:"short",
               year:"numeric",
@@ -364,12 +380,12 @@ window.showTransactions = async function(){
           )}
         </td>
 
-        <td class="p-3 ${color} font-bold">
+        <td class="p-3 ${color}">
           ${t.type}
         </td>
 
-        <td class="p-3 ${color} font-bold">
-          ${sign}${t.amount}
+        <td class="p-3 ${color}">
+          ${t.amount}
         </td>
 
       </tr>
@@ -406,7 +422,7 @@ window.showBets = async function(){
     query =
       query.gte(
         "created_at",
-        fromDate + "T00:00:00"
+        fromDate
       );
   }
 
@@ -430,19 +446,11 @@ window.showBets = async function(){
   if(bets.length === 0){
 
     table.innerHTML = `
-
       <tr>
-
-        <td
-        colspan="5"
-        class="p-5 text-center text-gray-400">
-
+        <td colspan="5" class="p-5 text-center text-gray-400">
           No bets found
-
         </td>
-
       </tr>
-
     `;
 
     return;
@@ -450,13 +458,8 @@ window.showBets = async function(){
 
   bets.forEach(bet => {
 
-    const number =
-      String(
-        bet.selected_number
-      ).padStart(2,"0");
-
-    let resultText = "Pending";
-    let resultColor = "text-yellow-400";
+    let resultText = bet.coins + " Coins";
+    let resultColor = "text-yellow-400 font-black";
 
     let statusText = "Pending";
     let statusColor = "text-yellow-400";
@@ -464,10 +467,10 @@ window.showBets = async function(){
     if(bet.status === "win"){
 
       resultText =
-        "+" + bet.potential_win;
+        bet.potential_win + " Won";
 
       resultColor =
-        "text-green-400";
+        "text-green-400 font-black";
 
       statusText =
         "You Win";
@@ -479,10 +482,10 @@ window.showBets = async function(){
     if(bet.status === "lose"){
 
       resultText =
-        "-" + bet.coins;
+        bet.coins + " Lost";
 
       resultColor =
-        "text-red-400";
+        "text-red-400 font-black";
 
       statusText =
         "You Lose";
@@ -492,17 +495,18 @@ window.showBets = async function(){
     }
 
     table.innerHTML += `
-
       <tr class="border-b border-gray-700">
 
         <td class="p-3">
-
           ${new Date(
-            bet.created_at
+            new Date(bet.created_at)
+            .toLocaleString(
+              "en-US",
+              { timeZone:"Asia/Kolkata" }
+            )
           ).toLocaleString(
             "en-IN",
             {
-              timeZone:"Asia/Kolkata",
               day:"2-digit",
               month:"short",
               year:"numeric",
@@ -511,27 +515,25 @@ window.showBets = async function(){
               second:"2-digit"
             }
           )}
-
         </td>
 
-        <td class="p-3 font-black text-yellow-400">
-          ${number}
+        <td class="p-3 font-bold text-yellow-400">
+          ${String(bet.selected_number).padStart(2,"0")}
         </td>
 
-        <td class="p-3">
+        <td class="p-3 font-bold">
           ${bet.coins}
         </td>
 
-        <td class="p-3 ${resultColor} font-black">
+        <td class="p-3 ${resultColor}">
           ${resultText}
         </td>
 
-        <td class="p-3 ${statusColor} font-black">
+        <td class="p-3 ${statusColor} font-bold">
           ${statusText}
         </td>
 
       </tr>
-
     `;
 
   });
