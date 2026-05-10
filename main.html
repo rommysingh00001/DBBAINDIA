@@ -411,17 +411,16 @@ async function loadLatestBalance() {
   // IF ENTRY EXISTS
   if(data && data.length > 0){
 
-    const latestBalance = data[0].balance;
+  const latestBalance = data[0].balance;
 
-    // CHANGE HEADER BALANCE
-    document.getElementById("balanceText").innerText =
-      latestBalance + " Coins";
+  // ENTER COINS INPUT
+  document.getElementById("coins").value =
+    latestBalance;
 
-    // CHANGE ENTER COINS INPUT
-    document.getElementById("coins").value =
-      latestBalance;
-  }
-}
+  // HEADER BALANCE
+  document.getElementById("balanceText").innerText =
+    latestBalance + " Coins";
+}}
 // CALL THIS AFTER USER DATA LOAD
 await loadLatestBalance();
     
