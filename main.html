@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>DBBA INDIA</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
 <body class="bg-[#050816] text-white">
 
   <!-- HEADER -->
   <header class="sticky top-0 z-50 border-b border-gray-800 bg-black">
+
     <div class="max-w-7xl mx-auto flex justify-between items-center px-5 py-4">
 
       <div>
@@ -27,7 +31,8 @@
 
       <div class="flex items-center gap-4">
 
-        <div onclick="openReports()"
+        <div
+        onclick="openReports()"
         class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
 
           <p class="text-gray-400 text-sm">
@@ -45,14 +50,16 @@
 
         </div>
 
-        <button onclick="logout()"
+        <button
+        onclick="logout()"
         class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
-          Logout
+        Logout
         </button>
 
       </div>
 
     </div>
+
   </header>
 
   <!-- HERO -->
@@ -71,7 +78,7 @@
       <div class="flex flex-wrap gap-4">
 
         <div class="bg-black text-white px-5 py-3 rounded-2xl font-black">
-          Daily Draw : 09:15 AM
+          Daily Draw : 09:15 PM IST
         </div>
 
         <div class="bg-white px-5 py-3 rounded-2xl font-black">
@@ -90,13 +97,15 @@
     <div class="grid md:grid-cols-3 gap-5">
 
       <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+
         <p class="text-gray-400 mb-3">
           Next Draw
         </p>
 
         <h2 class="text-5xl font-black text-yellow-400">
-          09:15 AM
+          09:15 PM
         </h2>
+
       </div>
 
       <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 text-center">
@@ -128,91 +137,10 @@
 
   </section>
 
-  <!-- HOW TO PLAY -->
-  <section class="max-w-7xl mx-auto px-5 pb-8">
-
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
-
-      <h2 class="text-4xl font-black text-yellow-400 mb-8">
-        How To Play
-      </h2>
-
-      <div class="grid md:grid-cols-4 gap-5">
-
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-
-          <div class="text-5xl font-black text-green-400 mb-4">
-            1
-          </div>
-
-          <h3 class="text-xl font-black mb-2">
-            Choose Number
-          </h3>
-
-          <p class="text-gray-400 leading-7">
-            Pick any number between 00 to 99 from the board.
-          </p>
-
-        </div>
-
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-
-          <div class="text-5xl font-black text-green-400 mb-4">
-            2
-          </div>
-
-          <h3 class="text-xl font-black mb-2">
-            Enter Coins
-          </h3>
-
-          <p class="text-gray-400 leading-7">
-            Add virtual coins amount for your selected number.
-          </p>
-
-        </div>
-
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-
-          <div class="text-5xl font-black text-green-400 mb-4">
-            3
-          </div>
-
-          <h3 class="text-xl font-black mb-2">
-            Wait For Result
-          </h3>
-
-          <p class="text-gray-400 leading-7">
-            Daily draw result is announced every morning at 09:15 AM.
-          </p>
-
-        </div>
-
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-
-          <div class="text-5xl font-black text-green-400 mb-4">
-            4
-          </div>
-
-          <h3 class="text-xl font-black mb-2">
-            Win 90x
-          </h3>
-
-          <p class="text-gray-400 leading-7">
-            Match the winning number and get 90x virtual reward.
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
   <!-- MAIN -->
   <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
 
-    <!-- NUMBER GRID -->
+    <!-- NUMBERS -->
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
       <div class="flex justify-between items-center mb-6">
@@ -229,10 +157,6 @@
 
         </div>
 
-        <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">
-          Virtual Game
-        </div>
-
       </div>
 
       <div id="numbers"
@@ -241,13 +165,13 @@
 
     </div>
 
-    <!-- BET SLIP -->
+    <!-- BET -->
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
 
       <div class="bg-black border border-yellow-400 rounded-2xl p-4 mb-6 text-center">
 
         <p class="text-gray-400 mb-1">
-          Today’s Winner
+          Today Winner
         </p>
 
         <h2 id="todayWinner"
@@ -268,7 +192,7 @@
         </p>
 
         <div id="selected"
-        class="bg-black border-2 border-green-500 rounded-3xl p-10 text-center text-8xl font-black text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.5)]">
+        class="bg-black border-2 border-green-500 rounded-3xl p-10 text-center text-8xl font-black text-green-400">
           00
         </div>
 
@@ -308,7 +232,7 @@
       <button
       id="placeBetBtn"
       class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">
-        PLACE BET
+      PLACE BET
       </button>
 
     </div>
@@ -320,21 +244,57 @@
 
     <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
 
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
+      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-5 mb-8">
 
-        <h2 class="text-4xl font-black text-yellow-400">
-          Result History
-        </h2>
+        <div>
 
-        <input
-        type="date"
-        id="resultDate"
-        class="bg-black border border-gray-700 rounded-2xl px-5 py-3 outline-none"/>
+          <h2 class="text-4xl font-black text-yellow-400">
+            Result History
+          </h2>
+
+          <p class="text-gray-400 mt-2">
+            Indian Time Zone Results
+          </p>
+
+        </div>
+
+        <!-- FILTER -->
+        <div class="flex flex-wrap gap-3">
+
+          <div>
+            <p class="text-xs text-gray-400 mb-1">
+              From Date
+            </p>
+
+            <input
+            type="date"
+            id="fromDate"
+            class="bg-black border border-gray-700 rounded-xl px-4 py-3 outline-none"/>
+          </div>
+
+          <div>
+            <p class="text-xs text-gray-400 mb-1">
+              To Date
+            </p>
+
+            <input
+            type="date"
+            id="toDate"
+            class="bg-black border border-gray-700 rounded-xl px-4 py-3 outline-none"/>
+          </div>
+
+          <button
+          id="filterBtn"
+          class="bg-green-500 hover:bg-green-400 text-black font-black px-6 py-3 rounded-xl mt-5">
+          FILTER
+          </button>
+
+        </div>
 
       </div>
 
       <div id="resultsGrid"
-      class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
       </div>
 
     </div>
@@ -370,11 +330,6 @@
     const numbersDiv =
       document.getElementById("numbers");
 
-    const timerText =
-      document.getElementById("timer");
-
-    let resultGeneratedToday = false;
-
     // LOAD BALANCE
     async function loadLatestBalance(){
 
@@ -385,11 +340,9 @@
         .eq("id", userId)
         .single();
 
-      const balance =
-        Number(data?.balance || 0);
-
       balanceText.innerText =
-        balance + " Coins";
+        Number(data?.balance || 0)
+        + " Coins";
     }
 
     // NUMBER GRID
@@ -404,11 +357,10 @@
       btn.innerText = num;
 
       btn.className =
-      "bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
+        "bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
 
-      btn.onclick = () => {
+      btn.onclick = () =>
         selectedDiv.innerText = num;
-      }
 
       numbersDiv.appendChild(btn);
     }
@@ -420,7 +372,7 @@
         parseInt(coinsInput.value) || 0;
 
       winText.innerText =
-        (coins * 90).toLocaleString();
+        coins * 90;
     }
 
     coinsInput.addEventListener(
@@ -430,86 +382,26 @@
 
     updatePotentialWin();
 
-    // PLACE BET
-    document.getElementById("placeBetBtn")
-    .addEventListener("click", async () => {
-
-      const number =
-        selectedDiv.innerText;
-
-      const coins =
-        parseInt(coinsInput.value) || 0;
-
-      if(coins <= 0){
-        alert("Enter valid coins");
-        return;
-      }
-
-      const {
-        data:userData
-      } = await supabase
-      .from("users")
-      .select("balance")
-      .eq("id", userId)
-      .single();
-
-      const currentBalance =
-        Number(userData.balance || 0);
-
-      if(coins > currentBalance){
-        alert("Insufficient Balance");
-        return;
-      }
-
-      const newBalance =
-        currentBalance - coins;
-
-      await supabase
-      .from("bets")
-      .insert([{
-        user_id:userId,
-        selected_number:number,
-        coins:coins,
-        potential_win:coins * 90,
-        result:"pending",
-        status:"pending",
-        created_at:new Date().toISOString()
-      }]);
-
-      await supabase
-      .from("users")
-      .update({
-        balance:newBalance
-      })
-      .eq("id", userId);
-
-      balanceText.innerText =
-        newBalance + " Coins";
-
-      coinsInput.value = 0;
-
-      updatePotentialWin();
-
-      alert("Bet placed successfully!");
-    });
-
-    // TIMER + AUTO RESULT
-    async function updateTimer(){
+    // IST TIMER
+    function updateTimer(){
 
       const now =
-        new Date();
+        new Date(
+          new Date().toLocaleString(
+            "en-US",
+            { timeZone:"Asia/Kolkata" }
+          )
+        );
 
       const target =
-        new Date();
+        new Date(now);
 
-      target.setHours(9,15,0,0);
+      target.setHours(21,15,0,0);
 
       if(now > target){
         target.setDate(
           target.getDate()+1
         );
-
-        resultGeneratedToday = false;
       }
 
       const diff =
@@ -524,151 +416,23 @@
       const secs =
         Math.floor(diff/1000)%60;
 
-      timerText.innerText =
+      document.getElementById("timer")
+      .innerText =
       `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-
-      if(diff <= 1000 && !resultGeneratedToday){
-
-        resultGeneratedToday = true;
-
-        await generateAutomaticResult();
-      }
     }
-
-    // AUTO RESULT LOGIC
-    async function generateAutomaticResult(){
-
-      const today =
-        new Date().toISOString().split("T")[0];
-
-      const { data:already } =
-        await supabase
-        .from("results")
-        .select("*")
-        .gte("created_at", today)
-        .limit(1);
-
-      if(already?.length > 0){
-        return;
-      }
-
-      const { data:bets } =
-        await supabase
-        .from("bets")
-        .select("*")
-        .eq("status","pending");
-
-      let totals = {};
-
-      for(let i=0;i<100;i++){
-
-        const num =
-          i.toString().padStart(2,"0");
-
-        totals[num] = 0;
-      }
-
-      bets?.forEach(b => {
-
-        totals[b.selected_number] +=
-          Number(b.coins || 0);
-
-      });
-
-      let lowestNumber = "00";
-      let lowestCoins = Infinity;
-
-      Object.keys(totals).forEach(num => {
-
-        if(totals[num] < lowestCoins){
-
-          lowestCoins =
-            totals[num];
-
-          lowestNumber =
-            num;
-        }
-
-      });
-
-      // SAVE RESULT
-      await supabase
-      .from("results")
-      .insert([{
-        winning_number:lowestNumber,
-        created_at:new Date().toISOString()
-      }]);
-
-      // UPDATE BETS
-      for(const bet of bets){
-
-        if(bet.selected_number === lowestNumber){
-
-          const reward =
-            Number(bet.coins) * 90;
-
-          // WINNER BALANCE
-          const { data:user } =
-            await supabase
-            .from("users")
-            .select("balance")
-            .eq("id", bet.user_id)
-            .single();
-
-          const updatedBalance =
-            Number(user.balance || 0)
-            + reward;
-
-          await supabase
-          .from("users")
-          .update({
-            balance:updatedBalance
-          })
-          .eq("id", bet.user_id);
-
-          await supabase
-          .from("bets")
-          .update({
-            result:"win",
-            status:"completed"
-          })
-          .eq("id", bet.id);
-
-        } else {
-
-          await supabase
-          .from("bets")
-          .update({
-            result:"lose",
-            status:"completed"
-          })
-          .eq("id", bet.id);
-        }
-
-      }
-
-      document.getElementById(
-        "todayWinner"
-      ).innerText =
-        lowestNumber;
-
-      loadResultsByDate();
-    }
-
-    setInterval(updateTimer,1000);
 
     updateTimer();
 
-    // LOAD TODAY WINNER
+    setInterval(updateTimer,1000);
+
+    // TODAY WINNER
     async function loadTodayWinner(){
 
       const { data } =
         await supabase
         .from("results")
         .select("*")
-        .order("created_at",{
-          ascending:false
-        })
+        .order("created_at",{ascending:false})
         .limit(1)
         .single();
 
@@ -677,55 +441,39 @@
         document.getElementById(
           "todayWinner"
         ).innerText =
-          data.winning_number;
+        String(
+          data.winning_number
+        ).padStart(2,"0");
       }
     }
 
     loadTodayWinner();
 
-    // DATE FILTER
-    const resultDate =
-      document.getElementById("resultDate");
-
-    resultDate.value =
-      new Date().toISOString().split("T")[0];
-
-    resultDate.addEventListener(
-      "change",
-      loadResultsByDate
-    );
-
     // LOAD RESULTS
-    async function loadResultsByDate(){
-
-      const selectedDate =
-        resultDate.value;
-
-      const start =
-        selectedDate + "T00:00:00";
-
-      const end =
-        selectedDate + "T23:59:59";
+    async function loadRecentResults(){
 
       const { data:results } =
         await supabase
         .from("results")
         .select("*")
-        .gte("created_at", start)
-        .lte("created_at", end)
-        .order("created_at",{
-          ascending:false
-        });
+        .order("created_at",{ascending:false})
+        .limit(50);
+
+      renderResults(results);
+    }
+
+    // RENDER RESULTS
+    function renderResults(results){
 
       const resultsGrid =
         document.getElementById("resultsGrid");
 
       resultsGrid.innerHTML = "";
 
-      if(!results || results.length === 0){
+      if(!results || results.length===0){
 
         resultsGrid.innerHTML = `
-          <div class="col-span-full text-center text-gray-400 text-xl">
+          <div class="col-span-full text-center text-gray-400 py-10">
             No Results Found
           </div>
         `;
@@ -739,26 +487,32 @@
           document.createElement("div");
 
         div.className =
-        "bg-black border border-gray-800 rounded-2xl p-5 text-center";
+          "bg-black border border-gray-800 rounded-2xl p-5 text-center";
 
         div.innerHTML = `
-          <h2 class="text-5xl font-black text-yellow-400 mb-2">
-            ${r.winning_number}
+
+          <h2 class="text-4xl font-black text-yellow-400 mb-3">
+            ${String(r.winning_number).padStart(2,"0")}
           </h2>
 
-          <p class="text-gray-400">
-            ${new Date(r.created_at).toLocaleString(
-              "en-IN",
-              {
-                timeZone:"Asia/Kolkata",
-                day:"2-digit",
-                month:"short",
-                year:"numeric",
-                hour:"2-digit",
-                minute:"2-digit"
-              }
-            )}
+          <p class="text-gray-400 text-sm">
+
+            ${new Date(r.created_at)
+              .toLocaleString(
+                "en-IN",
+                {
+                  timeZone:"Asia/Kolkata",
+                  day:"2-digit",
+                  month:"short",
+                  year:"numeric",
+                  hour:"2-digit",
+                  minute:"2-digit"
+                }
+              )
+            }
+
           </p>
+
         `;
 
         resultsGrid.appendChild(div);
@@ -767,26 +521,55 @@
 
     }
 
-    loadResultsByDate();
+    loadRecentResults();
 
-    // REALTIME BALANCE
-    supabase
-    .channel("balance-update")
-    .on(
-      "postgres_changes",
-      {
-        event:"UPDATE",
-        schema:"public",
-        table:"users",
-        filter:`id=eq.${userId}`
-      },
-      payload => {
+    // FILTER
+    document.getElementById("filterBtn")
+    .addEventListener("click", async () => {
 
-        balanceText.innerText =
-          payload.new.balance + " Coins";
+      const fromDate =
+        document.getElementById("fromDate").value;
+
+      const toDate =
+        document.getElementById("toDate").value;
+
+      if(!fromDate || !toDate){
+
+        alert("Select both dates");
+        return;
       }
-    )
-    .subscribe();
+
+      const start =
+        new Date(fromDate);
+
+      start.setHours(0,0,0,0);
+
+      const end =
+        new Date(toDate);
+
+      end.setHours(23,59,59,999);
+
+      const {
+        data:results
+      } = await supabase
+      .from("results")
+      .select("*")
+      .gte(
+        "created_at",
+        start.toISOString()
+      )
+      .lte(
+        "created_at",
+        end.toISOString()
+      )
+      .order(
+        "created_at",
+        { ascending:false }
+      );
+
+      renderResults(results);
+
+    });
 
     // LOGOUT
     window.logout = async function(){
@@ -797,7 +580,7 @@
         "index.html";
     }
 
-    // REPORTS
+    // OPEN REPORTS
     window.openReports = function(){
 
       window.location.href =
