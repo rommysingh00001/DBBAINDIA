@@ -385,8 +385,8 @@ window.showTransactions = async function(){
         </td>
 
         <td class="p-3 ${color}">
-          ${t.amount}
-        </td>
+  ${isDeposit ? "+" : "-"}${t.amount}
+</td>
 
       </tr>
     `;
