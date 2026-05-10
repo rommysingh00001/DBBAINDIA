@@ -346,29 +346,16 @@ window.onload = async function() {
     await loadRecentResults();
 };
     
-    // 1️⃣ Check login
-const { data: { session } } = await supabase.auth.getSession();
-if(!session){ window.location.href = "index.html"; }
+    // CHECK LOGIN
 
-// 2️⃣ User ID
-const userId = session.user.id;
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
 
-// 3️⃣ Realtime subscription for ledger changes by admin
-supabase
-  .channel(`balance_ledger_user_${userId}`)
-  .on(
-    "postgres_changes",
-    { event: "INSERT", schema: "public", table: "balance_ledger", filter: `user_id=eq.${userId}` },
-    (payload) => {
-      const newBalance = payload.new.balance_after;
-      document.getElementById("balanceText").innerText = newBalance + " Coins";
+    if(!session){
+
+      window.location.href = "index.html";
     }
-  )
-  .subscribe();
-
-// 4️⃣ Load initial ledger balance
-let currentBalance = await loadLedgerBalance();
-    
 // LOAD USER BALANCE
 
 const userId =
@@ -390,31 +377,24 @@ if(userData){
 
   
 }
-    // USER ID from session
-const userId = session.user.id;
+    // LOAD LATEST BALANCE FROM BALANCE LEDGER
+async function loadLatestBalance() {
 
-// Function to load latest ledger balance
-async function loadLedgerBalance() {
-  const { data: latest, error } = await supabase
+  const { data: latestBalance, error } = await supabase
     .from("balance_ledger")
-    .select("balance_after")
+    .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
 
   if(error){
-    console.log("Ledger fetch error:", error.message);
-    return 0;
+    console.log(error);
+    return;
   }
 
-  const balance = latest?.balance_after || 0;
-  document.getElementById("balanceText").innerText = balance + " Coins";
-  return balance;
-}
-
-// Initial load
-let currentBalance = await loadLedgerBalance();
+  const balance =
+    latestBalance?.balance || 0;
 
   // HEADER BALANCE UPDATE
   document.getElementById(
@@ -711,44 +691,51 @@ window.closeHistory = function(){
     "historyPopup"
   ).classList.add("hidden");
 }
-    placeBetBtn.addEventListener("click", async () => {
+    const placeBetBtn = document.getElementById("placeBetBtn");
+
+placeBetBtn.addEventListener("click", async () => {
   const number = selectedDiv.innerText;
-  const coins = parseInt(coinsInput.value) || 0;
+const coins = parseInt(coinsInput.value) || 0;
 
-  // CURRENT BALANCE from ledger
-  let currentBalance = parseInt(document.getElementById("balanceText").innerText.replace(" Coins","")) || 0;
+// CURRENT BALANCE
+const currentBalance =
+  parseInt(
+    document.getElementById("balanceText")
+    .innerText
+    .replace(" Coins","")
+  ) || 0;
 
-  if(coins <= 0 || coins > currentBalance){
-    alert("Insufficient Balance");
+// INVALID OR ZERO
+if(coins <= 0){
+  alert("Insufficient Balance");
+  return;
+}
+
+// MORE THAN AVAILABLE BALANCE
+if(coins > currentBalance){
+  alert("Insufficient Balance");
+  return;
+}
+
+  // Supabase insert
+  const { data: betData, error } = await supabase
+    .from("bets")
+    .insert([{
+      user_id: userId,
+      selected_number: number,
+      coins: coins,
+      potential_win: coins * 90,
+      status: 'pending'
+    }]);
+
+  if(error){
+    alert("Error placing bet: " + error.message);
     return;
   }
 
-  // Deduct coins
-  const newBalance = currentBalance - coins;
-
-  // 1️⃣ Insert bet
-  const { data: betData, error } = await supabase.from("bets").insert([{
-    user_id: userId,
-    selected_number: number,
-    coins: coins,
-    potential_win: coins*90,
-    status: 'pending'
-  }]);
-  if(error){ alert("Error placing bet: " + error.message); return; }
-
-  // 2️⃣ Update balance ledger
-  await supabase.from("balance_ledger").insert([{
-    user_id: userId,
-    change_type: "bet",
-    amount: coins,
-    balance_after: newBalance,
-    created_at: new Date().toISOString()
-  }]);
-
-  // 3️⃣ Update header
-  document.getElementById("balanceText").innerText = newBalance + " Coins";
-
   alert("Bet placed successfully!");
+  coinsInput.value = userData.balance; // reset
+  loadReports(); // update My Bets section
 });
   </script>
 <!-- HISTORY POPUP -->
