@@ -127,233 +127,262 @@
 
     import { supabase } from "./supabase.js";
 
+    // GO BACK
     window.goBack = () => {
       window.history.back();
     }
 
+    // LOAD TRANSACTIONS
     async function loadTransactions(){
 
-      const { data:{ session } } =
-        await supabase.auth.getSession();
+      try{
 
-      if(!session){
-        window.location.href = "index.html";
-        return;
-      }
+        const { data:{ session }, error:sessionError } =
+          await supabase.auth.getSession();
 
-      const userId = session.user.id;
-
-      const fromDate =
-        document.getElementById("fromDate").value;
-
-      const toDate =
-        document.getElementById("toDate").value;
-
-      const typeFilter =
-        document.getElementById("typeFilter").value;
-
-      // LOAD LEDGER
-      const { data: ledger, error } =
-        await supabase
-          .from("balance_ledger")
-          .select("*")
-          .eq("user_id", userId)
-          .order("created_at", { ascending:false });
-
-      if(error){
-        alert(error.message);
-        return;
-      }
-
-      let transactions = ledger || [];
-
-      // DATE FILTER
-      if(fromDate){
-
-        transactions = transactions.filter(t => {
-
-          const d = new Date(t.created_at);
-
-          return d >= new Date(fromDate);
-
-        });
-      }
-
-      if(toDate){
-
-        const end = new Date(toDate);
-
-        end.setHours(23,59,59,999);
-
-        transactions = transactions.filter(t => {
-
-          const d = new Date(t.created_at);
-
-          return d <= end;
-
-        });
-      }
-
-      // TYPE FILTER
-      if(typeFilter){
-
-        transactions = transactions.filter(t => {
-
-          return t.change_type === typeFilter;
-
-        });
-      }
-
-      // SUMMARY
-      let totalDeposit = 0;
-      let totalWithdraw = 0;
-      let totalBets = 0;
-
-      transactions.forEach(t => {
-
-        if(t.change_type === "credit"){
-          totalDeposit += Number(t.amount || 0);
+        if(sessionError){
+          console.log(sessionError);
+          return;
         }
 
-        if(t.change_type === "debit"){
-          totalWithdraw += Number(t.amount || 0);
+        if(!session){
+          window.location.href = "index.html";
+          return;
         }
 
-        if(t.change_type === "bet"){
-          totalBets += Number(t.amount || 0);
+        const userId = session.user.id;
+
+        const fromDate =
+          document.getElementById("fromDate").value;
+
+        const toDate =
+          document.getElementById("toDate").value;
+
+        const typeFilter =
+          document.getElementById("typeFilter").value;
+
+        // LOAD LEDGER
+        const { data: ledger, error } =
+          await supabase
+            .from("balance_ledger")
+            .select("*")
+            .eq("user_id", userId)
+            .order("created_at", { ascending:false });
+
+        if(error){
+
+          console.log(error);
+
+          alert("Unable to load transactions");
+
+          return;
         }
 
-      });
+        let transactions = ledger || [];
 
-      document.getElementById("totalTransactions").innerText =
-        transactions.length;
+        // DATE FILTER
+        if(fromDate){
 
-      document.getElementById("totalDeposit").innerText =
-        totalDeposit;
+          transactions = transactions.filter(t => {
 
-      document.getElementById("totalWithdraw").innerText =
-        totalWithdraw;
+            const d = new Date(t.created_at);
 
-      document.getElementById("totalBets").innerText =
-        totalBets;
+            return d >= new Date(fromDate);
 
-      // RENDER
-      const transactionsDiv =
-        document.getElementById("transactionsList");
-
-      transactionsDiv.innerHTML = "";
-
-      if(transactions.length === 0){
-
-        transactionsDiv.innerHTML = `
-          <div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 text-center">
-            <h2 class="text-3xl font-black text-gray-400">
-              No Transactions Found
-            </h2>
-          </div>
-        `;
-
-        return;
-      }
-
-      transactions.forEach(t => {
-
-        const dt =
-          new Date(t.created_at)
-          .toLocaleString("en-IN",{
-            timeZone:"Asia/Kolkata",
-            day:"2-digit",
-            month:"short",
-            year:"numeric",
-            hour:"2-digit",
-            minute:"2-digit",
-            second:"2-digit"
           });
-
-        let title = "";
-        let amount = "";
-        let color = "";
-        let bg = "";
-
-        // CREDIT / DEPOSIT
-        if(t.change_type === "credit"){
-
-          title = "Deposit";
-          amount = `+${t.amount}`;
-          color = "text-green-400";
-          bg = "bg-green-500/10 border-green-500/20";
         }
 
-        // DEBIT / WITHDRAW
-        if(t.change_type === "debit"){
+        if(toDate){
 
-          title = "Withdraw";
-          amount = `-${t.amount}`;
-          color = "text-red-400";
-          bg = "bg-red-500/10 border-red-500/20";
+          const end = new Date(toDate);
+
+          end.setHours(23,59,59,999);
+
+          transactions = transactions.filter(t => {
+
+            const d = new Date(t.created_at);
+
+            return d <= end;
+
+          });
         }
 
-        // BET
-        if(t.change_type === "bet"){
+        // TYPE FILTER
+        if(typeFilter){
 
-          title = "Bet Placed";
-          amount = `-${t.amount}`;
-          color = "text-yellow-400";
-          bg = "bg-yellow-500/10 border-yellow-500/20";
+          transactions = transactions.filter(t => {
+
+            return (t.change_type || t.type) === typeFilter;
+
+          });
         }
 
-        // WIN
-        if(t.change_type === "win"){
+        // SUMMARY
+        let totalDeposit = 0;
+        let totalWithdraw = 0;
+        let totalBets = 0;
 
-          title = "Winning Reward";
-          amount = `+${t.amount}`;
-          color = "text-green-400";
-          bg = "bg-green-500/10 border-green-500/20";
+        transactions.forEach(t => {
+
+          const currentType =
+            t.change_type || t.type;
+
+          if(currentType === "credit"){
+            totalDeposit += Number(t.amount || 0);
+          }
+
+          if(currentType === "debit"){
+            totalWithdraw += Number(t.amount || 0);
+          }
+
+          if(currentType === "bet"){
+            totalBets += Number(t.amount || 0);
+          }
+
+        });
+
+        document.getElementById("totalTransactions").innerText =
+          transactions.length;
+
+        document.getElementById("totalDeposit").innerText =
+          totalDeposit;
+
+        document.getElementById("totalWithdraw").innerText =
+          totalWithdraw;
+
+        document.getElementById("totalBets").innerText =
+          totalBets;
+
+        // RENDER
+        const transactionsDiv =
+          document.getElementById("transactionsList");
+
+        transactionsDiv.innerHTML = "";
+
+        if(transactions.length === 0){
+
+          transactionsDiv.innerHTML = `
+            <div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 text-center">
+              <h2 class="text-3xl font-black text-gray-400">
+                No Transactions Found
+              </h2>
+            </div>
+          `;
+
+          return;
         }
 
-        transactionsDiv.innerHTML += `
+        transactions.forEach(t => {
 
-          <div class="${bg} border rounded-3xl p-5">
+          const currentType =
+            t.change_type || t.type;
 
-            <div class="flex justify-between items-center gap-4">
+          const dt =
+            new Date(t.created_at)
+            .toLocaleString("en-IN",{
+              timeZone:"Asia/Kolkata",
+              day:"2-digit",
+              month:"short",
+              year:"numeric",
+              hour:"2-digit",
+              minute:"2-digit",
+              second:"2-digit"
+            });
 
-              <div>
+          let title = "";
+          let amount = "";
+          let color = "";
+          let bg = "";
 
-                <p class="text-gray-400 text-sm mb-1">
-                  ${title}
-                </p>
+          // DEPOSIT
+          if(currentType === "credit"){
 
-                <h2 class="text-3xl font-black ${color}">
-                  ${amount}
-                </h2>
+            title = "Deposit";
+            amount = `+${t.amount}`;
+            color = "text-green-400";
+            bg = "bg-green-500/10 border-green-500/20";
+          }
 
-                <p class="text-gray-400 text-xs mt-2">
-                  ${dt}
-                </p>
+          // WITHDRAW
+          if(currentType === "debit"){
 
-              </div>
+            title = "Withdraw";
+            amount = `-${t.amount}`;
+            color = "text-red-400";
+            bg = "bg-red-500/10 border-red-500/20";
+          }
 
-              <div class="text-right">
+          // BET
+          if(currentType === "bet"){
 
-                <p class="text-gray-400 text-sm mb-1">
-                  Balance After
-                </p>
+            title = "Bet Placed";
+            amount = `-${t.amount}`;
+            color = "text-yellow-400";
+            bg = "bg-yellow-500/10 border-yellow-500/20";
+          }
 
-                <h2 class="text-2xl font-black text-white">
-                  ${t.balance_after || 0}
-                </h2>
+          // WIN
+          if(currentType === "win"){
+
+            title = "Winning Reward";
+            amount = `+${t.amount}`;
+            color = "text-green-400";
+            bg = "bg-green-500/10 border-green-500/20";
+          }
+
+          transactionsDiv.innerHTML += `
+
+            <div class="${bg} border rounded-3xl p-5">
+
+              <div class="flex justify-between items-center gap-4">
+
+                <div>
+
+                  <p class="text-gray-400 text-sm mb-1">
+                    ${title}
+                  </p>
+
+                  <h2 class="text-3xl font-black ${color}">
+                    ${amount}
+                  </h2>
+
+                  <p class="text-gray-400 text-xs mt-2">
+                    ${dt}
+                  </p>
+
+                </div>
+
+                <div class="text-right">
+
+                  <p class="text-gray-400 text-sm mb-1">
+                    Balance After
+                  </p>
+
+                  <h2 class="text-2xl font-black text-white">
+                    ${t.balance_after || 0}
+                  </h2>
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+          `;
 
-        `;
+        });
 
-      });
+      }catch(err){
+
+        console.log(err);
+
+        alert("Something went wrong");
+
+      }
 
     }
+
+    window.loadTransactions = loadTransactions;
 
     loadTransactions();
 
