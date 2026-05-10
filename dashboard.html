@@ -169,8 +169,18 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
   </div>
 
   <div
-    id="numberGrid"
-    <div class="mt-8 text-center">
+  id="numberGrid"
+  class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
+</div>
+
+<div class="mt-8 text-center">
+
+  <div
+  id="numberGrid"
+  class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
+</div>
+
+<div class="mt-8 text-center">
 
   <h2
     id="selectedNumberText"
@@ -189,9 +199,6 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
   </button>
 
 </div>
-    class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
-  </div>
-
 </div>
 
 <!-- PNL -->
@@ -405,7 +412,9 @@ window.scrollToUsers = () => {
 }
 
 window.scrollToAnnounce = () => {
-  document.getElementById("announceSection")
+  document.getElementById("numberGridSection")
+  .scrollIntoView({behavior:"smooth"});
+}
   .scrollIntoView({behavior:"smooth"});
 }
 
@@ -677,91 +686,7 @@ await supabase
   alert("Balance Debited");
 }
 
-// ANNOUNCE RESULT
-window.announceResult = async function(){
 
-  const value =
-    document.getElementById("resultInput")
-    .value.trim();
-
-  if(!value){
-    alert("Enter winning number");
-    return;
-  }
-
-  await supabase
-  .from("results")
-  .insert([{
-    winning_number:value,
-    created_at:new Date().toISOString()
-  }]);
-
-  const { data:bets=[] } =
-    await supabase
-    .from("bets")
-    .select("*")
-    .eq("status","pending");
-
-  for(const bet of bets){
-
-    if(bet.selected_number === value){
-
-      const { data:user } =
-        await supabase
-        .from("users")
-        .select("*")
-        .eq("id",bet.user_id)
-        .single();
-
-      const currentBalance =
-        Number(user.balance) || 0;
-
-      const newBalance =
-        currentBalance +
-        Number(bet.potential_win);
-
-      await supabase
-      .from("users")
-      .update({
-        balance:newBalance
-      })
-      .eq("id",bet.user_id);
-
-      await supabase
-      .from("bets")
-      .update({
-        status:"win"
-      })
-      .eq("id",bet.id);
-
-      await supabase
-      .from("balance_ledger")
-      .insert([{
-        user_id:bet.user_id,
-        type:"win",
-        amount:bet.potential_win,
-        balance_after:newBalance,
-        created_at:new Date().toISOString()
-      }]);
-
-    } else {
-
-      await supabase
-      .from("bets")
-      .update({
-        status:"lose"
-      })
-      .eq("id",bet.id);
-
-    }
-  }
-
-  alert("Result Announced Successfully");
-
-  document.getElementById("resultInput").value="";
-
-  loadAllBetData();
-}
 
 // LOAD BET DATA
 async function loadAllBetData(){
