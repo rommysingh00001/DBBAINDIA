@@ -381,40 +381,28 @@ balance + " Coins";
     // LOAD LATEST BALANCE FROM BALANCE LEDGER
 async function loadLatestBalance() {
 
-  // GET LOGGED IN USER
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
-
-  if(!session){
-    window.location.href = "index.html";
-    return;
-  }
-
-  const userId = session.user.id;
-
-  // FETCH LAST ENTRY FROM BALANCE_LEDGER
-  const { data, error } = await supabase
+  const { data: latestBalance, error } = await supabase
     .from("balance_ledger")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .limit(1);
+    .limit(1)
+    .single();
 
   if(error){
-    console.log(error.message);
+    console.log(error);
     return;
   }
 
-  // IF ENTRY EXISTS
-  if(data && data.length > 0){
+  const balance =
+    latestBalance?.balance || 0;
 
-  const latestBalance = data[0].balance;
-
-  // UPDATE HEADER BALANCE
-  document.getElementById("balanceText").innerText =
-    latestBalance + " Coins";
-
+  // HEADER BALANCE UPDATE
+  document.getElementById(
+    "balanceText"
+  ).innerText =
+    balance + " Coins";
+}
   
 }
 // CALL THIS AFTER USER DATA LOAD
