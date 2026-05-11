@@ -7,44 +7,43 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="module" src="./supabase.js"></script>
 </head>
-<body class="bg-[#050816] text-white flex items-center justify-center h-screen">
+<body class="bg-[#0f172a] flex items-center justify-center min-h-screen font-sans">
 
-<div class="w-full max-w-md p-6 bg-gray-900 rounded-xl shadow-lg">
-  <h1 class="text-3xl font-bold mb-6 text-center">Create Account</h1>
+<div class="w-full max-w-md p-8 bg-[#1e293b] rounded-2xl shadow-lg">
+  <h1 class="text-3xl font-bold text-white text-center mb-6">Create Account</h1>
 
   <form id="signupForm" class="space-y-4">
     <div>
-      <label for="full_name" class="block mb-1">Full Name</label>
-      <input type="text" id="full_name" name="full_name" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <label for="full_name" class="block text-sm text-gray-300 mb-1">Full Name</label>
+      <input type="text" id="full_name" name="full_name" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
-      <label for="email" class="block mb-1">Email</label>
-      <input type="email" id="email" name="email" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <label for="email" class="block text-sm text-gray-300 mb-1">Email</label>
+      <input type="email" id="email" name="email" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
-      <label for="phone" class="block mb-1">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <label for="phone" class="block text-sm text-gray-300 mb-1">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
-      <label for="password" class="block mb-1">Password</label>
-      <input type="password" id="password" name="password" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <label for="password" class="block text-sm text-gray-300 mb-1">Password</label>
+      <input type="password" id="password" name="password" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
-      <label for="referral" class="block mb-1">Referral Code (Optional)</label>
-      <input type="text" id="referral" name="referral" class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <label for="referral" class="block text-sm text-gray-300 mb-1">Referral Code (Optional)</label>
+      <input type="text" id="referral" name="referral" class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
-    <div>
-      <button type="submit" class="w-full p-2 bg-blue-600 rounded hover:bg-blue-700 transition">Sign Up</button>
-    </div>
+    <button type="submit" class="w-full py-3 mt-4 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg text-white font-semibold hover:from-blue-600 hover:to-blue-800 transition">Sign Up</button>
 
-    <p class="text-sm text-center">
-      Already have an account? <a href="login.html" class="text-blue-500">Login</a>
+    <p class="text-sm text-gray-400 text-center mt-4">
+      Already have an account? <a href="login.html" class="text-blue-400 hover:text-blue-500">Login</a>
     </p>
+
     <p id="errorMsg" class="text-red-500 text-center mt-2"></p>
   </form>
 </div>
@@ -70,18 +69,12 @@
       return;
     }
 
-    // Sign up user
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
-    });
-
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
       errorMsg.textContent = error.message;
       return;
     }
 
-    // Insert profile data
     const { error: profileError } = await supabase.from('profiles').insert([{
       id: data.user.id,
       full_name,
