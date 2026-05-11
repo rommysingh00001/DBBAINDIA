@@ -28,15 +28,7 @@
       class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">
 
       Manage Users
-<div class="bg-gray-900 p-6 rounded-3xl mt-8">
 
-  <h2 class="text-3xl font-black text-green-400 mb-5">
-    Deposit Requests
-  </h2>
-
-  <div id="depositRequests"></div>
-
-</div>
     </button>
 
     <button
@@ -401,91 +393,6 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 </div>
 
 <script type="module">
-
-  async function loadDepositRequests(){
-
-  const {
-    data:requests
-  } = await supabase
-  .from("deposit_requests")
-  .select("*")
-  .eq("status","pending")
-  .order("created_at",{ascending:false});
-
-  const box =
-    document.getElementById("depositRequests");
-
-  box.innerHTML = "";
-
-  requests.forEach(req => {
-
-    box.innerHTML += `
-
-    <div class="border border-gray-700 rounded-2xl p-4 mb-4">
-
-      <p>User ID: ${req.user_id}</p>
-
-      <p>Amount: ${req.amount}</p>
-
-      <p>Transaction ID: ${req.transaction_id}</p>
-
-      <div class="flex gap-4 mt-4">
-
-        <button
-        onclick="approveDeposit(${req.id}, '${req.user_id}', ${req.amount})"
-        class="bg-green-500 px-4 py-2 rounded-xl font-bold text-black">
-        Approve
-        </button>
-
-        <button
-        onclick="rejectDeposit(${req.id})"
-        class="bg-red-500 px-4 py-2 rounded-xl font-bold">
-        Reject
-        </button>
-
-      </div>
-
-    </div>
-
-    `;
-
-  });
-}
-  window.approveDeposit = async function(id,userId,amount){
-
-  await supabase
-  .from("deposits")
-  .insert([
-    {
-      user_id:userId,
-      amount:amount
-    }
-  ]);
-
-  await supabase
-  .from("deposit_requests")
-  .update({
-    status:"approved"
-  })
-  .eq("id",id);
-
-  alert("Deposit Approved");
-
-  loadDepositRequests();
-}
-  window.rejectDeposit = async function(id){
-
-  await supabase
-  .from("deposit_requests")
-  .update({
-    status:"rejected"
-  })
-  .eq("id",id);
-
-  alert("Request Rejected");
-
-  loadDepositRequests();
-}
 
   function formatIST(dateString){
 
@@ -1305,7 +1212,6 @@ window.onload = async ()=>{
 await loadPNLReport();
 
 }
-  loadDepositRequests();
 </script>
 </body>
 </html>
