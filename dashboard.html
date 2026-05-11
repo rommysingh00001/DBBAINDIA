@@ -394,6 +394,35 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 
 <script type="module">
 
+  function formatIST(dateString){
+
+  return new Date(dateString)
+    .toLocaleString(
+      "en-IN",
+      {
+        timeZone:"Asia/Kolkata",
+        day:"2-digit",
+        month:"short",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:true
+      }
+    );
+}
+
+function getISTDate(dateString){
+
+  return new Date(dateString)
+    .toLocaleDateString(
+      "en-CA",
+      {
+        timeZone:"Asia/Kolkata"
+      }
+    );
+}
+
 import { supabase } from "./supabase.js";
 
 let allBetData = [];
