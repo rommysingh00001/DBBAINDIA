@@ -16,19 +16,12 @@
 
 <!-- HEADER -->
 
-  
-</div>
-
 <header class="sticky top-0 z-50 border-b border-gray-800 bg-black p-4 flex justify-between items-center">
 
   <h1 class="text-3xl font-black text-yellow-400">
     My Reports
   </h1>
 
-  <button id="buyCoinsBtn" class="bg-green-600 text-white px-4 py-2 rounded font-bold ml-2">
-    Buy More Coins
-  </button>
-  
 <button
 onclick="goBack()"
 class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
@@ -548,75 +541,6 @@ window.showBets = async function(){
 }
 
 showTransactions();
-
-  
-<!-- Buy Coins Modal -->
-<div id="buyCoinsModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
-  <div class="bg-[#111827] p-6 rounded-2xl w-[300px] text-center relative">
-    <h2 class="text-xl font-bold mb-4">Buy More Coins</h2>
-    
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rommysingh@ptyes&pn=DBBA%20INDIA&cu=INR"
-         class="rounded-xl mx-auto mb-4"/>
-    
-    <input id="amountInput" type="number" placeholder="Enter Amount" class="w-full p-2 rounded mb-3 text-black" />
-    <input id="txnIdInput" type="text" placeholder="Transaction ID" class="w-full p-2 rounded mb-3 text-black" />
-
-    <button id="confirmPaymentBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-      Confirm Payment
-    </button>
-
-    <span id="closeModal" class="absolute top-2 right-3 cursor-pointer text-gray-400 hover:text-white">&times;</span>
-  </div>
-</div>
-
-<!-- JS for Modal + WhatsApp -->
-<script type="module">
-import { supabase } from "./supabase.js";
-
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // Supabase session check
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    window.location.href = "index.html";
-    return;
-  }
-
-  const userId = session.user.id;
-
-  const buyBtn = document.getElementById("buyCoinsBtn");
-  const modal = document.getElementById("buyCoinsModal");
-  const closeModal = document.getElementById("closeModal");
-  const confirmBtn = document.getElementById("confirmPaymentBtn");
-
-  const adminWhatsApp = "918178593108"; // Replace with admin number with country code
-
-  // Open modal
-  buyBtn.addEventListener("click", () => modal.classList.remove("hidden"));
-  // Close modal
-  closeModal.addEventListener("click", () => modal.classList.add("hidden"));
-
-  // Confirm → WhatsApp
-  confirmBtn.addEventListener("click", () => {
-    const amount = document.getElementById("amountInput").value;
-    const txnId = document.getElementById("txnIdInput").value;
-
-    if (!amount || !txnId) {
-      alert("Please enter amount and transaction ID");
-      return;
-    }
-
-    const message = `User ${userId} wants to buy coins.\nAmount: ${amount}\nTransaction ID: ${txnId}`;
-    const url = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
-
-    window.open(url, "_blank");
-    modal.classList.add("hidden");
-  });
-
-  // Back button
-  window.goBack = () => window.location.href = "main.html";
-
-});
 
 </script>
 
