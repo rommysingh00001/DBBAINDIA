@@ -9,7 +9,7 @@
 </head>
 <body class="bg-[#0f172a] flex items-center justify-center min-h-screen font-sans">
 
-<!-- Card container identical to login page -->
+<!-- Centered card container like login page -->
 <div class="w-full max-w-md p-8 bg-[#1e293b] rounded-2xl shadow-xl">
   <h1 class="text-3xl font-bold text-white text-center mb-6">Create Account</h1>
 
@@ -29,7 +29,7 @@
         class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
-    <!-- Phone -->
+    <!-- Phone Number -->
     <div>
       <label for="phone" class="block text-sm text-gray-300 mb-1">Phone Number</label>
       <input type="tel" id="phone" name="phone" required
@@ -49,7 +49,7 @@
       Sign Up
     </button>
 
-    <!-- Links below -->
+    <!-- Link to login page -->
     <p class="text-sm text-gray-400 text-center mt-4">
       Already have an account? <a href="login.html" class="text-blue-400 hover:text-blue-500">Login</a>
     </p>
@@ -79,24 +79,23 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  // Sign up with Supabase
+  // Supabase email/password signup
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) {
     errorMsg.textContent = error.message;
     return;
   }
 
-  // Insert into profiles table
-  const { error: profileError } = await supabase.from('profiles').insert([{
-    id: data.user.id,
-    full_name,
-    phone_number: phone
-  }]);
-
-  if (profileError) {
-    errorMsg.textContent = profileError.message;
-    return;
-  }
+  // If you want to store extra info in profiles table (optional)
+  // const { error: profileError } = await supabase.from('profiles').insert([{
+  //   id: data.user.id,
+  //   full_name,
+  //   phone_number: phone
+  // }]);
+  // if (profileError) {
+  //   errorMsg.textContent = profileError.message;
+  //   return;
+  // }
 
   alert('Sign-up successful! Please verify your email.');
   window.location.href = 'login.html';
