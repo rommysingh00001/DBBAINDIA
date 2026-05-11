@@ -9,87 +9,107 @@
 </head>
 <body class="bg-[#0f172a] flex items-center justify-center min-h-screen font-sans">
 
-<div class="w-full max-w-md p-8 bg-[#1e293b] rounded-2xl shadow-lg">
+<!-- Card container identical to login page -->
+<div class="w-full max-w-md p-8 bg-[#1e293b] rounded-2xl shadow-xl">
   <h1 class="text-3xl font-bold text-white text-center mb-6">Create Account</h1>
 
   <form id="signupForm" class="space-y-4">
+
+    <!-- Full Name -->
     <div>
       <label for="full_name" class="block text-sm text-gray-300 mb-1">Full Name</label>
-      <input type="text" id="full_name" name="full_name" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <input type="text" id="full_name" name="full_name" required
+        class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
+    <!-- Email -->
     <div>
       <label for="email" class="block text-sm text-gray-300 mb-1">Email</label>
-      <input type="email" id="email" name="email" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <input type="email" id="email" name="email" required
+        class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
+    <!-- Phone -->
     <div>
       <label for="phone" class="block text-sm text-gray-300 mb-1">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <input type="tel" id="phone" name="phone" required
+        class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
+    <!-- Password -->
     <div>
       <label for="password" class="block text-sm text-gray-300 mb-1">Password</label>
-      <input type="password" id="password" name="password" required class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <input type="password" id="password" name="password" required
+        class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
+    <!-- Referral Code -->
     <div>
       <label for="referral" class="block text-sm text-gray-300 mb-1">Referral Code (Optional)</label>
-      <input type="text" id="referral" name="referral" class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <input type="text" id="referral" name="referral"
+        class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
-    <button type="submit" class="w-full py-3 mt-4 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg text-white font-semibold hover:from-blue-600 hover:to-blue-800 transition">Sign Up</button>
+    <!-- Sign Up Button -->
+    <button type="submit"
+      class="w-full py-3 mt-4 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg text-white font-semibold hover:from-blue-600 hover:to-blue-800 transition">
+      Sign Up
+    </button>
 
+    <!-- Links below -->
     <p class="text-sm text-gray-400 text-center mt-4">
       Already have an account? <a href="login.html" class="text-blue-400 hover:text-blue-500">Login</a>
     </p>
 
+    <!-- Error message -->
     <p id="errorMsg" class="text-red-500 text-center mt-2"></p>
   </form>
 </div>
 
 <script type="module">
-  import { supabase } from './supabase.js';
+import { supabase } from './supabase.js';
 
-  const form = document.getElementById('signupForm');
-  const errorMsg = document.getElementById('errorMsg');
+const form = document.getElementById('signupForm');
+const errorMsg = document.getElementById('errorMsg');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    errorMsg.textContent = '';
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errorMsg.textContent = '';
 
-    const full_name = form.full_name.value.trim();
-    const email = form.email.value.trim();
-    const phone = form.phone.value.trim();
-    const password = form.password.value;
-    const referral = form.referral.value.trim() || null;
+  const full_name = form.full_name.value.trim();
+  const email = form.email.value.trim();
+  const phone = form.phone.value.trim();
+  const password = form.password.value;
+  const referral = form.referral.value.trim() || null;
 
-    if (!full_name || !email || !phone || !password) {
-      errorMsg.textContent = 'Please fill in all required fields.';
-      return;
-    }
+  if (!full_name || !email || !phone || !password) {
+    errorMsg.textContent = 'Please fill in all required fields.';
+    return;
+  }
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      errorMsg.textContent = error.message;
-      return;
-    }
+  // Sign up with Supabase
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) {
+    errorMsg.textContent = error.message;
+    return;
+  }
 
-    const { error: profileError } = await supabase.from('profiles').insert([{
-      id: data.user.id,
-      full_name,
-      phone_number: phone,
-      referral_code: referral
-    }]);
+  // Insert into profiles table
+  const { error: profileError } = await supabase.from('profiles').insert([{
+    id: data.user.id,
+    full_name,
+    phone_number: phone,
+    referral_code: referral
+  }]);
 
-    if (profileError) {
-      errorMsg.textContent = profileError.message;
-      return;
-    }
+  if (profileError) {
+    errorMsg.textContent = profileError.message;
+    return;
+  }
 
-    alert('Sign-up successful! Please verify your email.');
-    window.location.href = 'login.html';
-  });
+  alert('Sign-up successful! Please verify your email.');
+  window.location.href = 'login.html';
+});
 </script>
 
 </body>
