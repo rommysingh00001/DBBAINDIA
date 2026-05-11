@@ -10,19 +10,16 @@
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 border-b border-gray-800 bg-black p-4 flex justify-between items-center">
-  <h1 class="text-3xl font-black text-yellow-400">
-    My Reports
-  </h1>
+  <h1 class="text-3xl font-black text-yellow-400">My Reports</h1>
 
   <div class="flex gap-4 items-center">
-    <button onclick="openBuyCoinsModal()"
-      class="bg-green-500 hover:bg-green-400 px-4 py-2 rounded-xl font-bold">
-      Buy Coins
-    </button>
-    <button onclick="goBack()"
-      class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
-      Back
-    </button>
+    <!-- Buy Coins button same style as balance -->
+    <div onclick="openBuyCoinsModal()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition text-center">
+      <p class="text-gray-400 text-sm">Buy Coins</p>
+      <h2 class="text-2xl font-bold text-yellow-400">+</h2>
+    </div>
+
+    <button onclick="goBack()" class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">Back</button>
   </div>
 </header>
 
@@ -42,72 +39,69 @@
   </div>
 </div>
 
-<!-- MAIN SECTION -->
+<!-- FILTER -->
 <section class="max-w-7xl mx-auto px-5 py-8">
-
-  <!-- FILTER -->
-  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-6">
-    <div class="grid md:grid-cols-4 gap-4">
-      <div>
-        <p class="mb-2 text-gray-400">From Date</p>
-        <input type="date" id="fromDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      </div>
-      <div>
-        <p class="mb-2 text-gray-400">To Date</p>
-        <input type="date" id="toDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      </div>
-      <div class="flex items-end">
-        <button onclick="applyFilter()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">APPLY FILTER</button>
-      </div>
-      <div class="flex items-end">
-        <button onclick="resetFilter()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">RESET</button>
-      </div>
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-6">
+  <div class="grid md:grid-cols-4 gap-4">
+    <div>
+      <p class="mb-2 text-gray-400">From Date</p>
+      <input type="date" id="fromDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    </div>
+    <div>
+      <p class="mb-2 text-gray-400">To Date</p>
+      <input type="date" id="toDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    </div>
+    <div class="flex items-end">
+      <button onclick="applyFilter()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">APPLY FILTER</button>
+    </div>
+    <div class="flex items-end">
+      <button onclick="resetFilter()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">RESET</button>
     </div>
   </div>
+</div>
 
-  <!-- TABS -->
-  <div class="flex gap-4 mb-6 flex-wrap">
-    <button onclick="showTransactions()" id="tabTransactions" class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">My Transactions</button>
-    <button onclick="showBets()" id="tabBets" class="bg-yellow-400 hover:bg-yellow-300 px-6 py-3 rounded-2xl font-bold text-black">My Bets</button>
+<!-- TABS -->
+<div class="flex gap-4 mb-6 flex-wrap">
+  <button onclick="showTransactions()" id="tabTransactions" class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">My Transactions</button>
+  <button onclick="showBets()" id="tabBets" class="bg-yellow-400 hover:bg-yellow-300 px-6 py-3 rounded-2xl font-bold text-black">My Bets</button>
+</div>
+
+<!-- TRANSACTIONS -->
+<div id="transactionsSection" class="hidden">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
+    <h2 class="text-3xl font-black mb-6 text-green-400">My Transactions</h2>
+    <table class="w-full text-left border-collapse min-w-[700px]">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="p-3">Date & Time</th>
+          <th class="p-3">Type</th>
+          <th class="p-3">Coins</th>
+          <th class="p-3">Status</th>
+        </tr>
+      </thead>
+      <tbody id="transactionsTable"></tbody>
+    </table>
   </div>
+</div>
 
-  <!-- TRANSACTIONS -->
-  <div id="transactionsSection" class="hidden">
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
-      <h2 class="text-3xl font-black mb-6 text-green-400">My Transactions</h2>
-      <table class="w-full text-left border-collapse min-w-[700px]">
-        <thead>
-          <tr class="border-b border-gray-700">
-            <th class="p-3">Date & Time</th>
-            <th class="p-3">Type</th>
-            <th class="p-3">Coins</th>
-            <th class="p-3">Status</th>
-          </tr>
-        </thead>
-        <tbody id="transactionsTable"></tbody>
-      </table>
-    </div>
+<!-- BETS -->
+<div id="betsSection" class="hidden">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
+    <h2 class="text-3xl font-black mb-6 text-yellow-400">My Bets</h2>
+    <table class="w-full text-left border-collapse min-w-[900px]">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="p-3">Date & Time</th>
+          <th class="p-3">Number</th>
+          <th class="p-3">Coins</th>
+          <th class="p-3">Result</th>
+          <th class="p-3">Status</th>
+        </tr>
+      </thead>
+      <tbody id="betsTable"></tbody>
+    </table>
   </div>
-
-  <!-- BETS -->
-  <div id="betsSection" class="hidden">
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
-      <h2 class="text-3xl font-black mb-6 text-yellow-400">My Bets</h2>
-      <table class="w-full text-left border-collapse min-w-[900px]">
-        <thead>
-          <tr class="border-b border-gray-700">
-            <th class="p-3">Date & Time</th>
-            <th class="p-3">Number</th>
-            <th class="p-3">Coins</th>
-            <th class="p-3">Result</th>
-            <th class="p-3">Status</th>
-          </tr>
-        </thead>
-        <tbody id="betsTable"></tbody>
-      </table>
-    </div>
-  </div>
-
+</div>
 </section>
 
 <script type="module">
@@ -119,131 +113,105 @@ const userId = session.user.id;
 
 let currentTab = "transactions";
 
-window.goBack = () => { window.location.href="main.html"; }
-
+window.goBack = ()=>{ window.location.href="main.html"; }
 function openBuyCoinsModal(){ document.getElementById("buyCoinsModal").classList.remove("hidden"); }
 function closeBuyCoinsModal(){ document.getElementById("buyCoinsModal").classList.add("hidden"); }
 
 async function confirmBuyCoins(){
   const amount = Number(document.getElementById("buyCoinsAmount").value);
-  const transactionId = document.getElementById("transactionId").value.trim();
+  const txnId = document.getElementById("transactionId").value.trim();
+  if(amount<=0){ alert("Enter valid coin amount"); return; }
+  if(txnId===""){ alert("Enter transaction ID"); return; }
 
-  if(amount <= 0){ alert("Enter valid coin amount"); return; }
-  if(transactionId === ""){ alert("Enter transaction ID"); return; }
-
-  // SAVE PENDING COIN REQUEST
   const { error } = await supabase.from("coin_requests").insert([{
-    user_id: userId,
-    coins: amount,
-    transaction_id: transactionId,
-    status: "pending",
-    created_at: new Date().toISOString()
+    user_id:userId,
+    coins:amount,
+    transaction_id:txnId,
+    status:"pending",
+    created_at:new Date().toISOString()
   }]);
-
   if(error){ alert(error.message); return; }
-
-  alert("Request submitted. Admin will approve it.");
-  document.getElementById("buyCoinsAmount").value = "";
-  document.getElementById("transactionId").value = "";
+  alert("Coin request submitted. Admin approval pending.");
+  document.getElementById("buyCoinsAmount").value="";
+  document.getElementById("transactionId").value="";
   closeBuyCoinsModal();
 }
 
-function getDateFilter(){
-  return {
-    fromDate: document.getElementById("fromDate").value,
-    toDate: document.getElementById("toDate").value
-  };
-}
+// Tab & Filter functions
+function getDateFilter(){ return { fromDate:document.getElementById("fromDate").value, toDate:document.getElementById("toDate").value }; }
 
-// ======== SHOW TABS ========
-window.applyFilter = async function(){ if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
-window.resetFilter = async function(){ document.getElementById("fromDate").value=""; document.getElementById("toDate").value=""; if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
+window.applyFilter=async()=>{ if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
+window.resetFilter=async()=>{ document.getElementById("fromDate").value=""; document.getElementById("toDate").value=""; if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
 
-window.showTransactions = async function(){
+window.showTransactions=async()=>{
   currentTab="transactions";
   document.getElementById("transactionsSection").classList.remove("hidden");
   document.getElementById("betsSection").classList.add("hidden");
 
-  const { fromDate, toDate } = getDateFilter();
-
+  const { fromDate,toDate } = getDateFilter();
   let depositsQuery = supabase.from("deposits").select("*").eq("user_id",userId).order("created_at",{ascending:false});
   let withdrawQuery = supabase.from("withdraws").select("*").eq("user_id",userId).order("created_at",{ascending:false});
   let coinReqQuery = supabase.from("coin_requests").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+  if(fromDate){ depositsQuery=depositsQuery.gte("created_at",fromDate); withdrawQuery=withdrawQuery.gte("created_at",fromDate); coinReqQuery=coinReqQuery.gte("created_at",fromDate); }
+  if(toDate){ depositsQuery=depositsQuery.lte("created_at",toDate+"T23:59:59"); withdrawQuery=withdrawQuery.lte("created_at",toDate+"T23:59:59"); coinReqQuery=coinReqQuery.lte("created_at",toDate+"T23:59:59"); }
 
-  if(fromDate){
-    depositsQuery = depositsQuery.gte("created_at", fromDate);
-    withdrawQuery = withdrawQuery.gte("created_at", fromDate);
-    coinReqQuery = coinReqQuery.gte("created_at", fromDate);
-  }
-  if(toDate){
-    depositsQuery = depositsQuery.lte("created_at", toDate + "T23:59:59");
-    withdrawQuery = withdrawQuery.lte("created_at", toDate + "T23:59:59");
-    coinReqQuery = coinReqQuery.lte("created_at", toDate + "T23:59:59");
-  }
-
-  const { data: deposits=[] } = await depositsQuery;
-  const { data: withdraws=[] } = await withdrawQuery;
-  const { data: coinRequests=[] } = await coinReqQuery;
+  const { data:deposits=[] }=await depositsQuery;
+  const { data:withdraws=[] }=await withdrawQuery;
+  const { data:coinRequests=[] }=await coinReqQuery;
 
   const allTransactions=[];
-  deposits.forEach(dep=>{ allTransactions.push({created_at:dep.created_at,type:"Deposit",amount:dep.amount,status:"approved"}); });
-  withdraws.forEach(w=>{ allTransactions.push({created_at:w.created_at,type:"Withdraw",amount:w.amount,status:w.status||"pending"}); });
-  coinRequests.forEach(c=>{ allTransactions.push({created_at:c.created_at,type:"Buy Coins",amount:c.coins,status:c.status}); });
+  deposits.forEach(d=>allTransactions.push({created_at:d.created_at,type:"Deposit",amount:d.amount,status:"approved"}));
+  withdraws.forEach(w=>allTransactions.push({created_at:w.created_at,type:"Withdraw",amount:w.amount,status:w.status||"pending"}));
+  coinRequests.forEach(c=>allTransactions.push({created_at:c.created_at,type:"Buy Coins",amount:c.coins,status:c.status}));
 
   allTransactions.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
 
-  const table=document.getElementById("transactionsTable");
-  table.innerHTML="";
+  const table=document.getElementById("transactionsTable"); table.innerHTML="";
   if(allTransactions.length===0){ table.innerHTML=`<tr><td colspan="4" class="p-5 text-center text-gray-400">No transactions found</td></tr>`; return; }
-
   allTransactions.forEach(t=>{
-    const color = (t.type==="Deposit"||t.type==="Buy Coins") ? "text-green-400 font-black" : "text-red-400 font-black";
+    const color=(t.type==="Deposit"||t.type==="Buy Coins")?"text-green-400 font-black":"text-red-400 font-black";
     table.innerHTML+=`
       <tr class="border-b border-gray-700">
         <td class="p-3">${new Date(new Date(t.created_at).toLocaleString("en-US",{timeZone:"Asia/Kolkata"})).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
         <td class="p-3 ${color}">${t.type}</td>
-        <td class="p-3 ${color}">${t.type==="Deposit"||t.type==="Buy Coins" ? "+" : "-"}${t.amount}</td>
+        <td class="p-3 ${color}">${(t.type==="Deposit"||t.type==="Buy Coins")?"+":"-"}${t.amount}</td>
         <td class="p-3 font-black ${color}">${t.status}</td>
-      </tr>
-    `;
+      </tr>`;
   });
 }
 
-window.showBets = async function(){
+window.showBets=async()=>{
   currentTab="bets";
   document.getElementById("betsSection").classList.remove("hidden");
   document.getElementById("transactionsSection").classList.add("hidden");
 
-  const { fromDate, toDate } = getDateFilter();
+  const { fromDate,toDate } = getDateFilter();
   let query = supabase.from("bets").select("*").eq("user_id",userId).order("created_at",{ascending:false});
-  if(fromDate) query=query.gte("created_at", fromDate);
-  if(toDate) query=query.lte("created_at", toDate+"T23:59:59");
+  if(fromDate) query=query.gte("created_at",fromDate);
+  if(toDate) query=query.lte("created_at",toDate+"T23:59:59");
 
   const { data:bets=[] } = await query;
   const table=document.getElementById("betsTable");
   table.innerHTML="";
   if(bets.length===0){ table.innerHTML=`<tr><td colspan="5" class="p-5 text-center text-gray-400">No bets found</td></tr>`; return; }
-
-  bets.forEach(bet=>{
+  bets.forEach(b=>{
     let resultText="Pending", resultColor="text-yellow-400 font-black";
     let statusText="Pending", statusColor="text-yellow-400";
-    if(bet.status==="win"){ resultText=`+${bet.potential_win}`; resultColor="text-green-400 font-black"; statusText="You Win"; statusColor="text-green-400"; }
-    if(bet.status==="lose"){ resultText=`-${bet.coins}`; resultColor="text-red-400 font-black"; statusText="You Lose"; statusColor="text-red-400"; }
+    if(b.status==="win"){ resultText=`+${b.potential_win}`; resultColor="text-green-400 font-black"; statusText="You Win"; statusColor="text-green-400"; }
+    if(b.status==="lose"){ resultText=`-${b.coins}`; resultColor="text-red-400 font-black"; statusText="You Lose"; statusColor="text-red-400"; }
 
     table.innerHTML+=`
       <tr class="border-b border-gray-700">
-        <td class="p-3">${new Date(new Date(bet.created_at).toLocaleString("en-US",{timeZone:"Asia/Kolkata"})).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
-        <td class="p-3 font-bold text-yellow-400">${String(bet.selected_number).padStart(2,"0")}</td>
-        <td class="p-3 font-bold">${bet.coins}</td>
+        <td class="p-3">${new Date(new Date(b.created_at).toLocaleString("en-US",{timeZone:"Asia/Kolkata"})).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
+        <td class="p-3 font-bold text-yellow-400">${String(b.selected_number).padStart(2,"0")}</td>
+        <td class="p-3 font-bold">${b.coins}</td>
         <td class="p-3 ${resultColor}">${resultText}</td>
         <td class="p-3 ${statusColor} font-bold">${statusText}</td>
-      </tr>
-    `;
+      </tr>`;
   });
 }
 
 showTransactions();
-
 </script>
 </body>
 </html>
