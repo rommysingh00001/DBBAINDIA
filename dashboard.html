@@ -28,14 +28,7 @@
       class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">
 
       Manage Users
-
-    </button>
-
-    <button
-      onclick="scrollToAnnounce()"
-      class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">
-
-      <div class="bg-gray-900 p-6 rounded-3xl mt-8">
+<div class="bg-gray-900 p-6 rounded-3xl mt-8">
 
   <h2 class="text-3xl font-black text-green-400 mb-5">
     Deposit Requests
@@ -44,6 +37,11 @@
   <div id="depositRequests"></div>
 
 </div>
+    </button>
+
+    <button
+      onclick="scrollToAnnounce()"
+      class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">
 
       Announce Winner
 
@@ -488,7 +486,6 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 
   loadDepositRequests();
 }
-  loadDepositRequests();
 
   function formatIST(dateString){
 
@@ -1308,6 +1305,7 @@ window.onload = async ()=>{
 await loadPNLReport();
 
 }
+  loadDepositRequests();
 </script>
 </body>
 </html>
