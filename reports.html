@@ -22,14 +22,25 @@
 
   <div class="flex items-center gap-4">
 
-    <!-- BUY COINS BUTTON (main.html balance style jaisa) -->
+    <!-- BUY COINS BUTTON
+    
     <button
-    onclick="openBuyCoins()"
-    class="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-black px-6 py-4 rounded-3xl shadow-lg shadow-yellow-500/40 hover:scale-105 transition-transform duration-200">
+onclick="openBuyCoins()"
+class="relative inline-flex items-center justify-center px-8 py-4 rounded-3xl font-black text-black overflow-hidden group shadow-lg">
 
-      Buy Coins +
+  <!-- Background gradient + glow -->
+  <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-400 to-orange-400 blur-md opacity-75 group-hover:opacity-100 transition duration-300"></span>
 
-    </button>
+  <!-- Border & inner glow -->
+  <span class="absolute inset-0 w-full h-full border-2 border-yellow-500 rounded-3xl"></span>
+
+  <!-- Text -->
+  <span class="relative z-10 text-lg">Buy Coins +</span>
+
+  <!-- Hover animation shine -->
+  <span class="absolute top-0 left-[-75%] w-1/2 h-full bg-white opacity-30 transform -skew-x-12 rotate-12 group-hover:translate-x-[200%] transition duration-500"></span>
+
+</button>
 
     <!-- BACK BUTTON -->
     <button
