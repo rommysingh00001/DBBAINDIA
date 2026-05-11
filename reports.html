@@ -653,6 +653,45 @@ window.showBets = async function(){
 
 showTransactions();
 
+  // ----------------- Buy Coins Modal Functions -----------------
+
+// Open modal
+window.openBuyCoins = () => {
+  document.getElementById("buyCoinsModal").classList.remove("hidden");
+}
+
+// Close modal
+window.closeBuyCoins = () => {
+  document.getElementById("buyCoinsModal").classList.add("hidden");
+}
+
+// Submit coin request
+window.submitCoinRequest = async () => {
+  const amount = document.getElementById("coinAmount").value;
+  const transaction_id = document.getElementById("transactionId").value;
+
+  if(!amount || !transaction_id){
+    alert("Please fill all fields");
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("coin_requests")
+    .insert([{
+      user_id: supabase.auth.user().id,
+      user_email: supabase.auth.user().email,
+      amount,
+      transaction_id,
+    }]);
+
+  if(error){
+    alert("Error submitting request: " + error.message);
+  } else {
+    alert("Request sent! Waiting for admin approval.");
+    closeBuyCoins();
+  }
+}
+
 </script>
 
 </body>
