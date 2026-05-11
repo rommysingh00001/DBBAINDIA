@@ -57,40 +57,37 @@
       }
 
       // SIGNUP USER IN SUPABASE AUTH
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password
-      });
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password
+});
 
-      if(error){
-        alert(error.message);
-        return;
-      }
+if(error){
+  alert(error.message);
+  return;
+}
 
-      const userId = data.user.id;
+const userId = data.user.id;
 
-      // SAVE USER DATA IN CUSTOM TABLE "profiles"
-      const { error: insertError } = await supabase
-        .from("profiles")
-        .insert([
-          {
-            id: userId,
-            full_name: fullName,
-            phone: phone,
-            email: email,
-            balance: 0,
-            created_at: new Date().toISOString()
-          }
-        ]);
-
-      if(insertError){
-        alert("Database error: " + insertError.message);
-        return;
-      }
-
-      alert("Account Created Successfully!");
-      window.location.href = "login.html";
+// INSERT USER DATA IN CUSTOM TABLE
+const { error: insertError } = await supabase
+  .from("profiles")
+  .insert([
+    {
+      id: userId,
+      full_name: fullName,
+      phone: phone,
+      email: email,
+      balance: 0
     }
+  ]);
+
+if(insertError){
+  alert("Database error: " + insertError.message);
+  return;
+}
+
+alert("Account Created Successfully!");
   </script>
 </body>
 </html>
