@@ -177,35 +177,6 @@ My Bets
 
 <script type="module">
 
-  function formatIST(dateString){
-
-  return new Date(dateString)
-    .toLocaleString(
-      "en-IN",
-      {
-        timeZone:"Asia/Kolkata",
-        day:"2-digit",
-        month:"short",
-        year:"numeric",
-        hour:"2-digit",
-        minute:"2-digit",
-        second:"2-digit",
-        hour12:true
-      }
-    );
-}
-
-function getISTDate(dateString){
-
-  return new Date(dateString)
-    .toLocaleDateString(
-      "en-CA",
-      {
-        timeZone:"Asia/Kolkata"
-      }
-    );
-}
-
 import { supabase } from "./supabase.js";
 
 const {
@@ -295,16 +266,16 @@ window.showTransactions = async function(){
   if(fromDate){
 
     depositsQuery =
-  depositsQuery.gte(
-    "created_at",
-    fromDate + "T00:00:00+05:30"
-  );
+      depositsQuery.gte(
+        "created_at",
+        fromDate
+      );
 
     withdrawQuery =
-  withdrawQuery.gte(
-    "created_at",
-    fromDate + "T00:00:00+05:30"
-  );
+      withdrawQuery.gte(
+        "created_at",
+        fromDate
+      );
   }
 
   if(toDate){
@@ -312,13 +283,13 @@ window.showTransactions = async function(){
     depositsQuery =
       depositsQuery.lte(
         "created_at",
-        toDate + "T23:59:59+05:30"
+        toDate + "T23:59:59"
       );
 
     withdrawQuery =
       withdrawQuery.lte(
         "created_at",
-        toDate + "T23:59:59+05:30"
+        toDate + "T23:59:59"
       );
   }
 
@@ -390,7 +361,23 @@ window.showTransactions = async function(){
       <tr class="border-b border-gray-700">
 
         <td class="p-3">
-          ${formatIST(bet.created_at)}
+          ${new Date(
+            new Date(t.created_at)
+            .toLocaleString(
+              "en-US",
+              { timeZone:"Asia/Kolkata" }
+            )
+          ).toLocaleString(
+            "en-IN",
+            {
+              day:"2-digit",
+              month:"short",
+              year:"numeric",
+              hour:"2-digit",
+              minute:"2-digit",
+              second:"2-digit"
+            }
+          )}
         </td>
 
         <td class="p-3 ${color}">
@@ -433,10 +420,10 @@ window.showBets = async function(){
   if(fromDate){
 
     query =
-  query.gte(
-    "created_at",
-    fromDate + "T00:00:00+05:30"
-  );
+      query.gte(
+        "created_at",
+        fromDate
+      );
   }
 
   if(toDate){
@@ -444,7 +431,7 @@ window.showBets = async function(){
     query =
       query.lte(
         "created_at",
-        toDate + "T23:59:59+05:30"
+        toDate + "T23:59:59"
       );
   }
 
@@ -511,7 +498,23 @@ window.showBets = async function(){
       <tr class="border-b border-gray-700">
 
         <td class="p-3">
-          ${formatIST(bet.created_at)}
+          ${new Date(
+            new Date(bet.created_at)
+            .toLocaleString(
+              "en-US",
+              { timeZone:"Asia/Kolkata" }
+            )
+          ).toLocaleString(
+            "en-IN",
+            {
+              day:"2-digit",
+              month:"short",
+              year:"numeric",
+              hour:"2-digit",
+              minute:"2-digit",
+              second:"2-digit"
+            }
+          )}
         </td>
 
         <td class="p-3 font-bold text-yellow-400">
