@@ -611,7 +611,7 @@ if(coins > currentBalance){
   minute:"2-digit",
   second:"2-digit",
   hour12:true
-})
+})}
           </p>
         `;
 
@@ -676,15 +676,16 @@ window.loadHistory = async function(){
       </h2>
 
       <p class="text-gray-400 text-sm mt-2">
-        ${new Date(r.created_at).toLocaleDateString(
-  "en-IN",
-  {
-    timeZone:"Asia/Kolkata",
-    day:"2-digit",
-    month:"short",
-    year:"numeric"
-  }
-)}
+        ${new Date(r.created_at).toLocaleString("en-IN",{
+  timeZone:"Asia/Kolkata",
+  day:"2-digit",
+  month:"short",
+  year:"numeric",
+  hour:"2-digit",
+  minute:"2-digit",
+  second:"2-digit",
+  hour12:true
+})}
       </p>
     `;
 
