@@ -21,43 +21,7 @@
   <h1 class="text-3xl font-black text-yellow-400">
     My Reports
   </h1>
-<div class="mb-6">
 
-  
-
-</div>
-
-<div
-id="depositBox"
-class="hidden bg-gray-900 border border-gray-700 rounded-3xl p-6 mb-6">
-
-  <h2 class="text-2xl font-black text-yellow-400 mb-5">
-    Deposit Coins
-  </h2>
-
-  <img
-  src="https://drive.google.com/file/d/16b1Fq67_iL1prE_w6BQIRozjKTVp8IHk/view?usp=sharing"
-  class="w-64 mx-auto rounded-2xl mb-6"/>
-
-  <input
-  type="number"
-  id="depositAmount"
-  placeholder="Enter Amount"
-  class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
-
-  <input
-  type="text"
-  id="transactionId"
-  placeholder="Enter UTR / Transaction ID"
-  class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
-
-  <button
-  onclick="submitDepositRequest()"
-  class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">
-  Confirm Deposit
-  </button>
-
-</div>
 <button
 onclick="goBack()"
 class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
@@ -120,13 +84,10 @@ Back </button>
   </div>
 
   <!-- TABS -->
-<button
-  onclick="toggleDepositBox()"
-  class="bg-blue-500 hover:bg-blue-400 px-6 py-3 rounded-2xl font-bold text-white">
-  Buy More Coins +
-  </button>
+
   <div class="flex gap-4 mb-6 flex-wrap">
-    
+
+
 <button
 onclick="showTransactions()"
 class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">
@@ -215,49 +176,7 @@ My Bets
 </section>
 
 <script type="module">
-window.toggleDepositBox = function(){
 
-  document
-  .getElementById("depositBox")
-  .classList.toggle("hidden");
-}
-
-window.submitDepositRequest = async function(){
-
-  const amount =
-    document.getElementById("depositAmount").value;
-
-  const transactionId =
-    document.getElementById("transactionId").value;
-
-  if(!amount || !transactionId){
-
-    alert("Fill all fields");
-    return;
-  }
-
-  const { error } = await supabase
-  .from("deposit_requests")
-  .insert([
-    {
-      user_id:userId,
-      amount:Number(amount),
-      transaction_id:transactionId,
-      status:"pending"
-    }
-  ]);
-
-  if(error){
-
-    alert("Request failed");
-    return;
-  }
-
-  alert("Deposit request submitted");
-
-  document.getElementById("depositAmount").value = "";
-  document.getElementById("transactionId").value = "";
-}
 import { supabase } from "./supabase.js";
 
 const {
