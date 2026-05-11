@@ -20,28 +20,13 @@
         <p class="text-gray-400 text-sm">Predict • Play • Win</p>
       </div>
 
-      <a
-href="https://wa.me/918607079707"
-target="_blank"
-class="fixed bottom-5 right-5 z-50 bg-green-500 hover:bg-green-400 text-white font-bold px-5 py-3 rounded-full shadow-2xl"
->
-WhatsApp Chat
-</a>
-
       <div class="flex items-center gap-4">
         <div onclick="openReports()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
           <p class="text-gray-400 text-sm">Balance</p>
           <h2 id="balanceText" class="text-2xl font-bold text-yellow-400">0 Coins</h2>
           <p class="text-green-400 text-xs mt-1">View Reports</p>
         </div>
-        
-<!-- Balance Section -->
-  <button id="buyCoinsBtn" class="bg-green-600 text-white px-4 py-2 rounded font-bold ml-2">
-    Buy Coins
-  </button>
-        
-</div>
-        
+
         <button onclick="logout()" class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
           Logout
         </button>
@@ -746,8 +731,7 @@ window.loadHistory = async function(){
     // INITIAL LOAD
     loadLatestBalance();
 
-  </script>
-<!-- Buy Coins Modal -->
+    <!-- Buy Coins Modal -->
 <div id="buyCoinsModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
   <div class="bg-[#111827] p-6 rounded-2xl w-[300px] text-center relative">
     <h2 class="text-xl font-bold mb-4">Buy More Coins</h2>
@@ -797,7 +781,8 @@ confirmBtn.addEventListener("click", () => {
   alert("WhatsApp message opened to admin.");
   modal.classList.add("hidden");
 });
-</script>
+
+  </script>
 
 </body>
 </html>
