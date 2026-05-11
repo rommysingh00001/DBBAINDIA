@@ -8,117 +8,233 @@
 </head>
 <body class="bg-[#050816] text-white">
 
-<!-- HEADER -->
 <header class="sticky top-0 z-50 border-b border-gray-800 bg-black p-4 flex justify-between items-center">
   <div class="flex items-center gap-4">
-    <button
-      id="buyCoinsBtn"
-      class="bg-green-500 hover:bg-green-400 px-4 py-2 rounded-xl font-bold text-black">
+    <button onclick="openBuyCoinsModal()" class="bg-green-500 hover:bg-green-400 px-4 py-2 rounded-xl font-bold text-black">
       Buy Coins
     </button>
-    <h1 class="text-3xl font-black text-yellow-400">
-      My Reports
-    </h1>
+    <h1 class="text-3xl font-black text-yellow-400">My Reports</h1>
   </div>
-  <button onclick="goBack()" class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
-    Back
-  </button>
+  <button onclick="goBack()" class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">Back</button>
 </header>
 
-<!-- BUY COINS MODAL -->
-<div id="buyCoinsModal" class="fixed inset-0 bg-black/80 hidden justify-center items-center z-50">
-  <div class="bg-gray-900 p-8 rounded-3xl max-w-md w-full relative">
-    <h2 class="text-2xl font-black text-yellow-400 mb-4">Buy Coins</h2>
-    <p class="text-gray-400 mb-4">Enter number of coins to buy (1 coin = 1 INR)</p>
-    <input type="number" id="coinsToBuy" min="1" placeholder="0" class="w-full p-4 rounded-2xl bg-black border border-gray-700 text-xl mb-4"/>
-    <button id="confirmBuyCoins" class="w-full bg-green-500 hover:bg-green-400 py-3 rounded-2xl font-bold text-black mb-3">
-      Confirm
-    </button>
-    <button onclick="closeBuyCoins()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 font-bold">X</button>
+<section class="max-w-7xl mx-auto px-5 py-8">
 
-    <div id="paymentSection" class="hidden text-center mt-4">
-      <p class="text-gray-400 mb-2">Scan QR or use UPI to pay:</p>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=rommysingh@ptyes&pn=DBBA%20INDIA&am=0&cu=INR" id="upiQr" class="mx-auto mb-2"/>
-      <p class="text-green-400 font-bold">UPI ID: rommysingh@ptyes</p>
-      <button id="simulateSuccess" class="bg-green-500 hover:bg-green-400 px-5 py-2 rounded-2xl font-bold mt-3 text-black">Payment Successful</button>
-      <button id="simulateFail" class="bg-red-500 hover:bg-red-400 px-5 py-2 rounded-2xl font-bold mt-2 text-black">Payment Failed</button>
+<!-- FILTER -->
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-6">
+  <div class="grid md:grid-cols-4 gap-4">
+    <div>
+      <p class="mb-2 text-gray-400">From Date</p>
+      <input type="date" id="fromDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    </div>
+    <div>
+      <p class="mb-2 text-gray-400">To Date</p>
+      <input type="date" id="toDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    </div>
+    <div class="flex items-end">
+      <button onclick="applyFilter()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">
+        APPLY FILTER
+      </button>
+    </div>
+    <div class="flex items-end">
+      <button onclick="resetFilter()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">
+        RESET
+      </button>
     </div>
   </div>
 </div>
 
-<!-- MAIN SECTION (FILTERS, TABS) -->
-<section class="max-w-7xl mx-auto px-5 py-8">
-  <!-- FILTERS, TABS, Transactions & Bets HTML here -->
-  <!-- Copy your existing transactions & bets sections here -->
-</section>
+<!-- TABS -->
+<div class="flex gap-4 mb-6 flex-wrap">
+  <button onclick="showTransactions()" id="transactionsTab" class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">
+    My Transactions
+  </button>
+  <button onclick="showBets()" id="betsTab" class="bg-yellow-400 hover:bg-yellow-300 px-6 py-3 rounded-2xl font-bold text-black">
+    My Bets
+  </button>
+</div>
+
+<!-- TRANSACTIONS -->
+<div id="transactionsSection" class="hidden">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
+    <h2 class="text-3xl font-black mb-6 text-green-400">My Transactions</h2>
+    <table class="w-full text-left border-collapse min-w-[700px]">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="p-3">Date & Time</th>
+          <th class="p-3">Type</th>
+          <th class="p-3">Coins</th>
+        </tr>
+      </thead>
+      <tbody id="transactionsTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BETS -->
+<div id="betsSection" class="hidden">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6 overflow-x-auto">
+    <h2 class="text-3xl font-black mb-6 text-yellow-400">My Bets</h2>
+    <table class="w-full text-left border-collapse min-w-[900px]">
+      <thead>
+        <tr class="border-b border-gray-700">
+          <th class="p-3">Date & Time</th>
+          <th class="p-3">Number</th>
+          <th class="p-3">Coins</th>
+          <th class="p-3">Result</th>
+          <th class="p-3">Status</th>
+        </tr>
+      </thead>
+      <tbody id="betsTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BUY COINS MODAL -->
+<div id="buyCoinsModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+  <div class="bg-gray-900 rounded-3xl p-8 w-full max-w-md relative">
+    <h2 class="text-2xl font-black text-yellow-400 mb-4">Buy Coins</h2>
+    <input type="number" id="buyCoinAmount" placeholder="Enter Coins" class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none mb-4"/>
+    <button onclick="confirmBuyCoins()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
+      Proceed to Payment
+    </button>
+    <div id="upiLinkDiv" class="hidden mb-4">
+      <p class="text-gray-400 mb-2">Scan/Click UPI to pay:</p>
+      <a id="upiLink" href="#" target="_blank" class="text-green-400 font-bold text-lg"></a>
+    </div>
+    <button onclick="closeBuyCoinsModal()" class="absolute top-4 right-4 text-red-500 font-bold text-xl">✖</button>
+  </div>
+</div>
 
 <script type="module">
-import { supabase } from "./supabase.js";
-
-const { data: { session } } = await supabase.auth.getSession();
-if(!session) window.location.href = "index.html";
+import { supabase } from './supabase.js';
+const { data:{ session } } = await supabase.auth.getSession();
+if(!session) window.location.href="index.html";
 const userId = session.user.id;
+let currentTab="transactions";
+window.goBack = () => window.location.href="main.html";
 
-window.goBack = () => window.location.href = "main.html";
-
-// Buy Coins Modal Logic
-const buyCoinsModal = document.getElementById("buyCoinsModal");
-const buyCoinsBtn = document.getElementById("buyCoinsBtn");
-const confirmBtn = document.getElementById("confirmBuyCoins");
-const paymentSection = document.getElementById("paymentSection");
-const coinsInput = document.getElementById("coinsToBuy");
-const simulateSuccessBtn = document.getElementById("simulateSuccess");
-const simulateFailBtn = document.getElementById("simulateFail");
-
-buyCoinsBtn.addEventListener("click", () => {
-  coinsInput.value = "";
-  paymentSection.classList.add("hidden");
-  buyCoinsModal.classList.remove("hidden");
-});
-
-function closeBuyCoins() {
-  buyCoinsModal.classList.add("hidden");
-  paymentSection.classList.add("hidden");
+// MODAL FUNCTIONS
+function openBuyCoinsModal(){ document.getElementById("buyCoinsModal").classList.remove("hidden"); }
+function closeBuyCoinsModal(){ 
+  document.getElementById("buyCoinsModal").classList.add("hidden"); 
+  document.getElementById("upiLinkDiv").classList.add("hidden");
 }
 
-confirmBtn.addEventListener("click", () => {
-  const coins = parseInt(coinsInput.value);
-  if(!coins || coins <= 0){
-    alert("Enter valid coin amount");
-    return;
+// UPI Payment flow
+async function confirmBuyCoins(){
+  const amount = Number(document.getElementById("buyCoinAmount").value);
+  if(amount <= 0){ alert("Enter valid amount"); return; }
+
+  // Generate UPI link
+  const upiId = "rommysingh@ptyes";
+  const upiUrl = `upi://pay?pa=${upiId}&pn=DBBA India&am=${amount}&cu=INR&tn=Buy Coins`;
+
+  // Show link to user
+  const upiLinkDiv = document.getElementById("upiLinkDiv");
+  const upiLink = document.getElementById("upiLink");
+  upiLink.href = upiUrl;
+  upiLink.innerText = `Pay ₹${amount} via UPI`;
+  upiLinkDiv.classList.remove("hidden");
+
+  // Polling simulation: auto success if user clicks the link
+  // Real implementation: webhooks or payment API confirmation
+  const paymentConfirmed = await simulateUPIPayment(amount);
+  if(paymentConfirmed){
+    const { data:userData } = await supabase.from("users").select("balance").eq("id",userId).single();
+    const newBalance = (userData.balance||0) + amount;
+    await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
+    await supabase.from("balance_ledger").insert([{ user_id:userId, change_type:"credit", amount, balance_after:newBalance, created_at:new Date().toISOString() }]);
+    alert(`Payment Successful! ${amount} Coins added.`);
+    closeBuyCoinsModal();
+    showTransactions();
+  } else {
+    alert("Payment cancelled or failed.");
+    closeBuyCoinsModal();
   }
-  // Show payment section
-  const qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=rommysingh@ptyes&pn=DBBA%20INDIA&am=${coins}&cu=INR`;
-  document.getElementById("upiQr").src = qrLink;
-  paymentSection.classList.remove("hidden");
-});
+}
 
-// Simulate Payment Success
-simulateSuccessBtn.addEventListener("click", async () => {
-  const coins = parseInt(coinsInput.value);
-  if(!coins) return;
-  // Update user balance in Supabase
-  const { data: userData, error: userError } = await supabase.from("users").select("balance").eq("id", userId).single();
-  let newBalance = (parseInt(userData.balance) || 0) + coins;
-  await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
-  await supabase.from("balance_ledger").insert([{
-    user_id: userId,
-    change_type: "credit",
-    amount: coins,
-    balance_after: newBalance,
-    created_at: new Date().toISOString()
-  }]);
-  alert(`Payment successful! ${coins} Coins added.`);
-  closeBuyCoins();
-});
+// Simulate UPI payment confirmation (replace with webhook/API for real)
+async function simulateUPIPayment(amount){
+  return new Promise(resolve => setTimeout(()=>resolve(true),2000));
+}
 
-// Simulate Payment Fail
-simulateFailBtn.addEventListener("click", () => {
-  alert("Payment failed or canceled.");
-  closeBuyCoins();
-});
+// TABS & FILTERS
+function getDateFilter(){ return {fromDate:document.getElementById("fromDate").value,toDate:document.getElementById("toDate").value}; }
+
+window.applyFilter = async function(){ if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
+window.resetFilter = async function(){ document.getElementById("fromDate").value=""; document.getElementById("toDate").value=""; if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
+
+window.showTransactions = async function(){
+  currentTab="transactions";
+  document.getElementById("transactionsSection").classList.remove("hidden");
+  document.getElementById("betsSection").classList.add("hidden");
+
+  const {fromDate,toDate} = getDateFilter();
+  let depositsQuery = supabase.from("deposits").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+  let withdrawQuery = supabase.from("withdraws").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+  if(fromDate){ depositsQuery = depositsQuery.gte("created_at",fromDate); withdrawQuery = withdrawQuery.gte("created_at",fromDate); }
+  if(toDate){ depositsQuery = depositsQuery.lte("created_at",toDate+"T23:59:59"); withdrawQuery = withdrawQuery.lte("created_at",toDate+"T23:59:59"); }
+
+  const { data:deposits=[] } = await depositsQuery;
+  const { data:withdraws=[] } = await withdrawQuery;
+  const allTransactions=[];
+  deposits.forEach(dep=>allTransactions.push({created_at:dep.created_at,type:"Deposit",amount:dep.amount}));
+  withdraws.forEach(w=>allTransactions.push({created_at:w.created_at,type:"Withdraw",amount:w.amount}));
+  allTransactions.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+  const table=document.getElementById("transactionsTable");
+  table.innerHTML="";
+  if(allTransactions.length===0){ table.innerHTML=`<tr><td colspan="3" class="p-5 text-center text-gray-400">No transactions found</td></tr>`; return; }
+
+  allTransactions.forEach(t=>{
+    const isDeposit=t.type==="Deposit";
+    const color=isDeposit?"text-green-400 font-black":"text-red-400 font-black";
+    table.innerHTML+=`
+      <tr class="border-b border-gray-700">
+        <td class="p-3">${new Date(new Date(t.created_at).toLocaleString("en-US",{timeZone:"Asia/Kolkata"})).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
+        <td class="p-3 ${color}">${t.type}</td>
+        <td class="p-3 ${color}">${isDeposit?"+":"-"}${t.amount}</td>
+      </tr>
+    `;
+  });
+}
+
+window.showBets = async function(){
+  currentTab="bets";
+  document.getElementById("betsSection").classList.remove("hidden");
+  document.getElementById("transactionsSection").classList.add("hidden");
+
+  const {fromDate,toDate} = getDateFilter();
+  let query = supabase.from("bets").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+  if(fromDate) query = query.gte("created_at",fromDate);
+  if(toDate) query = query.lte("created_at",toDate+"T23:59:59");
+
+  const { data:bets=[] } = await query;
+  const table=document.getElementById("betsTable");
+  table.innerHTML="";
+  if(bets.length===0){ table.innerHTML=`<tr><td colspan="5" class="p-5 text-center text-gray-400">No bets found</td></tr>`; return; }
+
+  bets.forEach(bet=>{
+    let resultText="Pending", resultColor="text-yellow-400 font-black", statusText="Pending", statusColor="text-yellow-400";
+    if(bet.status==="win"){ resultText=`+${bet.potential_win}`; resultColor="text-green-400 font-black"; statusText="You Win"; statusColor="text-green-400"; }
+    if(bet.status==="lose"){ resultText=`-${bet.coins}`; resultColor="text-red-400 font-black"; statusText="You Lose"; statusColor="text-red-400"; }
+
+    table.innerHTML+=`
+      <tr class="border-b border-gray-700">
+        <td class="p-3">${new Date(new Date(bet.created_at).toLocaleString("en-US",{timeZone:"Asia/Kolkata"})).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
+        <td class="p-3 font-bold text-yellow-400">${String(bet.selected_number).padStart(2,"0")}</td>
+        <td class="p-3 font-bold">${bet.coins}</td>
+        <td class="p-3 ${resultColor}">${resultText}</td>
+        <td class="p-3 ${statusColor} font-bold">${statusText}</td>
+      </tr>
+    `;
+  });
+}
+
+// AUTO LOAD
+showTransactions();
 
 </script>
-
 </body>
 </html>
