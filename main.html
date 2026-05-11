@@ -789,12 +789,7 @@ confirmBtn.addEventListener("click", () => {
     return;
   }
 
-  await db.collection("payment_requests").add({
-    user_id: "USER123",
-    amount: parseInt(amount),
-    txn_id: txnId,
-    status: "pending",
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  
 });
 
   // Yahan backend ya admin request bhej sakte ho
