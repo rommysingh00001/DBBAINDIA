@@ -296,20 +296,6 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
   <script type="module">
 
     import { supabase } from "./supabase.js";
-    function formatIST(dateString){
-
-  return new Date(dateString)
-    .toLocaleString("en-IN",{
-      timeZone:"Asia/Kolkata",
-      day:"2-digit",
-      month:"short",
-      year:"numeric",
-      hour:"2-digit",
-      minute:"2-digit",
-      second:"2-digit",
-      hour12:true
-    });
-}
 
     const {
       data:{ session }
@@ -523,24 +509,22 @@ if(coins > currentBalance){
     // TIMER
     function updateTimer(){
 
-  const now = new Date();
+      const now =
+        new Date();
 
-  // INDIA TIME
-  const indiaNow = new Date(
-    now.toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata"
-    })
-  );
+      const target =
+        new Date();
 
-  const target = new Date(indiaNow);
+      target.setHours(9,15,0);
 
-  target.setHours(9,15,0,0);
+      if(now > target){
+        target.setDate(
+          target.getDate()+1
+        );
+      }
 
-  if(indiaNow > target){
-    target.setDate(target.getDate()+1);
-  }
-
-  const diff = target - indiaNow;
+      const diff =
+        target - now;
 
       const hrs =
         Math.floor(diff/1000/60/60);
@@ -616,7 +600,15 @@ if(coins > currentBalance){
           </h2>
 
           <p class="text-gray-400 text-sm">
-            ${formatIST(r.created_at)}
+            ${new Date(r.created_at).toLocaleDateString(
+  "en-IN",
+  {
+    timeZone:"Asia/Kolkata",
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  }
+)}
           </p>
         `;
 
@@ -645,8 +637,8 @@ window.loadHistory = async function(){
   const { data } = await supabase
     .from("results")
     .select("*")
-    .gte("created_at", fromDate + "T00:00:00+05:30")
-    .lte("created_at", toDate + "T23:59:59+05:30")
+    .gte("created_at", fromDate)
+    .lte("created_at", toDate + "T23:59:59")
     .order("created_at",{ascending:false});
 
   const historyGrid =
@@ -681,7 +673,14 @@ window.loadHistory = async function(){
       </h2>
 
       <p class="text-gray-400 text-sm mt-2">
-        ${formatIST(r.created_at)}
+        ${new Date(r.created_at).toLocaleDateString(
+          "en-IN",
+          {
+            day:"2-digit",
+            month:"short",
+            year:"numeric"
+          }
+        )}
       </p>
     `;
 
