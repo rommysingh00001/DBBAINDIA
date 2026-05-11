@@ -20,16 +20,17 @@
     My Reports
   </h1>
 
-  <div class="flex items-center gap-4">
-
-    <!-- BUY COINS BUTTON (main.html ke balance style jaisa) -->
-<button
-onclick="openBuyCoins()"
-class="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-black px-6 py-4 rounded-3xl shadow-lg shadow-yellow-500/40 hover:scale-105 transition-transform duration-200">
-
-  Buy Coins +
+  <div class="flex flex-col items-center gap-1 mb-6">
+  <!-- BUY COINS BUTTON -->
+  <button
+    onclick="openBuyCoins()"
+    class="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-black px-6 py-4 rounded-3xl shadow-lg shadow-yellow-500/40 hover:scale-105 transition-transform duration-200">
+    Buy Coins +
+  </button>
   
-</button>
+  <!-- SMALL SIGN / LABEL -->
+  <span class="text-gray-400 text-sm mt-1">Powered by QR Pay</span>
+</div>
 
     <!-- BACK BUTTON -->
     <button
@@ -190,50 +191,42 @@ My Bets
 </section>
 
   <!-- BUY COINS MODAL -->
-<div id="buyCoinsModal"
-class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+<div id="buyCoinsModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
 
-  <img
-      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=rommysingh@ptyes"
-      class="w-56 h-56 rounded-2xl bg-white p-2"
-      alt="QR Code"/>
-        Buy Coins
-      </h2>
+  <div class="bg-gray-900 border border-gray-700 rounded-3xl p-6 w-full max-w-sm flex flex-col items-center">
 
-      <button
-      onclick="closeBuyCoins()"
-      class="bg-red-500 px-3 py-1 rounded-xl font-bold">
-      X
-      </button>
-
-    </div>
-
-    <div class="text-center mb-5">
-
-      <img
-      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=rommysingh@ptyes"
-      class="w-56 h-56 mx-auto rounded-2xl bg-white p-2"/>
-
-    </div>
-
-    <input
-    type="number"
-    id="coinAmount"
-    placeholder="Enter Amount"
-    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
-
-    <input
-    type="text"
-    id="transactionId"
-    placeholder="Unique Transaction ID"
-    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-5 outline-none"/>
-
+    <!-- CLOSE BUTTON -->
     <button
-    onclick="submitCoinRequest()"
-    class="w-full bg-blue-500 hover:bg-blue-400 py-4 rounded-2xl font-black">
+      onclick="closeBuyCoins()"
+      class="self-end bg-red-500 px-3 py-1 rounded-xl font-bold mb-3">
+      X
+    </button>
 
-    Confirm Payment
+    <!-- QR CODE -->
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=rommysingh@ptyes"
+      class="w-56 h-56 rounded-2xl bg-white p-2 mb-4"
+      alt="QR Code"/>
 
+    <!-- AMOUNT -->
+    <input
+      type="number"
+      id="coinAmount"
+      placeholder="Enter Amount"
+      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-3 outline-none"/>
+
+    <!-- UNIQUE TRANSACTION ID -->
+    <input
+      type="text"
+      id="transactionId"
+      placeholder="Unique Transaction ID"
+      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-5 outline-none"/>
+
+    <!-- CONFIRM BUTTON -->
+    <button
+      onclick="submitCoinRequest()"
+      class="w-full bg-pink-500 hover:bg-pink-600 py-4 rounded-2xl font-black text-white">
+      Confirm
     </button>
 
   </div>
