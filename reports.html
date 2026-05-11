@@ -6,68 +6,62 @@
 <title>DBBA INDIA Reports</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-[#050816] text-white">
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 border-b border-gray-800 bg-black p-4 flex justify-between items-center">
-  <h1 class="text-3xl font-black text-yellow-400">
-    My Reports
-  </h1>
-
+  <div class="flex items-center gap-4">
+    <h1 class="text-3xl font-black text-yellow-400">
+      My Reports
+    </h1>
+    <button
+      id="buyCoinsBtn"
+      class="bg-green-500 hover:bg-green-400 px-4 py-2 rounded-xl font-bold text-black">
+      Buy Coins
+    </button>
+  </div>
   <button onclick="goBack()" class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">Back</button>
 </header>
 
-<!-- MAIN -->
-<section class="max-w-7xl mx-auto px-5 py-8">
-
-  <!-- TOP BUTTONS: Buy Coins + Tabs -->
-  <div class="flex items-center justify-between mb-6">
-    <!-- Buy Coins -->
-    <button
-      id="buyCoinsBtn"
-      class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-xl font-bold text-black">
-      Buy Coins
-    </button>
-
-    <!-- Tabs -->
-    <div class="flex gap-4">
-      <button
-        onclick="showTransactions()"
-        class="bg-green-500 hover:bg-green-400 px-6 py-2 rounded-2xl font-bold text-black">
-        My Transactions
-      </button>
-
-      <button
-        onclick="showBets()"
-        class="bg-yellow-400 hover:bg-yellow-300 px-6 py-2 rounded-2xl font-bold text-black">
-        My Bets
-      </button>
+<!-- BUY COINS MODAL -->
+<div id="buyCoinsModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+  <div class="bg-gray-900 rounded-3xl p-6 w-[350px] flex flex-col gap-4">
+    <h2 class="text-2xl font-black text-green-400">Buy Coins</h2>
+    <input type="number" id="buyCoinsAmount" placeholder="Enter coins" class="bg-black border border-gray-700 rounded-2xl p-3 text-xl outline-none"/>
+    <div class="flex gap-3">
+      <button id="confirmBuy" class="bg-green-500 hover:bg-green-400 px-4 py-2 rounded-2xl font-bold text-black flex-1">Confirm</button>
+      <button id="cancelBuy" class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-2xl font-bold flex-1">Cancel</button>
     </div>
   </div>
+</div>
 
+<!-- MAIN -->
+<section class="max-w-7xl mx-auto px-5 py-8">
   <!-- FILTER -->
   <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-6">
     <div class="grid md:grid-cols-4 gap-4">
-
       <div>
         <p class="mb-2 text-gray-400">From Date</p>
         <input type="date" id="fromDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
       </div>
-
       <div>
         <p class="mb-2 text-gray-400">To Date</p>
         <input type="date" id="toDate" class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
       </div>
-
       <div class="flex items-end">
         <button onclick="applyFilter()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl">APPLY FILTER</button>
       </div>
-
       <div class="flex items-end">
         <button onclick="resetFilter()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl">RESET</button>
       </div>
-
     </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="flex gap-4 mb-6 flex-wrap">
+    <button onclick="showTransactions()" class="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-2xl font-bold text-black">My Transactions</button>
+    <button onclick="showBets()" class="bg-yellow-400 hover:bg-yellow-300 px-6 py-3 rounded-2xl font-bold text-black">My Bets</button>
   </div>
 
   <!-- TRANSACTIONS -->
@@ -105,142 +99,133 @@
       </table>
     </div>
   </div>
-
 </section>
-
-<!-- BUY COINS MODAL -->
-<div id="buyCoinsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-  <div class="bg-gray-900 rounded-3xl p-6 w-96 relative">
-    <h2 class="text-2xl font-black text-white mb-4">Buy Coins</h2>
-    <input id="buyAmount" type="number" placeholder="Enter Coins Amount" class="w-full p-3 rounded-2xl mb-4 bg-black border border-gray-700 text-white outline-none"/>
-    <button id="confirmBuy" class="w-full bg-blue-500 hover:bg-blue-400 text-black font-bold py-3 rounded-2xl mb-2">Confirm</button>
-    <button onclick="closeBuyModal()" class="absolute top-3 right-3 text-red-500 font-bold text-xl">&times;</button>
-  </div>
-</div>
 
 <script type="module">
 import { supabase } from "./supabase.js";
 
 const { data:{ session } } = await supabase.auth.getSession();
 if(!session) window.location.href = "index.html";
-const userId = session.user.id;
 
-// Modal functionality
+const userId = session.user.id;
+let currentTab = "transactions";
+
+// MODAL
 const buyBtn = document.getElementById("buyCoinsBtn");
 const modal = document.getElementById("buyCoinsModal");
+const cancelBtn = document.getElementById("cancelBuy");
 const confirmBtn = document.getElementById("confirmBuy");
+const coinsInput = document.getElementById("buyCoinsAmount");
 
 buyBtn.onclick = () => modal.classList.remove("hidden");
-window.closeBuyModal = () => modal.classList.add("hidden");
+cancelBtn.onclick = () => modal.classList.add("hidden");
 
-// Buy Coins logic
+// CONFIRM BUY (CREATE PENDING)
 confirmBtn.onclick = async () => {
-  const amount = parseInt(document.getElementById("buyAmount").value);
-  if(!amount || amount <= 0){ alert("Enter valid amount"); return; }
+  const coins = Number(coinsInput.value);
+  if(coins <= 0){ alert("Enter valid coins"); return; }
 
-  // Here you can integrate your payment gateway JS
-  // For demo, we simulate success after prompt
-  const confirmed = confirm(`Pay for ${amount} coins?`);
-  if(!confirmed) return;
-
-  // Update user's balance
-  const { data, error } = await supabase
-    .from("users")
-    .select("balance")
-    .eq("id", userId)
-    .single();
+  // INSERT PENDING TRANSACTION
+  const { error } = await supabase
+    .from("balance_ledger")
+    .insert([{
+      user_id: userId,
+      change_type: "buy",
+      amount: coins,
+      balance_after: null,
+      status: "pending",
+      created_at: new Date().toISOString()
+    }]);
 
   if(error){ alert(error.message); return; }
-  const newBalance = (data.balance||0) + amount;
 
-  const { error:updateError } = await supabase
-    .from("users")
-    .update({ balance:newBalance })
-    .eq("id", userId);
-  if(updateError){ alert(updateError.message); return; }
-
-  // Save transaction ledger
-  await supabase.from("balance_ledger").insert([{
-    user_id:userId,
-    change_type:"credit",
-    amount,
-    balance_after:newBalance,
-    created_at:new Date().toISOString()
-  }]);
-
-  alert(`Successfully bought ${amount} coins!`);
+  alert(`Buy Coins request created for ${coins} coins. Waiting for admin approval.`);
   modal.classList.add("hidden");
+  coinsInput.value = "";
   showTransactions();
 }
 
-// Tabs functions
-let currentTab = "transactions";
+// GO BACK
+window.goBack = () => { window.location.href = "main.html"; }
 
+// FILTER HELPERS
+function getDateFilter(){
+  return {
+    fromDate: document.getElementById("fromDate").value,
+    toDate: document.getElementById("toDate").value
+  };
+}
+
+// APPLY / RESET FILTERS
+window.applyFilter = async () => currentTab === "transactions" ? showTransactions() : showBets();
+window.resetFilter = async () => {
+  document.getElementById("fromDate").value = "";
+  document.getElementById("toDate").value = "";
+  currentTab === "transactions" ? showTransactions() : showBets();
+}
+
+// SHOW TRANSACTIONS
 window.showTransactions = async function(){
-  currentTab="transactions";
+  currentTab = "transactions";
   document.getElementById("transactionsSection").classList.remove("hidden");
   document.getElementById("betsSection").classList.add("hidden");
 
-  const fromDate = document.getElementById("fromDate").value;
-  const toDate = document.getElementById("toDate").value;
+  const { fromDate, toDate } = getDateFilter();
 
-  let depositsQuery = supabase.from("balance_ledger").select("*").eq("user_id", userId).order("created_at",{ascending:false});
-  if(fromDate) depositsQuery = depositsQuery.gte("created_at", fromDate);
-  if(toDate) depositsQuery = depositsQuery.lte("created_at", toDate+"T23:59:59");
-
-  const { data:ledger=[] } = await depositsQuery;
+  let query = supabase.from("balance_ledger").select("*").eq("user_id", userId).order("created_at",{ascending:false});
+  if(fromDate) query = query.gte("created_at", fromDate);
+  if(toDate) query = query.lte("created_at", toDate + "T23:59:59");
+  const { data: ledger=[] } = await query;
 
   const table = document.getElementById("transactionsTable");
   table.innerHTML = "";
 
-  if(ledger.length===0){
+  if(ledger.length === 0){
     table.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-gray-400">No transactions found</td></tr>`;
     return;
   }
 
-  ledger.forEach(t=>{
-    const typeColor = t.change_type==="credit"?"text-green-400":"text-red-400";
-    const sign = t.change_type==="credit"?"+":"-";
-    table.innerHTML+=`
+  ledger.forEach(t => {
+    let color="", sign="";
+    if(t.change_type==="buy"){ color="text-yellow-400 font-black"; sign="+"; t.status = t.status || "pending"; }
+    if(t.change_type==="credit"){ color="text-green-400 font-black"; sign="+"; }
+    if(t.change_type==="debit"){ color="text-red-400 font-black"; sign="-"; }
+
+    const statusText = t.status ? ` (${t.status})` : "";
+    table.innerHTML += `
       <tr class="border-b border-gray-700">
-        <td class="p-3">${new Date(t.created_at).toLocaleString("en-IN",{timeZone:"Asia/Kolkata", day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
-        <td class="p-3 ${typeColor} font-bold">${t.change_type}</td>
-        <td class="p-3 ${typeColor} font-bold">${sign}${t.amount}</td>
+        <td class="p-3">${new Date(t.created_at).toLocaleString("en-IN",{timeZone:"Asia/Kolkata", day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"})}</td>
+        <td class="p-3 ${color}">${t.change_type}${statusText}</td>
+        <td class="p-3 ${color}">${sign}${t.amount}</td>
       </tr>
     `;
   });
 }
 
+// SHOW BETS
 window.showBets = async function(){
-  currentTab="bets";
+  currentTab = "bets";
   document.getElementById("betsSection").classList.remove("hidden");
   document.getElementById("transactionsSection").classList.add("hidden");
 
-  const fromDate = document.getElementById("fromDate").value;
-  const toDate = document.getElementById("toDate").value;
-
+  const { fromDate, toDate } = getDateFilter();
   let query = supabase.from("bets").select("*").eq("user_id", userId).order("created_at",{ascending:false});
   if(fromDate) query = query.gte("created_at", fromDate);
-  if(toDate) query = query.lte("created_at", toDate+"T23:59:59");
-
+  if(toDate) query = query.lte("created_at", toDate + "T23:59:59");
   const { data:bets=[] } = await query;
+
   const table = document.getElementById("betsTable");
   table.innerHTML = "";
+  if(bets.length===0){ table.innerHTML=`<tr><td colspan="5" class="p-5 text-center text-gray-400">No bets found</td></tr>`; return; }
 
-  if(bets.length===0){
-    table.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-gray-400">No bets found</td></tr>`;
-    return;
-  }
-
-  bets.forEach(bet=>{
-    let resultText = "Pending", resultColor="text-yellow-400 font-black";
-    let statusText="Pending", statusColor="text-yellow-400";
+  bets.forEach(bet => {
+    let resultText="Pending", resultColor="text-yellow-400 font-black", statusText="Pending", statusColor="text-yellow-400";
     if(bet.status==="win"){ resultText=`+${bet.potential_win}`; resultColor="text-green-400 font-black"; statusText="You Win"; statusColor="text-green-400"; }
     if(bet.status==="lose"){ resultText=`-${bet.coins}`; resultColor="text-red-400 font-black"; statusText="You Lose"; statusColor="text-red-400"; }
 
-    table.innerHTML+=`
+    table.innerHTML += `
       <tr class="border-b border-gray-700">
-        <td class="p-3">${new Date(bet.created_at).toLocaleString("en-IN",{timeZone:"Asia/Kolkata", day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</td>
+        <td class="p-3">${new Date(bet.created_at).toLocaleString("en-IN",{timeZone:"Asia/Kolkata", day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"})}</td>
         <td class="p-3 font-bold text-yellow-400">${String(bet.selected_number).padStart(2,"0")}</td>
         <td class="p-3 font-bold">${bet.coins}</td>
         <td class="p-3 ${resultColor}">${resultText}</td>
@@ -250,17 +235,6 @@ window.showBets = async function(){
   });
 }
 
-// Filters
-window.applyFilter = showTransactions;
-window.resetFilter = ()=>{
-  document.getElementById("fromDate").value="";
-  document.getElementById("toDate").value="";
-  showTransactions();
-}
-
-window.goBack = ()=> window.location.href="main.html";
-
-// Auto-load Transactions initially
 showTransactions();
 </script>
 
