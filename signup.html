@@ -1,42 +1,154 @@
-import {
-  createClient
-} from "https://esm.sh/@supabase/supabase-js@2";
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-const supabaseUrl =
-  "https://meqzyznfpiqitdrxsxax.supabase.co";
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcXp5em5mcGlxaXRkcnhzeGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxODQxNTgsImV4cCI6MjA5Mzc2MDE1OH0.IU0Q_EE3-6ozwhxJN5VVMWTDS00hYGbHm751yH2c47c";
+  <title>Signup - DBBA INDIA</title>
 
-export const supabase =
-  createClient(
-    supabaseUrl,
-    supabaseKey,
-    {
+  <script src="https://cdn.tailwindcss.com"></script>
 
-      auth: {
+</head>
 
-        persistSession: true,
+<body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
-        autoRefreshToken: true,
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
 
-        detectSessionInUrl: true,
+    <h2 class="text-4xl font-black text-center mb-2">
+      Create Account
+    </h2>
 
-        flowType: "pkce",
+    <p class="text-center text-gray-400 mb-6">
+      Join DBBA INDIA
+    </p>
 
-        storage: window.localStorage
+    <input
+    id="fullName"
+    type="text"
+    placeholder="Full Name"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
 
-      },
+    <input
+    id="phone"
+    type="text"
+    placeholder="Phone Number"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
 
-      realtime: {
+    <input
+    id="email"
+    type="email"
+    placeholder="Email Address"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
 
-        params: {
+    <input
+    id="password"
+    type="password"
+    placeholder="Password"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-6 outline-none"/>
 
-          eventsPerSecond: 10
+    <button
+    onclick="signup()"
+    class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
+    CREATE ACCOUNT
+    </button>
 
-        }
+    <a href="login.html"
+    class="block text-center text-yellow-400 font-bold">
+    Already Have Account?
+    </a>
 
+  </div>
+
+  <script type="module">
+
+    import {
+      supabase
+    } from "./supabase.js";
+
+    window.signup = async function(){
+
+      const fullName =
+        document.getElementById("fullName").value.trim();
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value.trim();
+
+      if(
+        !fullName ||
+        !phone ||
+        !email ||
+        !password
+      ){
+        alert("Please fill all fields");
+        return;
       }
 
+      // CHECK EXISTING USER
+      const { data: existingUser } =
+        await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email);
+
+      if(existingUser && existingUser.length > 0){
+        alert("User already exists");
+        return;
+      }
+
+      // SIGNUP USER
+      const { data, error } =
+        await supabase.auth.signUp({
+          email,
+          password
+        });
+
+      if(error){
+        alert(error.message);
+        return;
+      }
+
+      if(!data.user){
+        alert("Signup failed");
+        return;
+      }
+
+      const userId = data.user.id;
+
+      // SAVE USER DATA
+      const { error: insertError } =
+        await supabase
+        .from("users")
+        .insert([
+          {
+            id: userId,
+            full_name: fullName,
+            phone: phone,
+            email: email,
+            balance: 0,
+            created_at: new Date().toISOString()
+          }
+        ]);
+
+      if(insertError){
+        alert(insertError.message);
+        return;
+      }
+
+      await supabase.auth.signOut();
+
+      alert("Account Created Successfully!");
+
+      window.location.href = "login.html";
     }
-  );
+
+  </script>
+
+</body>
+</html>
