@@ -35,9 +35,13 @@ WhatsApp Chat
           <p class="text-green-400 text-xs mt-1">View Reports</p>
         </div>
         
-<button id="buyCoinsBtn" class="bg-green-600 text-white px-4 py-2 rounded font-bold ml-2">
-  Buy Coins
-</button>
+<!-- Balance Section -->
+<div class="flex items-center mb-4">
+  <button class="bg-green-600 text-white px-4 py-2 rounded font-bold">Balance: ₹100</button>
+  <button id="buyCoinsBtn" class="bg-green-600 text-white px-4 py-2 rounded font-bold ml-2">
+    Buy Coins
+  </button>
+</div>
         
         <button onclick="logout()" class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
           Logout
@@ -749,36 +753,32 @@ window.loadHistory = async function(){
   <div class="bg-[#111827] p-6 rounded-2xl w-[300px] text-center relative">
     <h2 class="text-xl font-bold mb-4">Buy More Coins</h2>
     
-    <img
-      id="upiQr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rommysingh@ptyes&pn=DBBA%20INDIA&cu=INR"
-      class="rounded-xl mx-auto mb-4"
-    />
-
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rommysingh@ptyes&pn=DBBA%20INDIA&cu=INR"
+         class="rounded-xl mx-auto mb-4"/>
+    
     <input id="amountInput" type="number" placeholder="Enter Amount" class="w-full p-2 rounded mb-3 text-black" />
-
     <input id="txnIdInput" type="text" placeholder="Transaction ID" class="w-full p-2 rounded mb-3 text-black" />
 
-    <button id="confirmPaymentBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+    <button id="confirmPaymentBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
       Confirm Payment
     </button>
 
     <span id="closeModal" class="absolute top-2 right-3 cursor-pointer text-gray-400 hover:text-white">&times;</span>
   </div>
 </div>
-  <script>
+
+<!-- JS for Modal + WhatsApp -->
+<script>
 const buyBtn = document.getElementById("buyCoinsBtn");
 const modal = document.getElementById("buyCoinsModal");
 const closeModal = document.getElementById("closeModal");
 const confirmBtn = document.getElementById("confirmPaymentBtn");
 
-buyBtn.addEventListener("click", () => {
-  modal.classList.remove("hidden");
-});
+const adminWhatsApp = "919876543210"; // Replace with admin number with country code
+const userId = "USER123"; // Replace with logged-in user ID
 
-closeModal.addEventListener("click", () => {
-  modal.classList.add("hidden");
-});
+buyBtn.addEventListener("click", () => modal.classList.remove("hidden"));
+closeModal.addEventListener("click", () => modal.classList.add("hidden"));
 
 confirmBtn.addEventListener("click", () => {
   const amount = document.getElementById("amountInput").value;
@@ -789,14 +789,16 @@ confirmBtn.addEventListener("click", () => {
     return;
   }
 
-  
-});
+  const message = `User ${userId} wants to buy coins.\nAmount: ${amount}\nTransaction ID: ${txnId}`;
+  const url = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
 
-  // Yahan backend ya admin request bhej sakte ho
-  alert(`Payment request sent!\nAmount: ${amount}\nTransaction ID: ${txnId}`);
+  // Open WhatsApp chat
+  window.open(url, "_blank");
 
+  alert("WhatsApp message opened to admin.");
   modal.classList.add("hidden");
 });
 </script>
+
 </body>
 </html>
