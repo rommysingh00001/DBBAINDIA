@@ -43,13 +43,6 @@
         class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
-    <!-- Referral Code -->
-    <div>
-      <label for="referral" class="block text-sm text-gray-300 mb-1">Referral Code (Optional)</label>
-      <input type="text" id="referral" name="referral"
-        class="w-full p-3 rounded-lg bg-[#334155] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-    </div>
-
     <!-- Sign Up Button -->
     <button type="submit"
       class="w-full py-3 mt-4 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg text-white font-semibold hover:from-blue-600 hover:to-blue-800 transition">
@@ -80,7 +73,6 @@ form.addEventListener('submit', async (e) => {
   const email = form.email.value.trim();
   const phone = form.phone.value.trim();
   const password = form.password.value;
-  const referral = form.referral.value.trim() || null;
 
   if (!full_name || !email || !phone || !password) {
     errorMsg.textContent = 'Please fill in all required fields.';
@@ -98,8 +90,7 @@ form.addEventListener('submit', async (e) => {
   const { error: profileError } = await supabase.from('profiles').insert([{
     id: data.user.id,
     full_name,
-    phone_number: phone,
-    referral_code: referral
+    phone_number: phone
   }]);
 
   if (profileError) {
