@@ -170,17 +170,55 @@ window.showBets = async () => {
 
 // Functions to load transactions and bets (from deposits, withdraws, bets tables)
 async function loadTransactions(){
-  const { data:transactions=[] } = await supabase.from("balance_ledger").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+  const { data:transactions=[] } = await supabase
+    .from("balance_ledger")
+    .select("*")
+    .eq("user_id",userId)
+    .order("created_at",{ascending:false}); // latest first
+
   const table = document.getElementById("transactionsTable");
   table.innerHTML="";
-  if(transactions.length===0){ table.innerHTML=`<tr><td colspan="4" class="p-5 text-center text-gray-400">No transactions found</td></tr>`; return; }
+
+  if(transactions.length===0){
+    table.innerHTML=`
+      <tr>
+        <td colspan="4" class="p-5 text-center text-gray-400">
+          No transactions found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   transactions.forEach(t=>{
-    table.innerHTML+=`
+    let typeText = "";
+    let coinsText = "";
+    let color = "";
+
+    if(t.change_type === "credit"){
+      typeText = "Deposit";
+      coinsText = "+" + t.amount;
+      color = "text-green-400 font-black";
+    }
+    else if(t.change_type === "debit"){
+      typeText = "Withdraw";
+      coinsText = "-" + t.amount;
+      color = "text-red-400 font-black";
+    }
+    else if(t.change_type === "coin_request"){ 
+      typeText = "Coin Purchase";
+      coinsText = "+" + t.amount;
+      color = t.status === "approved" ? "text-green-400 font-black" : "text-yellow-400 font-black";
+    }
+
+    table.innerHTML += `
       <tr class="border-b border-gray-700">
-        <td class="p-3">${new Date(t.created_at).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</td>
-        <td class="p-3 font-bold ${t.change_type==='credit'?'text-green-400':'text-red-400'}">${t.change_type}</td>
-        <td class="p-3 font-bold ${t.change_type==='credit'?'text-green-400':'text-red-400'}">${t.amount}</td>
-        <td class="p-3 font-bold text-yellow-400">${t.status||'approved'}</td>
+        <td class="p-3">
+          ${new Date(t.created_at).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}
+        </td>
+        <td class="p-3 ${color}">${typeText}</td>
+        <td class="p-3 ${color}">${coinsText}</td>
+        <td class="p-3 text-yellow-400 font-bold">${t.status || "approved"}</td>
       </tr>
     `;
   });
