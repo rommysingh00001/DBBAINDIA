@@ -1,192 +1,537 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>My Transactions - DBBA INDIA</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
+
 <body class="bg-[#050816] text-white min-h-screen p-5 md:p-8">
 
   <!-- HEADER -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+
     <div>
-      <h1 class="text-4xl md:text-5xl font-black text-yellow-400">My Transactions</h1>
-      <p class="text-gray-400 mt-2">Complete Deposit / Withdraw / Bet History</p>
+
+      <h1 class="text-4xl md:text-5xl font-black text-yellow-400">
+        My Transactions
+      </h1>
+
+      <p class="text-gray-400 mt-2">
+        Complete Deposit / Withdraw / Bet History
+      </p>
+
     </div>
-    <button onclick="goBack()" class="bg-green-500 hover:bg-green-400 text-black px-6 py-3 rounded-2xl font-black">Back</button>
+
+    <button
+      onclick="goBack()"
+      class="bg-green-500 hover:bg-green-400 text-black px-6 py-3 rounded-2xl font-black">
+
+      Back
+
+    </button>
+
   </div>
 
   <!-- FILTERS -->
   <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5 mb-8">
-    <h2 class="text-2xl font-black text-yellow-400 mb-5">Filters</h2>
+
+    <h2 class="text-2xl font-black text-yellow-400 mb-5">
+      Filters
+    </h2>
+
     <div class="grid md:grid-cols-4 gap-4">
+
+      <!-- FROM DATE -->
       <div>
-        <p class="text-gray-400 mb-2">From Date</p>
-        <input type="date" id="fromDate" class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+        <p class="text-gray-400 mb-2">
+          From Date
+        </p>
+
+        <input
+          type="date"
+          id="fromDate"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
       </div>
+
+      <!-- TO DATE -->
       <div>
-        <p class="text-gray-400 mb-2">To Date</p>
-        <input type="date" id="toDate" class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+        <p class="text-gray-400 mb-2">
+          To Date
+        </p>
+
+        <input
+          type="date"
+          id="toDate"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
       </div>
+
+      <!-- TYPE -->
       <div>
-        <p class="text-gray-400 mb-2">Transaction Type</p>
-        <select id="typeFilter" class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none">
+
+        <p class="text-gray-400 mb-2">
+          Transaction Type
+        </p>
+
+        <select
+          id="typeFilter"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-3 outline-none">
+
           <option value="">All</option>
-          <option value="deposit">Deposit</option>
-          <option value="withdraw">Withdraw</option>
+          <option value="credit">Deposit</option>
+          <option value="debit">Withdraw</option>
           <option value="bet">Bet</option>
           <option value="win">Win</option>
+
         </select>
+
       </div>
+
+      <!-- BUTTON -->
       <div class="flex items-end">
-        <button onclick="loadTransactions()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-2xl font-black">Apply Filters</button>
+
+        <button
+          onclick="loadTransactions()"
+          class="w-full bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-2xl font-black">
+
+          Apply Filters
+
+        </button>
+
       </div>
+
     </div>
+
   </div>
 
   <!-- SUMMARY -->
   <div class="grid md:grid-cols-4 gap-5 mb-8">
+
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Transactions</p>
-      <h2 id="totalTransactions" class="text-4xl font-black text-yellow-400">0</h2>
+
+      <p class="text-gray-400 mb-2">
+        Total Transactions
+      </p>
+
+      <h2
+        id="totalTransactions"
+        class="text-4xl font-black text-yellow-400">
+
+        0
+
+      </h2>
+
     </div>
+
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Deposit</p>
-      <h2 id="totalDeposit" class="text-4xl font-black text-green-400">0</h2>
+
+      <p class="text-gray-400 mb-2">
+        Total Deposit
+      </p>
+
+      <h2
+        id="totalDeposit"
+        class="text-4xl font-black text-green-400">
+
+        0
+
+      </h2>
+
     </div>
+
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Withdraw</p>
-      <h2 id="totalWithdraw" class="text-4xl font-black text-red-400">0</h2>
+
+      <p class="text-gray-400 mb-2">
+        Total Withdraw
+      </p>
+
+      <h2
+        id="totalWithdraw"
+        class="text-4xl font-black text-red-400">
+
+        0
+
+      </h2>
+
     </div>
+
     <div class="bg-gray-900 border border-gray-800 rounded-3xl p-5">
-      <p class="text-gray-400 mb-2">Total Bets</p>
-      <h2 id="totalBets" class="text-4xl font-black text-blue-400">0</h2>
+
+      <p class="text-gray-400 mb-2">
+        Total Bets
+      </p>
+
+      <h2
+        id="totalBets"
+        class="text-4xl font-black text-blue-400">
+
+        0
+
+      </h2>
+
     </div>
+
   </div>
 
   <!-- TRANSACTIONS -->
   <div id="transactionsList" class="space-y-4"></div>
 
   <script type="module">
+
     import { supabase } from "./supabase.js";
 
     // GO BACK
-    window.goBack = () => window.location.href = "main.html";
+    window.goBack = () => {
 
-    // FORMAT IST
-    function formatIST(dateString){
+      window.location.href = "main.html";
+
+    }
+
+    // FORMAT INDIAN TIME
+    function formatIndianTime(dateString){
+
       return new Date(dateString).toLocaleString("en-IN",{
+
         timeZone: "Asia/Kolkata",
+
         day: "2-digit",
         month: "short",
         year: "numeric",
+
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
+
         hour12: true
+
       });
+
     }
 
     // LOAD TRANSACTIONS
     async function loadTransactions(){
+
       try{
-        const { data:{ session } } = await supabase.auth.getSession();
-        if(!session){ window.location.href = "index.html"; return; }
+
+        // SESSION
+        const { data:{ session } } =
+          await supabase.auth.getSession();
+
+        if(!session){
+
+          window.location.href = "index.html";
+          return;
+
+        }
+
         const userId = session.user.id;
 
-        const fromDate = document.getElementById("fromDate").value;
-        const toDate   = document.getElementById("toDate").value;
-        const typeFilter = document.getElementById("typeFilter").value;
+        // FILTER VALUES
+        const fromDate =
+          document.getElementById("fromDate").value;
 
-        const { data: ledger, error } = await supabase
-          .from("balance_ledger")
-          .select("*")
-          .eq("user_id", userId)
-          .order("created_at", { ascending:false });
+        const toDate =
+          document.getElementById("toDate").value;
 
-        if(error){ console.log(error); alert("Unable to load transactions"); return; }
+        const typeFilter =
+          document.getElementById("typeFilter").value;
 
+        // =========================
+        // LOAD LEDGER ONLY
+        // =========================
+
+        const { data: ledger, error } =
+          await supabase
+            .from("balance_ledger")
+            .select("*")
+            .eq("user_id", userId)
+            .order("created_at", { ascending:false });
+
+        if(error){
+
+          console.log(error);
+
+          alert("Unable to load transactions");
+
+          return;
+
+        }
+
+        // =========================
         // CONVERT DATA
-        let transactions = (ledger||[]).map(l => ({
-          type: l.change_type,      // Must match: deposit, withdraw, bet, win
-          amount: l.amount || 0,
-          created_at: l.created_at,
-          balance_after: l.balance_after || 0
-        }));
+        // =========================
 
-        // APPLY TYPE FILTER
+        let transactions = [];
+
+        (ledger || []).forEach(l => {
+
+          transactions.push({
+
+            type:
+              l.change_type || "unknown",
+
+            amount:
+              l.amount || 0,
+
+            created_at:
+              l.created_at,
+
+            balance_after:
+              l.balance_after || 0
+
+          });
+
+        });
+
+        // =========================
+        // FILTERS
+        // =========================
+
+        // TYPE FILTER
         if(typeFilter){
-          transactions = transactions.filter(t => t.type === typeFilter);
+
+          transactions =
+            transactions.filter(t =>
+              t.type === typeFilter
+            );
+
         }
 
-        // APPLY DATE FILTER
+        // FROM DATE
         if(fromDate){
-          const start = new Date(fromDate);
-          transactions = transactions.filter(t => new Date(t.created_at) >= start);
+
+          const start =
+            new Date(fromDate);
+
+          transactions =
+            transactions.filter(t => {
+
+              return new Date(t.created_at) >= start;
+
+            });
+
         }
+
+        // TO DATE
         if(toDate){
-          const end = new Date(toDate); end.setHours(23,59,59,999);
-          transactions = transactions.filter(t => new Date(t.created_at) <= end);
+
+          const end =
+            new Date(toDate);
+
+          end.setHours(23,59,59,999);
+
+          transactions =
+            transactions.filter(t => {
+
+              return new Date(t.created_at) <= end;
+
+            });
+
         }
 
         // SORT LATEST FIRST
-        transactions.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+        transactions.sort((a,b) => {
 
-        // SUMMARY
-        let totalDeposit = 0, totalWithdraw = 0, totalBets = 0;
-        transactions.forEach(t=>{
-          if(t.type==="deposit") totalDeposit += Number(t.amount);
-          if(t.type==="withdraw") totalWithdraw += Number(t.amount);
-          if(t.type==="bet") totalBets += Number(t.amount);
+          return new Date(b.created_at) -
+                 new Date(a.created_at);
+
         });
 
-        document.getElementById("totalTransactions").innerText = transactions.length;
-        document.getElementById("totalDeposit").innerText = totalDeposit;
-        document.getElementById("totalWithdraw").innerText = totalWithdraw;
-        document.getElementById("totalBets").innerText = totalBets;
+        // =========================
+        // SUMMARY
+        // =========================
 
+        let totalDeposit = 0;
+        let totalWithdraw = 0;
+        let totalBets = 0;
+
+        transactions.forEach(t => {
+
+          if(t.type === "credit"){
+
+            totalDeposit += Number(t.amount);
+
+          }
+
+          if(t.type === "debit"){
+
+            totalWithdraw += Number(t.amount);
+
+          }
+
+          if(t.type === "bet"){
+
+            totalBets += Number(t.amount);
+
+          }
+
+        });
+
+        // UPDATE SUMMARY
+        document.getElementById("totalTransactions").innerText =
+          transactions.length;
+
+        document.getElementById("totalDeposit").innerText =
+          totalDeposit;
+
+        document.getElementById("totalWithdraw").innerText =
+          totalWithdraw;
+
+        document.getElementById("totalBets").innerText =
+          totalBets;
+
+        // =========================
         // RENDER
-        const list = document.getElementById("transactionsList");
+        // =========================
+
+        const list =
+          document.getElementById("transactionsList");
+
         list.innerHTML = "";
-        if(transactions.length===0){
-          list.innerHTML = `<div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 text-center">
-            <h2 class="text-3xl font-black text-gray-400">No Transactions Found</h2>
-          </div>`;
+
+        // EMPTY
+        if(transactions.length === 0){
+
+          list.innerHTML = `
+
+            <div class="bg-gray-900 border border-gray-800 rounded-3xl p-10 text-center">
+
+              <h2 class="text-3xl font-black text-gray-400">
+                No Transactions Found
+              </h2>
+
+            </div>
+
+          `;
+
           return;
+
         }
 
-        transactions.forEach(t=>{
-          let title="", amountText="", amountColor="", bg="";
-          if(t.type==="deposit"){ title="Deposit"; amountText=`+${t.amount}`; amountColor="text-green-400"; bg="bg-green-500/10 border-green-500/20"; }
-          if(t.type==="withdraw"){ title="Withdraw"; amountText=`-${t.amount}`; amountColor="text-red-400"; bg="bg-red-500/10 border-red-500/20"; }
-          if(t.type==="bet"){ title="Bet Placed"; amountText=`-${t.amount}`; amountColor="text-yellow-400"; bg="bg-yellow-500/10 border-yellow-500/20"; }
-          if(t.type==="win"){ title="Winning Reward"; amountText=`+${t.amount}`; amountColor="text-green-400"; bg="bg-green-500/10 border-green-500/20"; }
+        // LOOP
+        transactions.forEach(t => {
+
+          let title = "";
+          let amountText = "";
+          let amountColor = "";
+          let bg = "";
+
+          // DEPOSIT
+          if(t.type === "credit"){
+
+            title = "Deposit";
+
+            amountText = `+${t.amount}`;
+
+            amountColor = "text-green-400";
+
+            bg = "bg-green-500/10 border-green-500/20";
+
+          }
+
+          // WITHDRAW
+          if(t.type === "debit"){
+
+            title = "Withdraw";
+
+            amountText = `-${t.amount}`;
+
+            amountColor = "text-red-400";
+
+            bg = "bg-red-500/10 border-red-500/20";
+
+          }
+
+          // BET
+          if(t.type === "bet"){
+
+            title = "Bet Placed";
+
+            amountText = `-${t.amount}`;
+
+            amountColor = "text-yellow-400";
+
+            bg = "bg-yellow-500/10 border-yellow-500/20";
+
+          }
+
+          // WIN
+          if(t.type === "win"){
+
+            title = "Winning Reward";
+
+            amountText = `+${t.amount}`;
+
+            amountColor = "text-green-400";
+
+            bg = "bg-green-500/10 border-green-500/20";
+
+          }
 
           list.innerHTML += `
+
             <div class="${bg} border rounded-3xl p-5">
+
               <div class="flex justify-between items-center gap-4">
+
                 <div>
-                  <p class="text-gray-400 text-sm mb-1">${title}</p>
-                  <h2 class="text-3xl font-black ${amountColor}">${amountText}</h2>
-                  <p class="text-gray-400 text-xs mt-2">${formatIST(t.created_at)}</p>
+
+                  <p class="text-gray-400 text-sm mb-1">
+                    ${title}
+                  </p>
+
+                  <h2 class="text-3xl font-black ${amountColor}">
+                    ${amountText}
+                  </h2>
+
+                  <p class="text-gray-400 text-xs mt-2">
+                    ${formatIndianTime(t.created_at)}
+                  </p>
+
                 </div>
+
                 <div class="text-right">
-                  <p class="text-gray-400 text-sm mb-1">Balance After</p>
-                  <h2 class="text-2xl font-black text-white">${t.balance_after}</h2>
+
+                  <p class="text-gray-400 text-sm mb-1">
+                    Balance After
+                  </p>
+
+                  <h2 class="text-2xl font-black text-white">
+                    ${t.balance_after}
+                  </h2>
+
                 </div>
+
               </div>
-            </div>`;
+
+            </div>
+
+          `;
+
         });
 
-      }catch(err){
-        console.log(err);
+      }catch(error){
+
+        console.log(error);
+
         alert("Something went wrong");
+
       }
+
     }
 
     // GLOBAL
-    window.loadTransactions = loadTransactions;
+    window.loadTransactions =
+      loadTransactions;
 
     // AUTO LOAD
     loadTransactions();
