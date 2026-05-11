@@ -2,133 +2,204 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <title>Admin Panel - DBBA INDIA</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
 <body class="bg-[#050816] text-white p-6">
 
 <!-- HEADER -->
 <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
-  <h1 class="text-5xl font-black text-yellow-400">ADMIN PANEL</h1>
+
+  <h1 class="text-5xl font-black text-yellow-400">
+    ADMIN PANEL
+  </h1>
 
   <div class="flex gap-4 flex-wrap">
-    <button onclick="scrollToUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">
+
+    <button
+      onclick="scrollToUsers()"
+      class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">
+
       Manage Users
+
     </button>
 
-    <button onclick="scrollToAnnounce()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">
+    <button
+      onclick="scrollToAnnounce()"
+      class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">
+
       Announce Winner
+
     </button>
 
-    <button onclick="scrollToReports()" class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-black">
+    <button
+      onclick="scrollToReports()"
+      class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-black">
+
       Daily Reports
-    </button>
 
-    <button onclick="logoutAdmin()" class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-2xl font-black">
-      Logout
     </button>
+<!-- HEADER BUTTONS KE ANDAR YE BUTTON ADD KARO -->
+
+<button
+  onclick="logoutAdmin()"
+  class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-2xl font-black">
+
+  Logout
+
+</button>
+    
   </div>
+
 </div>
 
-<!-- USERS SECTION -->
-<div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
-  <h2 class="text-3xl font-black text-green-400 mb-6">Manage Users</h2>
-  <!-- User filters and table here (unchanged from your original) -->
-</div>
 
-<!-- NUMBER GRID SECTION -->
-<div id="numberGridSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
+<!-- USERS -->
+<div
+id="usersSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
+
+  <h2 class="text-3xl font-black text-green-400 mb-6">
+    Manage Users
+  </h2>
+
+  <!-- USER FILTERS -->
+  <div class="grid md:grid-cols-4 gap-4 mb-6">
+
+    <input
+      type="text"
+      id="userNameFilter"
+      placeholder="Search Name"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+    <input
+      type="text"
+      id="userEmailFilter"
+      placeholder="Search Email"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+    <input
+      type="text"
+      id="userPhoneFilter"
+      placeholder="Search Phone"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+    <input
+      type="number"
+      id="userBalanceFilter"
+      placeholder="Minimum Balance"
+      class="bg-black border border-gray-700 rounded-2xl p-3 outline-none"/>
+
+  </div>
+
+  <div class="flex gap-4 mb-6">
+
+    <button
+      onclick="applyUserFilters()"
+      class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-3 rounded-2xl">
+
+      Apply User Filters
+
+    </button>
+
+    <button
+      onclick="clearUserFilters()"
+      class="bg-red-500 hover:bg-red-400 text-white font-black px-5 py-3 rounded-2xl">
+
+      Clear Filters
+
+    </button>
+
+  </div>
+
+  <div class="overflow-x-auto">
+
+    <table class="min-w-full divide-y divide-gray-700">
+
+      <thead>
+
+        <tr>
+
+          <th class="px-4 py-3 text-left text-gray-400">#</th>
+          <th class="px-4 py-3 text-left text-gray-400">Name</th>
+          <th class="px-4 py-3 text-left text-gray-400">Email</th>
+          <th class="px-4 py-3 text-left text-gray-400">Phone</th>
+          <th class="px-4 py-3 text-left text-gray-400">Balance</th>
+          <th class="px-4 py-3 text-left text-gray-400">Actions</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody
+      id="usersList"
+      class="divide-y divide-gray-700"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
+<!-- LIVE NUMBER EXPOSURE -->
+<div
+id="numberGridSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
+
   <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-    <h2 class="text-3xl font-black text-pink-400">Live Number Exposure</h2>
-    <button onclick="loadPendingNumberGrid()" class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black">
+
+    <h2 class="text-3xl font-black text-pink-400">
+      Live Number Exposure
+    </h2>
+
+    <button
+      onclick="loadPendingNumberGrid()"
+      class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black">
+
       Refresh Grid
+
     </button>
+
   </div>
 
-  <div id="numberGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4"></div>
-
-  <div class="mt-8 text-center">
-    <h2 id="selectedNumberText" class="text-4xl font-black text-pink-400 mb-5">Selected Number : --</h2>
-    <button onclick="announceSelectedResult()" class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl">
-      ANNOUNCE RESULT
-    </button>
-  </div>
+<div
+  id="numberGrid"
+  class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
 </div>
 
-<!-- DEPOSIT REQUESTS SECTION -->
-<div class="bg-gray-900 p-6 rounded-3xl mt-8">
-  <h2 class="text-3xl font-black text-green-400 mb-5">Deposit Requests</h2>
-  <div id="depositRequests"></div>
+<div class="mt-8 text-center">
+
+  <h2
+    id="selectedNumberText"
+    class="text-4xl font-black text-pink-400 mb-5">
+
+    Selected Number : --
+
+  </h2>
+
+  <button
+    onclick="announceSelectedResult()"
+    class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl">
+
+    ANNOUNCE RESULT
+
+  </button>
+
 </div>
 
-<!-- PNL SECTION -->
-<div id="pnlSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
-  <!-- Profit & Loss content unchanged -->
+
 </div>
 
-<!-- REPORTS SECTION -->
-<div id="reportsSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-  <!-- Reports content unchanged -->
-</div>
-
-<script type="module">
-import { supabase } from "./supabase.js";
-
-let allBetData = [];
-let allUsersData = [];
-let selectedWinningNumber = null;
-
-/* SCROLL FUNCTIONS */
-window.scrollToUsers = () => { document.getElementById("usersSection").scrollIntoView({behavior:"smooth"}); }
-window.scrollToAnnounce = () => { document.getElementById("numberGridSection").scrollIntoView({behavior:"smooth"}); }
-window.scrollToReports = () => { document.getElementById("reportsSection").scrollIntoView({behavior:"smooth"}); }
-
-/* STEP 7: Load Deposit Requests */
-async function loadDepositRequests() {
-  const { data:requests } = await supabase
-    .from("deposit_requests")
-    .select("*")
-    .eq("status","pending")
-    .order("created_at",{ascending:false});
-
-  const box = document.getElementById("depositRequests");
-  box.innerHTML = "";
-
-  requests.forEach(req => {
-    box.innerHTML += `
-      <div class="border border-gray-700 rounded-2xl p-4 mb-4">
-        <p>User ID: ${req.user_id}</p>
-        <p>Amount: ${req.amount}</p>
-        <p>Transaction ID: ${req.transaction_id}</p>
-        <div class="flex gap-4 mt-4">
-          <button onclick="approveDeposit(${req.id}, '${req.user_id}', ${req.amount})" class="bg-green-500 px-4 py-2 rounded-xl font-bold text-black">Approve</button>
-          <button onclick="rejectDeposit(${req.id})" class="bg-red-500 px-4 py-2 rounded-xl font-bold">Reject</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-/* STEP 8: Approve Deposit */
-window.approveDeposit = async function(id,userId,amount) {
-  await supabase.from("deposits").insert([{ user_id:userId, amount:amount }]);
-  await supabase.from("deposit_requests").update({ status:"approved" }).eq("id",id);
-  alert("Deposit Approved");
-  loadDepositRequests();
-}
-
-/* STEP 9: Reject Deposit */
-window.rejectDeposit = async function(id) {
-  await supabase.from("deposit_requests").update({ status:"rejected" }).eq("id",id);
-  alert("Request Rejected");
-  loadDepositRequests();
-}
-
-/* STEP 10: Load Requests on Page Load */
-loadDepositRequests();
+<!-- PNL -->
+<div
+id="pnlSection"
+class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
   <h2 class="text-3xl font-black text-orange-400 mb-6">
     Profit & Loss Analytics
@@ -1129,15 +1200,18 @@ window.announceSelectedResult = async function(){
   await loadAllBetData();
 
 }
+// INIT
+window.onload = async ()=>{
 
-/* INIT ON PAGE LOAD */
-window.onload = async () => {
   await loadUsers();
-  await loadAllBetData();
-  await loadPendingNumberGrid();
-  await loadPNLReport();
-};
-</script>
 
+  await loadAllBetData();
+
+  await loadPendingNumberGrid();
+
+await loadPNLReport();
+
+}
+</script>
 </body>
 </html>
