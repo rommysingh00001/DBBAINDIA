@@ -60,34 +60,6 @@
 
 </div>
 
-<!-- ANNOUNCE -->
-<div
-id="announceSection"
-class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
-
-  <h2 class="text-3xl font-black text-yellow-400 mb-5">
-    Announce Today's Winner
-  </h2>
-
-  <div class="flex gap-4 flex-wrap">
-
-    <input
-      type="text"
-      id="resultInput"
-      placeholder="Enter Winning Number"
-      class="bg-black border border-gray-700 rounded-2xl p-4 flex-1 outline-none"/>
-
-    <button
-      onclick="announceResult()"
-      class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-6 py-4 rounded-2xl">
-
-      ANNOUNCE
-
-    </button>
-
-  </div>
-
-</div>
 
 <!-- USERS -->
 <div
@@ -196,10 +168,31 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
   </div>
 
-  <div
-    id="numberGrid"
-    class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
-  </div>
+<div
+  id="numberGrid"
+  class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4">
+</div>
+
+<div class="mt-8 text-center">
+
+  <h2
+    id="selectedNumberText"
+    class="text-4xl font-black text-pink-400 mb-5">
+
+    Selected Number : --
+
+  </h2>
+
+  <button
+    onclick="announceSelectedResult()"
+    class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl">
+
+    ANNOUNCE RESULT
+
+  </button>
+
+</div>
+
 
 </div>
 
@@ -401,10 +394,40 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 
 <script type="module">
 
+  function formatIST(dateString){
+
+  return new Date(dateString)
+    .toLocaleString(
+      "en-IN",
+      {
+        timeZone:"Asia/Kolkata",
+        day:"2-digit",
+        month:"short",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:true
+      }
+    );
+}
+
+function getISTDate(dateString){
+
+  return new Date(dateString)
+    .toLocaleDateString(
+      "en-CA",
+      {
+        timeZone:"Asia/Kolkata"
+      }
+    );
+}
+
 import { supabase } from "./supabase.js";
 
 let allBetData = [];
 let allUsersData = [];
+  let selectedWinningNumber = null;
 
 // SCROLL
 window.scrollToUsers = () => {
@@ -413,9 +436,10 @@ window.scrollToUsers = () => {
 }
 
 window.scrollToAnnounce = () => {
-  document.getElementById("announceSection")
+  document.getElementById("numberGridSection")
   .scrollIntoView({behavior:"smooth"});
 }
+
 
 window.scrollToReports = () => {
   document.getElementById("reportsSection")
@@ -685,91 +709,7 @@ await supabase
   alert("Balance Debited");
 }
 
-// ANNOUNCE RESULT
-window.announceResult = async function(){
 
-  const value =
-    document.getElementById("resultInput")
-    .value.trim();
-
-  if(!value){
-    alert("Enter winning number");
-    return;
-  }
-
-  await supabase
-  .from("results")
-  .insert([{
-    winning_number:value,
-    created_at:new Date().toISOString()
-  }]);
-
-  const { data:bets=[] } =
-    await supabase
-    .from("bets")
-    .select("*")
-    .eq("status","pending");
-
-  for(const bet of bets){
-
-    if(bet.selected_number === value){
-
-      const { data:user } =
-        await supabase
-        .from("users")
-        .select("*")
-        .eq("id",bet.user_id)
-        .single();
-
-      const currentBalance =
-        Number(user.balance) || 0;
-
-      const newBalance =
-        currentBalance +
-        Number(bet.potential_win);
-
-      await supabase
-      .from("users")
-      .update({
-        balance:newBalance
-      })
-      .eq("id",bet.user_id);
-
-      await supabase
-      .from("bets")
-      .update({
-        status:"win"
-      })
-      .eq("id",bet.id);
-
-      await supabase
-      .from("balance_ledger")
-      .insert([{
-        user_id:bet.user_id,
-        type:"win",
-        amount:bet.potential_win,
-        balance_after:newBalance,
-        created_at:new Date().toISOString()
-      }]);
-
-    } else {
-
-      await supabase
-      .from("bets")
-      .update({
-        status:"lose"
-      })
-      .eq("id",bet.id);
-
-    }
-  }
-
-  alert("Result Announced Successfully");
-
-  document.getElementById("resultInput").value="";
-
-  loadAllBetData();
-}
 
 // LOAD BET DATA
 async function loadAllBetData(){
@@ -848,18 +788,16 @@ function renderFilteredData(data){
 
         <td class="px-4 py-3">
 
-          ${new Date(bet.created_at)
-            .toLocaleString(
-              "en-IN",
-              {
-                timeZone:"Asia/Kolkata",
-                day:"2-digit",
-                month:"short",
-                year:"numeric",
-                hour:"2-digit",
-                minute:"2-digit"
-              }
-            )}
+          new Date(bet.created_at).toLocaleString("en-IN",{
+  timeZone:"Asia/Kolkata",
+  day:"2-digit",
+  month:"short",
+  year:"numeric",
+  hour:"2-digit",
+  minute:"2-digit",
+  second:"2-digit",
+  hour12:true
+})
 
         </td>
 
@@ -921,10 +859,8 @@ window.applyFilters = function(){
         .toLowerCase();
 
       const betDate =
-        new Date(bet.created_at)
-        .toISOString()
-        .split("T")[0];
-
+  getISTDate(bet.created_at);
+      
       return (
 
         (!user || fullName.includes(user)) &&
@@ -1022,7 +958,18 @@ window.loadPendingNumberGrid = async function(){
     grid.innerHTML += `
 
       <div
-      class="bg-black border border-gray-700 rounded-2xl p-4 text-center">
+      onclick="selectWinningNumber('${number}')"
+      class="
+      bg-black
+      border
+      border-gray-700
+      rounded-2xl
+      p-4
+      text-center
+      cursor-pointer
+      hover:border-pink-500
+      hover:scale-105
+      transition">
 
         <h2 class="text-3xl font-black text-yellow-400 mb-2">
           ${number}
@@ -1066,21 +1013,21 @@ window.loadPNLReport = async function(){
 
   if(fromDate){
 
-    query =
-      query.gte(
-        "created_at",
-        fromDate + "T00:00:00"
-      );
-  }
+  query =
+    query.gte(
+      "created_at",
+      fromDate + "T00:00:00Z"
+    );
+}
 
-  if(toDate){
+if(toDate){
 
-    query =
-      query.lte(
-        "created_at",
-        toDate + "T23:59:59"
-      );
-  }
+  query =
+    query.lte(
+      "created_at",
+      toDate + "T23:59:59Z"
+    );
+}
 
   const { data:bets=[] } =
     await query;
@@ -1149,6 +1096,107 @@ window.loadPNLReport = async function(){
     </tr>
 
   `;
+}
+  // SELECT NUMBER
+window.selectWinningNumber = function(number){
+
+  selectedWinningNumber = number;
+
+  document.getElementById(
+    "selectedNumberText"
+  ).innerText =
+    "Selected Number : " + number;
+
+}
+
+// ANNOUNCE SELECTED RESULT
+window.announceSelectedResult = async function(){
+
+  if(!selectedWinningNumber){
+
+    alert("Select Number First");
+    return;
+  }
+
+  await supabase
+  .from("results")
+  .insert([{
+    winning_number:selectedWinningNumber,
+    created_at:new Date().toISOString()
+  }]);
+
+  const { data:bets=[] } =
+    await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  for(const bet of bets){
+
+    if(
+      bet.selected_number ===
+      selectedWinningNumber
+    ){
+
+      const { data:user } =
+        await supabase
+        .from("users")
+        .select("*")
+        .eq("id",bet.user_id)
+        .single();
+
+      const currentBalance =
+        Number(user.balance) || 0;
+
+      const newBalance =
+        currentBalance +
+        Number(bet.potential_win);
+
+      await supabase
+      .from("users")
+      .update({
+        balance:newBalance
+      })
+      .eq("id",bet.user_id);
+
+      await supabase
+      .from("bets")
+      .update({
+        status:"win"
+      })
+      .eq("id",bet.id);
+
+    } else {
+
+      await supabase
+      .from("bets")
+      .update({
+        status:"lose"
+      })
+      .eq("id",bet.id);
+
+    }
+
+  }
+
+  alert(
+    "Result Announced : " +
+    selectedWinningNumber
+  );
+
+  selectedWinningNumber = null;
+
+  document.getElementById(
+    "selectedNumberText"
+  ).innerText =
+    "Selected Number : --";
+
+  await loadPendingNumberGrid();
+
+  await loadPNLReport();
+
+  await loadAllBetData();
+
 }
 // INIT
 window.onload = async ()=>{
