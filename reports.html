@@ -215,7 +215,49 @@ My Bets
 </section>
 
 <script type="module">
+window.toggleDepositBox = function(){
 
+  document
+  .getElementById("depositBox")
+  .classList.toggle("hidden");
+}
+
+window.submitDepositRequest = async function(){
+
+  const amount =
+    document.getElementById("depositAmount").value;
+
+  const transactionId =
+    document.getElementById("transactionId").value;
+
+  if(!amount || !transactionId){
+
+    alert("Fill all fields");
+    return;
+  }
+
+  const { error } = await supabase
+  .from("deposit_requests")
+  .insert([
+    {
+      user_id:userId,
+      amount:Number(amount),
+      transaction_id:transactionId,
+      status:"pending"
+    }
+  ]);
+
+  if(error){
+
+    alert("Request failed");
+    return;
+  }
+
+  alert("Deposit request submitted");
+
+  document.getElementById("depositAmount").value = "";
+  document.getElementById("transactionId").value = "";
+}
 import { supabase } from "./supabase.js";
 
 const {
