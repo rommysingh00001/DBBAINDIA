@@ -14,38 +14,18 @@
 
 <body class="bg-[#050816] text-white">
 
+<!-- HEADER -->
+
 <header class="sticky top-0 z-50 border-b border-gray-800 bg-black p-4 flex justify-between items-center">
 
   <h1 class="text-3xl font-black text-yellow-400">
     My Reports
   </h1>
 
-  <div class="flex flex-col items-center gap-1 mb-6">
-  <!-- BUY COINS BUTTON -->
-  <button
-    onclick="openBuyCoins()"
-    class="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-black px-6 py-4 rounded-3xl shadow-lg shadow-yellow-500/40 hover:scale-105 transition-transform duration-200">
-    Buy Coins +
-  </button>
-  
-  <!-- Small sign / label -->
-  <span class="text-gray-400 text-sm mt-1">Powered by QR Pay</span>
-</div>
-  
-  <!-- SMALL SIGN / LABEL -->
-  <span class="text-gray-400 text-sm mt-1">Powered by QR Pay</span>
-</div>
-
-    <!-- BACK BUTTON -->
-    <button
-    onclick="goBack()"
-    class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
-
-      Back
-
-    </button>
-
-  </div>
+<button
+onclick="goBack()"
+class="bg-red-500 hover:bg-red-400 px-4 py-2 rounded-xl font-bold">
+Back </button>
 
 </header>
 
@@ -106,6 +86,7 @@
   <!-- TABS -->
 
   <div class="flex gap-4 mb-6 flex-wrap">
+
 
 <button
 onclick="showTransactions()"
@@ -194,48 +175,6 @@ My Bets
 
 </section>
 
-  <div id="buyCoinsModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-
-  <div class="bg-gray-900 border border-gray-700 rounded-3xl p-6 w-full max-w-sm flex flex-col items-center">
-
-    <!-- CLOSE BUTTON -->
-    <button
-      onclick="closeBuyCoins()"
-      class="self-end bg-red-500 px-3 py-1 rounded-xl font-bold mb-3">
-      X
-    </button>
-
-    <!-- QR CODE -->
-    <img
-      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=UPI_ID_HERE"
-      class="w-56 h-56 rounded-2xl bg-white p-2 mb-4"
-      alt="QR Code"/>
-
-    <!-- AMOUNT -->
-    <input
-      type="number"
-      id="coinAmount"
-      placeholder="Enter Amount"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-3 outline-none"/>
-
-    <!-- UNIQUE TRANSACTION ID -->
-    <input
-      type="text"
-      id="transactionId"
-      placeholder="Unique Transaction ID"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-5 outline-none"/>
-
-    <!-- CONFIRM BUTTON -->
-    <button
-      onclick="submitCoinRequest()"
-      class="w-full bg-pink-500 hover:bg-pink-600 py-4 rounded-2xl font-black text-white">
-      Confirm
-    </button>
-
-  </div>
-
-</div>
-  
 <script type="module">
 
 import { supabase } from "./supabase.js";
@@ -254,56 +193,6 @@ let currentTab = "transactions";
 
 window.goBack = () => {
   window.location.href = "main.html";
-}
-
-  window.openBuyCoins = () => {
-  document
-    .getElementById("buyCoinsModal")
-    .classList.remove("hidden");
-}
-
-window.closeBuyCoins = () => {
-  document
-    .getElementById("buyCoinsModal")
-    .classList.add("hidden");
-}
-
-window.submitCoinRequest = async () => {
-
-  const amount =
-    document.getElementById("coinAmount").value;
-
-  const transactionId =
-    document.getElementById("transactionId").value;
-
-  if(!amount || !transactionId){
-    alert("Fill all fields");
-    return;
-  }
-
-  const { error } = await supabase
-    .from("coin_requests")
-    .insert([
-      {
-        user_id: userId,
-        user_email: session.user.email,
-        amount,
-        transaction_id: transactionId,
-        status: "pending"
-      }
-    ]);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  alert("Request Sent To Admin");
-
-  closeBuyCoins();
-
-  document.getElementById("coinAmount").value = "";
-  document.getElementById("transactionId").value = "";
 }
 
 function getDateFilter(){
@@ -652,45 +541,6 @@ window.showBets = async function(){
 }
 
 showTransactions();
-
-  // ----------------- Buy Coins Modal Functions -----------------
-
-// Open modal
-window.openBuyCoins = () => {
-  document.getElementById("buyCoinsModal").classList.remove("hidden");
-}
-
-// Close modal
-window.closeBuyCoins = () => {
-  document.getElementById("buyCoinsModal").classList.add("hidden");
-}
-
-// Submit coin request
-window.submitCoinRequest = async () => {
-  const amount = document.getElementById("coinAmount").value;
-  const transaction_id = document.getElementById("transactionId").value;
-
-  if(!amount || !transaction_id){
-    alert("Please fill all fields");
-    return;
-  }
-
-  const { data, error } = await supabase
-    .from("coin_requests")
-    .insert([{
-      user_id: supabase.auth.user().id,
-      user_email: supabase.auth.user().email,
-      amount,
-      transaction_id,
-    }]);
-
-  if(error){
-    alert("Error submitting request: " + error.message);
-  } else {
-    alert("Request sent! Waiting for admin approval.");
-    closeBuyCoins();
-  }
-}
 
 </script>
 
