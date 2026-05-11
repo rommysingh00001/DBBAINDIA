@@ -549,7 +549,8 @@ window.showBets = async function(){
 
 showTransactions();
 
-  <!-- Buy Coins Modal -->
+  
+<!-- Buy Coins Modal -->
 <div id="buyCoinsModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
   <div class="bg-[#111827] p-6 rounded-2xl w-[300px] text-center relative">
     <h2 class="text-xl font-bold mb-4">Buy More Coins</h2>
@@ -569,36 +570,52 @@ showTransactions();
 </div>
 
 <!-- JS for Modal + WhatsApp -->
-<script>
-const buyBtn = document.getElementById("buyCoinsBtn");
-const modal = document.getElementById("buyCoinsModal");
-const closeModal = document.getElementById("closeModal");
-const confirmBtn = document.getElementById("confirmPaymentBtn");
+<script type="module">
+import { supabase } from "./supabase.js";
 
-const adminWhatsApp = "918178593108"; // Replace with admin number with country code
-const userId = "USER123"; // Replace with logged-in user ID
+document.addEventListener("DOMContentLoaded", async () => {
 
-buyBtn.addEventListener("click", () => modal.classList.remove("hidden"));
-closeModal.addEventListener("click", () => modal.classList.add("hidden"));
-
-confirmBtn.addEventListener("click", () => {
-  const amount = document.getElementById("amountInput").value;
-  const txnId = document.getElementById("txnIdInput").value;
-
-  if(!amount || !txnId){
-    alert("Please enter amount and transaction ID");
+  // Supabase session check
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = "index.html";
     return;
   }
 
-  // Pre-filled WhatsApp message
-  const message = `User ${userId} wants to buy coins.\nAmount: ${amount}\nTransaction ID: ${txnId}`;
-  const url = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+  const userId = session.user.id;
 
-  // Open WhatsApp chat
-  window.open(url, "_blank");
+  const buyBtn = document.getElementById("buyCoinsBtn");
+  const modal = document.getElementById("buyCoinsModal");
+  const closeModal = document.getElementById("closeModal");
+  const confirmBtn = document.getElementById("confirmPaymentBtn");
 
-  alert("WhatsApp message opened to admin.");
-  modal.classList.add("hidden");
+  const adminWhatsApp = "918178593108"; // Replace with admin number with country code
+
+  // Open modal
+  buyBtn.addEventListener("click", () => modal.classList.remove("hidden"));
+  // Close modal
+  closeModal.addEventListener("click", () => modal.classList.add("hidden"));
+
+  // Confirm → WhatsApp
+  confirmBtn.addEventListener("click", () => {
+    const amount = document.getElementById("amountInput").value;
+    const txnId = document.getElementById("txnIdInput").value;
+
+    if (!amount || !txnId) {
+      alert("Please enter amount and transaction ID");
+      return;
+    }
+
+    const message = `User ${userId} wants to buy coins.\nAmount: ${amount}\nTransaction ID: ${txnId}`;
+    const url = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+
+    window.open(url, "_blank");
+    modal.classList.add("hidden");
+  });
+
+  // Back button
+  window.goBack = () => window.location.href = "main.html";
+
 });
 
 </script>
