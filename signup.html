@@ -10,22 +10,32 @@
 <body class="bg-[#050816] text-white flex items-center justify-center h-screen">
 
 <div class="w-full max-w-md p-6 bg-gray-900 rounded-xl shadow-lg">
-  <h1 class="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+  <h1 class="text-3xl font-bold mb-6 text-center">Create Account</h1>
 
   <form id="signupForm" class="space-y-4">
     <div>
       <label for="full_name" class="block mb-1">Full Name</label>
-      <input type="text" id="full_name" name="full_name" required class="w-full p-2 rounded bg-gray-800 text-white"/>
+      <input type="text" id="full_name" name="full_name" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
       <label for="email" class="block mb-1">Email</label>
-      <input type="email" id="email" name="email" required class="w-full p-2 rounded bg-gray-800 text-white"/>
+      <input type="email" id="email" name="email" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+    </div>
+
+    <div>
+      <label for="phone" class="block mb-1">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
       <label for="password" class="block mb-1">Password</label>
-      <input type="password" id="password" name="password" required class="w-full p-2 rounded bg-gray-800 text-white"/>
+      <input type="password" id="password" name="password" required class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+    </div>
+
+    <div>
+      <label for="referral" class="block mb-1">Referral Code (Optional)</label>
+      <input type="text" id="referral" name="referral" class="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div>
@@ -51,14 +61,16 @@
 
     const full_name = form.full_name.value.trim();
     const email = form.email.value.trim();
+    const phone = form.phone.value.trim();
     const password = form.password.value;
+    const referral = form.referral.value.trim() || null;
 
-    if (!full_name || !email || !password) {
-      errorMsg.textContent = 'All fields are required.';
+    if (!full_name || !email || !phone || !password) {
+      errorMsg.textContent = 'Please fill in all required fields.';
       return;
     }
 
-    // Supabase sign-up
+    // Sign up user
     const { data, error } = await supabase.auth.signUp({
       email,
       password
@@ -69,17 +81,19 @@
       return;
     }
 
-    // Add extra info to profiles table
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert([{ id: data.user.id, full_name }]);
+    // Insert profile data
+    const { error: profileError } = await supabase.from('profiles').insert([{
+      id: data.user.id,
+      full_name,
+      phone_number: phone,
+      referral_code: referral
+    }]);
 
     if (profileError) {
       errorMsg.textContent = profileError.message;
       return;
     }
 
-    // Success
     alert('Sign-up successful! Please verify your email.');
     window.location.href = 'login.html';
   });
