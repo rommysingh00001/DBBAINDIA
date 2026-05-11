@@ -95,7 +95,7 @@
   <div class="bg-gray-900 rounded-3xl p-8 w-full max-w-md relative">
     <h2 class="text-2xl font-black text-yellow-400 mb-4">Buy Coins</h2>
     <input type="number" id="buyCoinAmount" placeholder="Enter Coins" class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none mb-4"/>
-    <button onclick="confirmBuyCoins()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
+    <button onclick="generateUPIPayment()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4">
       Proceed to Payment
     </button>
     <div id="upiLinkDiv" class="hidden mb-4">
@@ -112,35 +112,36 @@ const { data:{ session } } = await supabase.auth.getSession();
 if(!session) window.location.href="index.html";
 const userId = session.user.id;
 let currentTab="transactions";
-window.goBack = () => window.location.href="main.html";
 
-// MODAL FUNCTIONS
+// MODAL
 function openBuyCoinsModal(){ document.getElementById("buyCoinsModal").classList.remove("hidden"); }
 function closeBuyCoinsModal(){ 
   document.getElementById("buyCoinsModal").classList.add("hidden"); 
   document.getElementById("upiLinkDiv").classList.add("hidden");
 }
 
-// UPI Payment flow
-async function confirmBuyCoins(){
+// GENERATE UPI PAYMENT
+async function generateUPIPayment(){
   const amount = Number(document.getElementById("buyCoinAmount").value);
-  if(amount <= 0){ alert("Enter valid amount"); return; }
+  if(amount<=0){ alert("Enter valid amount"); return; }
 
-  // Generate UPI link
   const upiId = "rommysingh@ptyes";
   const upiUrl = `upi://pay?pa=${upiId}&pn=DBBA India&am=${amount}&cu=INR&tn=Buy Coins`;
 
-  // Show link to user
-  const upiLinkDiv = document.getElementById("upiLinkDiv");
   const upiLink = document.getElementById("upiLink");
+  const upiDiv = document.getElementById("upiLinkDiv");
   upiLink.href = upiUrl;
   upiLink.innerText = `Pay ₹${amount} via UPI`;
-  upiLinkDiv.classList.remove("hidden");
+  upiDiv.classList.remove("hidden");
 
-  // Polling simulation: auto success if user clicks the link
-  // Real implementation: webhooks or payment API confirmation
-  const paymentConfirmed = await simulateUPIPayment(amount);
-  if(paymentConfirmed){
+  // Polling for confirmation
+  pollPaymentConfirmation(amount);
+}
+
+// POLLING SIMULATION: replace with real webhook in production
+async function pollPaymentConfirmation(amount){
+  const confirmed = await simulatePayment(amount);
+  if(confirmed){
     const { data:userData } = await supabase.from("users").select("balance").eq("id",userId).single();
     const newBalance = (userData.balance||0) + amount;
     await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
@@ -149,31 +150,30 @@ async function confirmBuyCoins(){
     closeBuyCoinsModal();
     showTransactions();
   } else {
-    alert("Payment cancelled or failed.");
+    alert("Payment Cancelled or failed.");
     closeBuyCoinsModal();
   }
 }
 
-// Simulate UPI payment confirmation (replace with webhook/API for real)
-async function simulateUPIPayment(amount){
-  return new Promise(resolve => setTimeout(()=>resolve(true),2000));
-}
+// Simulate UPI payment confirmation (replace with webhook)
+async function simulatePayment(amount){ return new Promise(resolve => setTimeout(()=>resolve(true),3000)); }
 
-// TABS & FILTERS
+// TABS
+window.goBack = () => window.location.href="main.html";
 function getDateFilter(){ return {fromDate:document.getElementById("fromDate").value,toDate:document.getElementById("toDate").value}; }
-
 window.applyFilter = async function(){ if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
 window.resetFilter = async function(){ document.getElementById("fromDate").value=""; document.getElementById("toDate").value=""; if(currentTab==="transactions") await showTransactions(); if(currentTab==="bets") await showBets(); }
 
+// SHOW TRANSACTIONS
 window.showTransactions = async function(){
   currentTab="transactions";
   document.getElementById("transactionsSection").classList.remove("hidden");
   document.getElementById("betsSection").classList.add("hidden");
+  const {fromDate,toDate}=getDateFilter();
 
-  const {fromDate,toDate} = getDateFilter();
   let depositsQuery = supabase.from("deposits").select("*").eq("user_id",userId).order("created_at",{ascending:false});
   let withdrawQuery = supabase.from("withdraws").select("*").eq("user_id",userId).order("created_at",{ascending:false});
-  if(fromDate){ depositsQuery = depositsQuery.gte("created_at",fromDate); withdrawQuery = withdrawQuery.gte("created_at",fromDate); }
+  if(fromDate){ depositsQuery = depositsQuery.gte("created_at",fromDate); withdrawQuery = withdrawQuery.gte("created_at",fromDate);}
   if(toDate){ depositsQuery = depositsQuery.lte("created_at",toDate+"T23:59:59"); withdrawQuery = withdrawQuery.lte("created_at",toDate+"T23:59:59"); }
 
   const { data:deposits=[] } = await depositsQuery;
@@ -200,12 +200,13 @@ window.showTransactions = async function(){
   });
 }
 
+// SHOW BETS
 window.showBets = async function(){
   currentTab="bets";
   document.getElementById("betsSection").classList.remove("hidden");
   document.getElementById("transactionsSection").classList.add("hidden");
 
-  const {fromDate,toDate} = getDateFilter();
+  const {fromDate,toDate}=getDateFilter();
   let query = supabase.from("bets").select("*").eq("user_id",userId).order("created_at",{ascending:false});
   if(fromDate) query = query.gte("created_at",fromDate);
   if(toDate) query = query.lte("created_at",toDate+"T23:59:59");
