@@ -296,6 +296,20 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
   <script type="module">
 
     import { supabase } from "./supabase.js";
+    function formatIST(dateString){
+
+  return new Date(dateString)
+    .toLocaleString("en-IN",{
+      timeZone:"Asia/Kolkata",
+      day:"2-digit",
+      month:"short",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit",
+      hour12:true
+    });
+}
 
     const {
       data:{ session }
@@ -602,16 +616,7 @@ if(coins > currentBalance){
           </h2>
 
           <p class="text-gray-400 text-sm">
-            ${new Date(r.created_at).toLocaleString("en-IN",{
-  timeZone:"Asia/Kolkata",
-  day:"2-digit",
-  month:"short",
-  year:"numeric",
-  hour:"2-digit",
-  minute:"2-digit",
-  second:"2-digit",
-  hour12:true
-})}
+            ${formatIST(r.created_at)}
           </p>
         `;
 
@@ -676,16 +681,7 @@ window.loadHistory = async function(){
       </h2>
 
       <p class="text-gray-400 text-sm mt-2">
-        ${new Date(r.created_at).toLocaleString("en-IN",{
-  timeZone:"Asia/Kolkata",
-  day:"2-digit",
-  month:"short",
-  year:"numeric",
-  hour:"2-digit",
-  minute:"2-digit",
-  second:"2-digit",
-  hour12:true
-})}
+        ${formatIST(r.created_at)}
       </p>
     `;
 
