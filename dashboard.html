@@ -861,13 +861,8 @@ window.applyFilters = function(){
         .toLowerCase();
 
       const betDate =
-  new Date(bet.created_at)
-  .toLocaleDateString(
-    "en-CA",
-    {
-      timeZone:"Asia/Kolkata"
-    }
-  );
+  getISTDate(bet.created_at);
+      
       return (
 
         (!user || fullName.includes(user)) &&
@@ -1020,21 +1015,21 @@ window.loadPNLReport = async function(){
 
   if(fromDate){
 
-    query =
-      query.gte(
-        "created_at",
-        fromDate + "T00:00:00+05:30"
-      );
-  }
+  query =
+    query.gte(
+      "created_at",
+      fromDate + "T00:00:00Z"
+    );
+}
 
-  if(toDate){
+if(toDate){
 
-    query =
-      query.lte(
-        "created_at",
-        toDate + "T23:59:59+05:30"
-      );
-  }
+  query =
+    query.lte(
+      "created_at",
+      toDate + "T23:59:59Z"
+    );
+}
 
   const { data:bets=[] } =
     await query;
