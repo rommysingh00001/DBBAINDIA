@@ -540,7 +540,12 @@ if(coins > currentBalance){
       document.getElementById("timer")
       .innerText =
       `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-    }
+    
+     // ------------------- Step 2: Countdown End -------------------
+  if(diff <= 0){
+    announceWinnerAutomatically(); // ye function define karna hai
+  }
+}
 
     updateTimer();
 
