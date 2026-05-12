@@ -1002,103 +1002,64 @@ window.loadPendingNumberGrid = async function(){
 }
 
 // PNL REPORT
-window.loadPNLReport = async function(){
+window.loadPNLReport = async function(fromDate=null, toDate=null){
+  const fromInput = fromDate || document.getElementById("pnlFromDate").value;
+  const toInput = toDate || document.getElementById("pnlToDate").value;
 
-  const fromDate =
-    document.getElementById("pnlFromDate").value;
+  let query = supabase.from("bets").select("*");
+  if(fromInput) query = query.gte("created_at", fromInput + "T00:00:00Z");
+  if(toInput) query = query.lte("created_at", toInput + "T23:59:59Z");
 
-  const toDate =
-    document.getElementById("pnlToDate").value;
+  const { data:bets = [] } = await query;
 
-  let query =
-    supabase
-    .from("bets")
-    .select("*");
-
-  if(fromDate){
-
-  query =
-    query.gte(
-      "created_at",
-      fromDate + "T00:00:00Z"
-    );
-}
-
-if(toDate){
-
-  query =
-    query.lte(
-      "created_at",
-      toDate + "T23:59:59Z"
-    );
-}
-
-  const { data:bets=[] } =
-    await query;
-
-  let grossRevenue = 0;
-
+  let totalCollection = 0;
   let payoutExpense = 0;
+  let selectedNumber = selectedWinningNumber; // currently selected number
 
-  bets.forEach(bet=>{
+  // Default: pending bets if no date selected
+  if(!fromInput && !toInput){
+    const pendingBets = bets.filter(bet => bet.status === "pending");
+    totalCollection = pendingBets.reduce((sum, bet) => sum + Number(bet.coins || 0), 0);
 
-    if(bet.status === "pending") return;
-
-    grossRevenue +=
-      Number(bet.coins || 0);
-
-    if(bet.status === "win"){
-
-      payoutExpense +=
-        Number(bet.potential_win || 0);
-
+    if(selectedNumber){
+      payoutExpense = pendingBets
+        .filter(bet => bet.selected_number == selectedNumber)
+        .reduce((sum, bet) => sum + Number(bet.potential_win || 0), 0);
     }
 
-  });
+  } else {
+    // Report mode: get last announced number for the date
+    const { data: lastResult = [] } = await supabase
+      .from("results")
+      .select("*")
+      .gte("created_at", fromInput + "T00:00:00Z")
+      .lte("created_at", toInput + "T23:59:59Z")
+      .order("created_at", { ascending: false })
+      .limit(1);
 
-  const pnl =
-    grossRevenue - payoutExpense;
+    const lastNumber = lastResult[0]?.winning_number;
 
-  const tbody =
-    document.getElementById("pnlTableBody");
+    totalCollection = bets.reduce((sum, bet) => sum + Number(bet.coins || 0), 0);
 
+    payoutExpense = bets
+      .filter(bet => bet.selected_number == lastNumber)
+      .reduce((sum, bet) => sum + Number(bet.potential_win || 0), 0);
+  }
+
+  const profitLoss = totalCollection - payoutExpense;
+
+  // Update DOM
+  const tbody = document.getElementById("pnlTableBody");
   tbody.innerHTML = `
-
     <tr>
-
-      <td class="px-4 py-4">
-        ${fromDate || "-"}
+      <td class="px-4 py-4">${fromInput || "-"}</td>
+      <td class="px-4 py-4">${toInput || "-"}</td>
+      <td class="px-4 py-4 text-green-400 font-black">₹${totalCollection}</td>
+      <td class="px-4 py-4 text-yellow-400 font-black">₹${payoutExpense}</td>
+      <td class="px-4 py-4 font-black ${profitLoss>=0?"text-green-400":"text-red-400"}">
+        ${profitLoss>=0?"+":"-"}₹${Math.abs(profitLoss)}
       </td>
-
-      <td class="px-4 py-4">
-        ${toDate || "-"}
-      </td>
-
-      <td class="px-4 py-4 text-green-400 font-black">
-        ₹${grossRevenue}
-      </td>
-
-      <td class="px-4 py-4 text-yellow-400 font-black">
-        ₹${payoutExpense}
-      </td>
-
-      <td class="
-        px-4
-        py-4
-        font-black
-        ${pnl >= 0
-          ? "text-green-400"
-          : "text-red-400"}
-      ">
-
-        ${pnl >= 0 ? "+" : "-"}
-
-        ₹${Math.abs(pnl)}
-
-      </td>
-
     </tr>
-
   `;
 }
   // SELECT NUMBER
@@ -1114,13 +1075,11 @@ window.selectWinningNumber = function(number){
 }
 
 // ANNOUNCE SELECTED RESULT
-window.announceSelectedResult = async function(){
-
-  if(!selectedWinningNumber){
-
-    alert("Select Number First");
-    return;
-  }
+window.selectWinningNumber = function(number){
+  selectedWinningNumber = number;
+  document.getElementById("selectedNumberText").innerText = "Selected Number : " + number;
+  loadPNLReport(); // update PNL dynamically for selected number
+};
 
   await supabase
   .from("results")
@@ -1204,15 +1163,12 @@ window.announceSelectedResult = async function(){
 }
 // INIT
 window.onload = async ()=>{
-
   await loadUsers();
-
   await loadAllBetData();
-
   await loadPendingNumberGrid();
 
-await loadPNLReport();
-
+  // Default pending bets PNL view
+  await loadPNLReport();
 }
 </script>
 </body>
