@@ -31,13 +31,10 @@
       class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
     />
 
-    <!-- RESET PASSWORD LINK (with integrated reset function) -->
-    <button
-      id="resetPasswordBtn"
-      class="block w-full text-blue-400 text-sm underline mt-2 mb-4 text-center"
-    >
+    <!-- RESET PASSWORD LINK (hidden by default) -->
+    <a id="resetPasswordLink" href="reset-password.html" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
       Reset Password
-    </button>
+    </a>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
@@ -48,7 +45,6 @@
     <!-- LOGIN BUTTON -->
     <button
       id="loginBtn"
-      onclick="login()"
       class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4 transition"
     >
       LOGIN
@@ -75,8 +71,10 @@
     });
 
     // LOGIN FUNCTION
-    window.login = async function(){
+    async function login(){
       const loginBtn = document.getElementById("loginBtn");
+      const resetLink = document.getElementById("resetPasswordLink");
+      resetLink.classList.add("hidden"); // hide link at start
       try {
         loginBtn.disabled = true;
         loginBtn.innerText = "PLEASE WAIT...";
@@ -107,11 +105,17 @@
 
         // LOGIN
         const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-        if(loginError) throw loginError;
+        if(loginError){
+          alert("Wrong password!");
+          resetLink.classList.remove("hidden"); // show reset password
+          return;
+        }
 
+        // GET SESSION
         const { data: { session } } = await supabase.auth.getSession();
         if(!session) throw new Error("Session not created");
 
+        // GET USER PROFILE
         const { data: userData, error: userError } = await supabase
           .from("users")
           .select("*")
@@ -133,49 +137,15 @@
         loginBtn.disabled = false;
         loginBtn.innerText = "LOGIN";
       }
-    };
+    }
 
-    // RESET PASSWORD FUNCTION
-    document.getElementById("resetPasswordBtn").addEventListener("click", async function(){
-      try {
-        const input = document.getElementById("loginInput").value.trim();
-        if(!input){
-          alert("Enter your email or phone number first");
-          return;
-        }
+    document.getElementById("loginBtn").addEventListener("click", login);
 
-        let email = input;
-
-        // PHONE TO EMAIL
-        if(!input.includes("@")){
-          const { data: phoneUser } = await supabase
-            .from("users")
-            .select("email")
-            .eq("phone", input)
-            .maybeSingle();
-          if(!phoneUser){
-            alert("Phone number not found");
-            return;
-          }
-          email = phoneUser.email;
-        }
-
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + "/reset-password.html"
-        });
-
-        if(error) throw error;
-        alert("Password reset email sent!");
-      } catch(err){
-        console.error(err);
-        alert(err.message);
-      }
-    });
-
-    // ENTER BUTTON LOGIN
+    // ENTER KEY LOGIN
     document.addEventListener("keydown", function(event){
       if(event.key === "Enter") login();
     });
+
   </script>
 
 </body>
