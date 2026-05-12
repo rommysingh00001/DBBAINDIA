@@ -170,7 +170,7 @@
   }
 
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "https://yourdomain.com/reset-password.html", // change to your real URL
+    redirectTo: "https://dbbaindia.vercel.app/reset-password.html", // change to your real URL
   });
 
   if (error) {
