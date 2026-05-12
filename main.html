@@ -299,6 +299,42 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
 
     import { supabase } from "./supabase.js";
 
+    async function announceWinnerAutomatically(){
+  const { data:bets } = await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  let unbetNumbers = [];
+  for(let i=0;i<=99;i++){
+    const num = i.toString().padStart(2,"0");
+    if(!bets.some(b => b.selected_number === num)){
+      unbetNumbers.push(num);
+    }
+  }
+
+  let winningNumber;
+  if(unbetNumbers.length>0){
+    // pick random number
+    winningNumber = unbetNumbers[Math.floor(Math.random()*unbetNumbers.length)];
+  } else {
+    // pick min bet number
+    let totals = {};
+    bets.forEach(b => {
+      totals[b.selected_number] = (totals[b.selected_number]||0) + b.coins;
+    });
+    winningNumber = Object.keys(totals).reduce((a,b)=> totals[a]<totals[b]?a:b);
+  }
+
+  // Save to results table
+  await supabase.from("results").insert([{
+    winning_number: winningNumber,
+    created_at: new Date().toISOString()
+  }]);
+
+  // Update bets status, balances etc. (same logic as manual announce)
+}
+
     const {
       data:{ session }
     } = await supabase.auth.getSession();
