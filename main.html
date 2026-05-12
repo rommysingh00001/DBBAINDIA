@@ -622,7 +622,7 @@ if(coins > currentBalance){
     .from("results")
     .select("*")
     .order("created_at",{ascending:false})
-    .limit(11);
+    .limit(10);
 
   const resultsGrid =
     document.getElementById("resultsGrid");
