@@ -4,8 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DBBA INDIA</title>
-    <link rel="icon" type="image/png" href="logo.png">
-
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -299,47 +297,6 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
 
     import { supabase } from "./supabase.js";
 
-    async function announceWinnerAutomatically(){
-  const { data:bets } = await supabase
-    .from("bets")
-    .select("*")
-    .eq("status","pending");
-
-  let unbetNumbers = [];
-  for(let i=0;i<=99;i++){
-    const num = i.toString().padStart(2,"0");
-    if(!bets.some(b => b.selected_number === num)){
-      unbetNumbers.push(num);
-    }
-  }
-
-  let winningNumber;
-  if(unbetNumbers.length>0){
-    // pick random number
-    winningNumber = unbetNumbers[Math.floor(Math.random()*unbetNumbers.length)];
-  } else {
-    // pick min bet number
-    let totals = {};
-    bets.forEach(b => {
-      totals[b.selected_number] = (totals[b.selected_number]||0) + b.coins;
-    });
-    winningNumber = Object.keys(totals).reduce((a,b)=> totals[a]<totals[b]?a:b);
-  }
-
-  // Save to results table
-const fromISO = new Date(fromDate + "T00:00:00").toISOString();
-const toISO = new Date(toDate + "T23:59:59").toISOString();
-
-const { data } = await supabase
-  .from("results")
-  .select("*")
-  .gte("created_at", fromISO)
-  .lte("created_at", toISO)
-  .order("created_at",{ascending:false});
-
-  // Update bets status, balances etc. (same logic as manual announce)
-}
-
     const {
       data:{ session }
     } = await supabase.auth.getSession();
@@ -581,12 +538,7 @@ if(coins > currentBalance){
       document.getElementById("timer")
       .innerText =
       `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-    
-     // ------------------- Step 2: Countdown End -------------------
-  if(diff <= 0){
-    announceWinnerAutomatically(); // ye function define karna hai
-  }
-}
+    }
 
     updateTimer();
 
@@ -622,45 +574,108 @@ if(coins > currentBalance){
     // RECENT RESULTS
     async function loadRecentResults(){
 
-  const { data:results } =
-    await supabase
+      const { data:results } =
+        await supabase
+        .from("results")
+        .select("*")
+        .order("created_at",{ascending:false})
+        .limit(10);
+
+      const resultsGrid =
+        document.getElementById("resultsGrid");
+
+      resultsGrid.innerHTML = "";
+
+      results.forEach(r => {
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "bg-gray-900 rounded-2xl p-4 text-center";
+
+        div.innerHTML = `
+          <h2 class="text-3xl font-black text-yellow-400">
+            ${String(r.winning_number).padStart(2,"0")}
+          </h2>
+
+          <p class="text-gray-400 text-sm">
+            ${new Date(r.created_at).toLocaleDateString(
+  "en-IN",
+  {
+    timeZone:"Asia/Kolkata",
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  }
+)}
+          </p>
+        `;
+
+        resultsGrid.appendChild(div);
+
+      });
+
+    }
+
+    loadRecentResults();
+
+// HISTORY FILTER
+window.loadHistory = async function(){
+
+  const fromDate =
+    document.getElementById("fromDate").value;
+
+  const toDate =
+    document.getElementById("toDate").value;
+
+  if(!fromDate || !toDate){
+    alert("Select both dates");
+    return;
+  }
+
+  const { data } = await supabase
     .from("results")
     .select("*")
-    .order("created_at",{ascending:false})
-    .limit(10);
+    .gte("created_at", fromDate)
+    .lte("created_at", toDate + "T23:59:59")
+    .order("created_at",{ascending:false});
 
-  const resultsGrid =
-    document.getElementById("resultsGrid");
+  const historyGrid =
+    document.getElementById("historyGrid");
 
-  resultsGrid.innerHTML = "";
+  historyGrid.innerHTML = "";
 
-  // Get today's winner
-  const todayWinner = document.getElementById("todayWinner").innerText;
 
-  // Filter out today's winner
-  const filteredResults = results.filter(r =>
-    String(r.winning_number).padStart(2,"0") !== todayWinner
-  );
 
-  // Render filtered results
-  filteredResults.forEach(r => {
+  if(!data || data.length===0){
+
+    historyGrid.innerHTML = `
+  <div class="text-red-400 font-bold col-span-full text-center">
+    No history found
+  </div>
+`;
+
+    return;
+  }
+
+  data.forEach(r => {
 
     const div =
       document.createElement("div");
 
     div.className =
-      "bg-gray-900 rounded-2xl p-4 text-center";
+      "bg-gray-900 rounded-2xl p-4 text-center border border-gray-800";
 
     div.innerHTML = `
       <h2 class="text-3xl font-black text-yellow-400">
         ${String(r.winning_number).padStart(2,"0")}
       </h2>
 
-      <p class="text-gray-400 text-sm">
+      <p class="text-gray-400 text-sm mt-2">
         ${new Date(r.created_at).toLocaleDateString(
           "en-IN",
           {
-            timeZone:"Asia/Kolkata",
             day:"2-digit",
             month:"short",
             year:"numeric"
@@ -669,7 +684,7 @@ if(coins > currentBalance){
       </p>
     `;
 
-    resultsGrid.appendChild(div);
+    historyGrid.appendChild(div);
 
   });
 
@@ -697,12 +712,6 @@ if(coins > currentBalance){
     )
     .subscribe();
 
-    supabase.channel('winner-update')
-  .on('postgres_changes', { event:'INSERT', schema:'public', table:'results' },
-      payload => loadTodayWinner().then(()=>loadRecentResults())
-  )
-  .subscribe();
-
     // LOGOUT
     window.logout = async function(){
 
@@ -718,14 +727,9 @@ if(coins > currentBalance){
       window.location.href =
         "reports.html";
     }
-    
 
     // INITIAL LOAD
-loadLatestBalance();
-
-// Load today winner first, then recent results
-loadTodayWinner().then(() => loadRecentResults());
-    
+    loadLatestBalance();
 
   </script>
   <!-- WhatsApp Button -->
