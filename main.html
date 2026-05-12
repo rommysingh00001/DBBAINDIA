@@ -240,7 +240,7 @@ class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-n
   <div class="flex justify-between items-center mb-6">
 
     <h2 class="text-4xl font-black text-yellow-400">
-      Last 11 Winners
+      Last 10 Winners
     </h2>
 
   </div>
@@ -581,7 +581,7 @@ if(coins > currentBalance){
     .from("results")
     .select("*")
     .order("created_at",{ascending:false})
-    .limit(10);
+    .limit(11);
 
   const resultsGrid =
     document.getElementById("resultsGrid");
