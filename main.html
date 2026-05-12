@@ -731,6 +731,40 @@ window.loadHistory = async function(){
     // INITIAL LOAD
     loadLatestBalance();
 
+    <script>
+function startCountdown(endTime) {
+    const countdownEl = document.getElementById('countdown');
+    const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+
+        if (distance <= 0) {
+            clearInterval(interval);
+            countdownEl.innerText = "00:00:00";
+            announceResult(); // ✅ trigger the winner
+        } else {
+            const hours = String(Math.floor((distance/(1000*60*60)) % 24)).padStart(2,'0');
+            const minutes = String(Math.floor((distance/(1000*60)) % 60)).padStart(2,'0');
+            const seconds = String(Math.floor((distance/1000) % 60)).padStart(2,'0');
+            countdownEl.innerText = `${hours}:${minutes}:${seconds}`;
+        }
+    }, 1000);
+}
+
+// Function to ask server to generate result
+function announceResult() {
+    fetch('/generate-result')
+        .then(res => res.json())
+        .then(data => {
+            console.log("Winner announced:", data.number);
+        });
+}
+
+// Example: start countdown for 5 minutes
+const countdownTime = new Date().getTime() + 5*60*1000;
+startCountdown(countdownTime);
+</script>
+
   </script>
   <!-- WhatsApp Button -->
 <a href="https://wa.me/918607079707?text=Hello%20I%20want%20to%20play" target="_blank"
