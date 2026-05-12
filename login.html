@@ -34,9 +34,9 @@
     />
 
     <!-- RESET PASSWORD LINK (hidden by default) -->
-    <a id="resetPasswordLink" href="reset-password.html" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
-      Reset Password
-    </a>
+    <a id="resetPasswordLink" href="javascript:void(0)" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
+  Reset Password
+</a>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
@@ -147,6 +147,42 @@
     document.addEventListener("keydown", function(event){
       if(event.key === "Enter") login();
     });
+    async function sendResetEmail() {
+  const input = document.getElementById("loginInput").value.trim();
+  if (!input) {
+    alert("Enter your email or phone first");
+    return;
+  }
+
+  // If user enters phone, get email first
+  let email = input;
+  if (!input.includes("@")) {
+    const { data: phoneUser } = await supabase
+      .from("users")
+      .select("email")
+      .eq("phone", input)
+      .maybeSingle();
+    if (!phoneUser) {
+      alert("Phone number not found");
+      return;
+    }
+    email = phoneUser.email;
+  }
+
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://yourdomain.com/reset-password.html", // change to your real URL
+  });
+
+  if (error) {
+    alert("Error sending reset email: " + error.message);
+    return;
+  }
+
+  alert("Password reset email sent! Check your inbox.");
+}
+    // LINK CLICK LISTENER
+  const resetLink = document.getElementById("resetPasswordLink");
+  resetLink.addEventListener("click", sendResetEmail);
 
   </script>
 
