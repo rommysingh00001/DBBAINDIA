@@ -1,16 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>Login - DBBA INDIA</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
   <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
@@ -20,9 +15,7 @@
       <span class="text-green-400">INDIA</span>
     </h2>
 
-    <p class="text-center text-gray-400 mb-6">
-      Login To Continue
-    </p>
+    <p class="text-center text-gray-400 mb-6">Login To Continue</p>
 
     <input
       id="loginInput"
@@ -35,24 +28,18 @@
       id="loginPassword"
       type="password"
       placeholder="Password"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-3 outline-none"
+      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
     />
+
+    <!-- RESET PASSWORD LINK (always visible) -->
+    <a href="reset-password.html" class="block text-blue-500 text-sm underline mb-4">
+      Reset Password
+    </a>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
-
-      <input
-        type="checkbox"
-        id="showPassword"
-      />
-
-      <label
-        for="showPassword"
-        class="text-sm text-gray-400 cursor-pointer"
-      >
-        Show Password
-      </label>
-
+      <input type="checkbox" id="showPassword"/>
+      <label for="showPassword" class="text-sm text-gray-400 cursor-pointer">Show Password</label>
     </div>
 
     <!-- LOGIN BUTTON -->
@@ -65,376 +52,90 @@
     </button>
 
     <!-- SIGNUP -->
-    <a
-      href="signup.html"
-      class="block text-center text-green-400 font-bold mb-4"
-    >
+    <a href="signup.html" class="block text-center text-green-400 font-bold mb-4">
       Create New Account
     </a>
 
-    <!-- FORGOT PASSWORD -->
-    <div class="text-center">
-
-      <button
-        onclick="forgotPassword()"
-        class="text-red-400 font-bold hover:text-red-300"
-      >
-        Forgot Password?
-      </button>
-
-    </div>
-
   </div>
 
-
-
-
-
   <script type="module">
-
-    import {
-      supabase
-    } from "./supabase.js";
-
-
+    import { supabase } from "./supabase.js";
 
     // AUTO LOGIN CHECK
-
-    const {
-      data:{ session }
-    } =
-      await supabase.auth.getSession();
-
-    if(session){
-
-      window.location.href =
-        "main.html";
-    }
-
-
+    const { data: { session } } = await supabase.auth.getSession();
+    if(session) window.location.href = "main.html";
 
     // SHOW PASSWORD
-
-    document
-      .getElementById("showPassword")
-      .addEventListener(
-        "change",
-        function(){
-
-          const passInput =
-            document.getElementById(
-              "loginPassword"
-            );
-
-          passInput.type =
-            this.checked
-              ? "text"
-              : "password";
-        }
-      );
-
-
-
-
+    document.getElementById("showPassword").addEventListener("change", function(){
+      const passInput = document.getElementById("loginPassword");
+      passInput.type = this.checked ? "text" : "password";
+    });
 
     // LOGIN FUNCTION
-
     window.login = async function(){
-
-      const loginBtn =
-        document.getElementById(
-          "loginBtn"
-        );
-
+      const loginBtn = document.getElementById("loginBtn");
       try {
-
         loginBtn.disabled = true;
+        loginBtn.innerText = "PLEASE WAIT...";
 
-        loginBtn.innerText =
-          "PLEASE WAIT...";
-
-
-
-        const input =
-          document
-            .getElementById(
-              "loginInput"
-            )
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById(
-              "loginPassword"
-            )
-            .value
-            .trim();
-
-
+        const input = document.getElementById("loginInput").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
 
         if(!input || !password){
-
-          alert(
-            "Please fill all fields"
-          );
-
+          alert("Please fill all fields");
           return;
         }
 
-
-
         let email = input;
 
-
-
         // PHONE LOGIN SUPPORT
-
         if(!input.includes("@")){
-
-          const {
-            data: phoneUser,
-            error: phoneError
-          } =
-            await supabase
-              .from("users")
-              .select("email")
-              .eq("phone", input)
-              .maybeSingle();
-
-          if(
-            phoneError ||
-            !phoneUser
-          ){
-
-            alert(
-              "Phone number not found"
-            );
-
+          const { data: phoneUser } = await supabase
+            .from("users")
+            .select("email")
+            .eq("phone", input)
+            .maybeSingle();
+          if(!phoneUser){
+            alert("Phone number not found");
             return;
           }
-
-          email =
-            phoneUser.email;
+          email = phoneUser.email;
         }
-
-
 
         // LOGIN
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+        if(loginError) throw loginError;
 
-        const {
-          data: loginData,
-          error: loginError
-        } =
-          await supabase.auth
-            .signInWithPassword({
+        const { data: { session } } = await supabase.auth.getSession();
+        if(!session) throw new Error("Session not created");
 
-              email,
-
-              password
-
-            });
-
-        if(loginError){
-
-          throw loginError;
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+        if(userError || !userData){
+          await supabase.auth.signOut();
+          throw new Error("User profile missing");
         }
 
-
-
-        // GET SESSION
-
-        const {
-          data:{ session }
-        } =
-          await supabase.auth
-            .getSession();
-
-        if(!session){
-
-          throw new Error(
-            "Session not created"
-          );
-        }
-
-
-
-        // GET USER PROFILE
-
-        const {
-          data: userData,
-          error: userError
-        } =
-          await supabase
-            .from("users")
-            .select("*")
-            .eq(
-              "id",
-              session.user.id
-            )
-            .single();
-
-        if(
-          userError ||
-          !userData
-        ){
-
-          await supabase.auth
-            .signOut();
-
-          throw new Error(
-            "User profile missing"
-          );
-        }
-
-
-
-        // SAVE USER
-
-        localStorage.setItem(
-          "dbba_user",
-          JSON.stringify(userData)
-        );
-
-
-
-        // SUCCESS
-
-        alert(
-          "Login Successful"
-        );
-
-        window.location.href =
-          "main.html";
-
-
+        localStorage.setItem("dbba_user", JSON.stringify(userData));
+        alert("Login Successful");
+        window.location.href = "main.html";
 
       } catch(err){
-
         console.error(err);
-
         alert(err.message);
-
-
-
       } finally {
-
         loginBtn.disabled = false;
-
-        loginBtn.innerText =
-          "LOGIN";
+        loginBtn.innerText = "LOGIN";
       }
     };
 
-
-
-
-
-    // FORGOT PASSWORD
-
-    window.forgotPassword =
-      async function(){
-
-        try {
-
-          const input =
-            document
-              .getElementById(
-                "loginInput"
-              )
-              .value
-              .trim();
-
-          if(!input){
-
-            alert(
-              "Enter your email first"
-            );
-
-            return;
-          }
-
-          let email = input;
-
-
-
-          // PHONE TO EMAIL
-
-          if(!input.includes("@")){
-
-            const {
-              data: phoneUser
-            } =
-              await supabase
-                .from("users")
-                .select("email")
-                .eq("phone", input)
-                .maybeSingle();
-
-            if(!phoneUser){
-
-              alert(
-                "Phone number not found"
-              );
-
-              return;
-            }
-
-            email =
-              phoneUser.email;
-          }
-
-
-
-          const {
-            error
-          } =
-            await supabase.auth
-              .resetPasswordForEmail(
-                email,
-                {
-                  redirectTo:
-                    window.location.origin +
-                    "/reset-password.html"
-                }
-              );
-
-          if(error){
-
-            throw error;
-          }
-
-          alert(
-            "Password reset email sent"
-          );
-
-
-
-        } catch(err){
-
-          console.error(err);
-
-          alert(err.message);
-        }
-      };
-
-
-
-
-
     // ENTER BUTTON LOGIN
-
-    document.addEventListener(
-      "keydown",
-      function(event){
-
-        if(event.key === "Enter"){
-
-          login();
-        }
-      }
-    );
-
+    document.addEventListener("keydown", function(event){
+      if(event.key === "Enter") login();
+    });
   </script>
 
 </body>
