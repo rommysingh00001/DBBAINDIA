@@ -7,257 +7,275 @@
   <link rel="icon" type="image/png" href="logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-[#050816] text-white">
 
-  <!-- HEADER -->
-  <header class="sticky top-0 z-50 border-b border-gray-800 bg-black">
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-5 py-4">
+<!-- HEADER -->
+<header class="sticky top-0 z-50 border-b border-gray-800 bg-black">
+  <div class="max-w-7xl mx-auto flex justify-between items-center px-5 py-4">
+    <div>
+      <h1 class="text-4xl font-black">
+        <span class="text-yellow-400">DBBA</span>
+        <span class="text-green-400">INDIA</span>
+      </h1>
+      <p class="text-gray-400 text-sm">Predict • Play • Win</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div onclick="openReports()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
+        <p class="text-gray-400 text-sm">Balance</p>
+        <h2 id="balanceText" class="text-2xl font-bold text-yellow-400">0 Coins</h2>
+        <p class="text-green-400 text-xs mt-1">View Reports</p>
+      </div>
+      <button onclick="logout()" class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">Logout</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="max-w-7xl mx-auto px-5 pt-8">
+  <div class="bg-gradient-to-r from-yellow-400 to-green-400 rounded-3xl p-8 text-black">
+    <h2 class="text-5xl font-black mb-4">WIN 90X REWARD</h2>
+    <p class="text-xl font-bold mb-6">Select your lucky number from 00 to 99 and win huge virtual rewards.</p>
+    <div class="flex flex-wrap gap-4">
+      <div class="bg-black text-white px-5 py-3 rounded-2xl font-black">Daily Draw : 09:15 AM</div>
+      <div class="bg-white px-5 py-3 rounded-2xl font-black">Virtual Coins Only</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOP CARDS -->
+<section class="max-w-7xl mx-auto px-5 py-8">
+  <div class="grid md:grid-cols-3 gap-5">
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+      <p class="text-gray-400 mb-3">Next Draw</p>
+      <h2 class="text-5xl font-black text-yellow-400">09:15 AM</h2>
+    </div>
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 text-center">
+      <p class="text-gray-400 mb-3">Next Draw In</p>
+      <h2 id="timer" class="text-5xl font-black text-green-400">00:00:00</h2>
+    </div>
+    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+      <p class="text-gray-400 mb-3">Reward</p>
+      <h2 class="text-5xl font-black text-green-400">90x</h2>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO PLAY -->
+<section class="max-w-7xl mx-auto px-5 pb-8">
+  <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
+    <h2 class="text-4xl font-black text-yellow-400 mb-8">How To Play</h2>
+    <div class="grid md:grid-cols-4 gap-5">
+      <div class="bg-black border border-gray-800 rounded-2xl p-5">
+        <div class="text-5xl font-black text-green-400 mb-4">1</div>
+        <h3 class="text-xl font-black mb-2">Choose Number</h3>
+        <p class="text-gray-400 leading-7">Pick any number between 00 to 99 from the board.</p>
+      </div>
+      <div class="bg-black border border-gray-800 rounded-2xl p-5">
+        <div class="text-5xl font-black text-green-400 mb-4">2</div>
+        <h3 class="text-xl font-black mb-2">Enter Coins</h3>
+        <p class="text-gray-400 leading-7">Add virtual coins amount for your selected number.</p>
+      </div>
+      <div class="bg-black border border-gray-800 rounded-2xl p-5">
+        <div class="text-5xl font-black text-green-400 mb-4">3</div>
+        <h3 class="text-xl font-black mb-2">Wait For Result</h3>
+        <p class="text-gray-400 leading-7">Daily draw result is announced every morning at 09:15 AM.</p>
+      </div>
+      <div class="bg-black border border-gray-800 rounded-2xl p-5">
+        <div class="text-5xl font-black text-green-400 mb-4">4</div>
+        <h3 class="text-xl font-black mb-2">Win 90x</h3>
+        <p class="text-gray-400 leading-7">Match the winning number and get 90x virtual reward.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN SECTION -->
+<section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
+
+  <!-- NUMBERS GRID -->
+  <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+    <div class="flex justify-between items-center mb-6">
       <div>
-        <h1 class="text-4xl font-black">
-          <span class="text-yellow-400">DBBA</span>
-          <span class="text-green-400">INDIA</span>
-        </h1>
-        <p class="text-gray-400 text-sm">Predict • Play • Win</p>
+        <h2 class="text-3xl font-black">Choose Your Number</h2>
+        <p class="text-gray-400 mt-1">Select any number between 00 to 99</p>
       </div>
-
-      <div class="flex items-center gap-4">
-        <div onclick="openReports()" class="bg-gray-900 px-5 py-3 rounded-2xl border border-gray-700 cursor-pointer hover:border-yellow-400 transition">
-          <p class="text-gray-400 text-sm">Balance</p>
-          <h2 id="balanceText" class="text-2xl font-bold text-yellow-400">0 Coins</h2>
-          <p class="text-green-400 text-xs mt-1">View Reports</p>
-        </div>
-
-        <button onclick="logout()" class="bg-red-500 hover:bg-red-400 px-5 py-3 rounded-2xl font-bold">
-          Logout
-        </button>
-      </div>
+      <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">Virtual Game</div>
     </div>
-  </header>
+    <div id="numbers" class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
+  </div>
 
-  <!-- HERO SECTION -->
-  <section class="max-w-7xl mx-auto px-5 pt-8">
-    <div class="bg-gradient-to-r from-yellow-400 to-green-400 rounded-3xl p-8 text-black">
-      <h2 class="text-5xl font-black mb-4">WIN 90X REWARD</h2>
-      <p class="text-xl font-bold mb-6">Select your lucky number from 00 to 99 and win huge virtual rewards.</p>
-      <div class="flex flex-wrap gap-4">
-        <div class="bg-black text-white px-5 py-3 rounded-2xl font-black">Daily Draw : 09:15 AM</div>
-        <div class="bg-white px-5 py-3 rounded-2xl font-black">Virtual Coins Only</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TOP CARDS -->
-  <section class="max-w-7xl mx-auto px-5 py-8">
-    <div class="grid md:grid-cols-3 gap-5">
-      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-        <p class="text-gray-400 mb-3">Next Draw</p>
-        <h2 class="text-5xl font-black text-yellow-400">09:15 AM</h2>
-      </div>
-      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6 text-center">
-        <p class="text-gray-400 mb-3">Next Draw In</p>
-        <h2 id="timer" class="text-5xl font-black text-green-400">00:00:00</h2>
-      </div>
-      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-        <p class="text-gray-400 mb-3">Reward</p>
-        <h2 class="text-5xl font-black text-green-400">90x</h2>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW TO PLAY -->
-  <section class="max-w-7xl mx-auto px-5 pb-8">
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8">
-      <h2 class="text-4xl font-black text-yellow-400 mb-8">How To Play</h2>
-      <div class="grid md:grid-cols-4 gap-5">
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-          <div class="text-5xl font-black text-green-400 mb-4">1</div>
-          <h3 class="text-xl font-black mb-2">Choose Number</h3>
-          <p class="text-gray-400 leading-7">Pick any number between 00 to 99 from the board.</p>
-        </div>
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-          <div class="text-5xl font-black text-green-400 mb-4">2</div>
-          <h3 class="text-xl font-black mb-2">Enter Coins</h3>
-          <p class="text-gray-400 leading-7">Add virtual coins amount for your selected number.</p>
-        </div>
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-          <div class="text-5xl font-black text-green-400 mb-4">3</div>
-          <h3 class="text-xl font-black mb-2">Wait For Result</h3>
-          <p class="text-gray-400 leading-7">Daily draw result is announced automatically at countdown end.</p>
-        </div>
-        <div class="bg-black border border-gray-800 rounded-2xl p-5">
-          <div class="text-5xl font-black text-green-400 mb-4">4</div>
-          <h3 class="text-xl font-black mb-2">Win 90x</h3>
-          <p class="text-gray-400 leading-7">Match the winning number and get 90x virtual reward.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MAIN SECTION -->
-  <section class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1fr_350px] gap-6 pb-10">
-    <!-- NUMBERS GRID -->
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h2 class="text-3xl font-black">Choose Your Number</h2>
-          <p class="text-gray-400 mt-1">Select any number between 00 to 99</p>
-        </div>
-        <div class="bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-xl text-green-400">Virtual Game</div>
-      </div>
-      <div id="numbers" class="grid grid-cols-5 md:grid-cols-10 gap-3"></div>
+  <!-- BET SLIP -->
+  <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
+    <div class="bg-black border border-yellow-400 rounded-2xl p-4 mb-6 text-center">
+      <p class="text-gray-400 mb-1">Today’s Winner</p>
+      <h2 id="todayWinner" class="text-3xl font-black text-yellow-400">--</h2>
     </div>
 
-    <!-- BET SLIP -->
-    <div class="bg-gray-900 rounded-3xl border border-gray-800 p-6">
-      <div class="bg-black border border-yellow-400 rounded-2xl p-4 mb-6 text-center">
-        <p class="text-gray-400 mb-1">Today’s Winner</p>
-        <h2 id="todayWinner" class="text-3xl font-black text-yellow-400">--</h2>
-      </div>
-      <h2 class="text-3xl font-black text-yellow-400 mb-6">Bet Slip</h2>
-      <div class="mb-5">
-        <p class="text-gray-400 mb-2">Selected Number</p>
-        <div id="selected" class="bg-black border-2 border-green-500 rounded-3xl p-10 text-center text-8xl font-black text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.5)]">00</div>
-      </div>
-      <div class="mb-5">
-        <p class="text-gray-400 mb-2">Enter Coins</p>
-        <input id="coins" type="number" value="0" onfocus="if(this.value==='0'){this.value=''}" onblur="if(this.value===''){this.value='0'}" class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
-      </div>
-      <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center mb-6">
-        <p class="text-gray-400 mb-2">Potential Win</p>
-        <h2 id="win" class="text-5xl font-black text-yellow-400">90000</h2>
-        <p class="text-green-400 mt-2">90x Reward</p>
-      </div>
-      <button id="placeBetBtn" class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">PLACE BET</button>
+    <h2 class="text-3xl font-black text-yellow-400 mb-6">Bet Slip</h2>
+
+    <div class="mb-5">
+      <p class="text-gray-400 mb-2">Selected Number</p>
+      <div id="selected" class="bg-black border-2 border-green-500 rounded-3xl p-10 text-center text-8xl font-black text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.5)]">00</div>
     </div>
-  </section>
 
-  <!-- SCRIPT -->
-  <script type="module">
-    import { supabase } from "./supabase.js";
+    <div class="mb-5">
+      <p class="text-gray-400 mb-2">Enter Coins</p>
+      <input id="coins" type="number" value="0" onfocus="if(this.value==='0'){this.value=''}" onblur="if(this.value===''){this.value='0'}" class="w-full bg-black border border-gray-700 rounded-2xl p-4 text-2xl outline-none"/>
+    </div>
 
-    const { data:{ session } } = await supabase.auth.getSession();
-    if(!session) window.location.href = "index.html";
-    const userId = session.user.id;
+    <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center mb-6">
+      <p class="text-gray-400 mb-2">Potential Win</p>
+      <h2 id="win" class="text-5xl font-black text-yellow-400">90000</h2>
+      <p class="text-green-400 mt-2">90x Reward</p>
+    </div>
 
-    const balanceText = document.getElementById("balanceText");
-    const selectedDiv = document.getElementById("selected");
-    const coinsInput = document.getElementById("coins");
-    const winText = document.getElementById("win");
-    const numbersDiv = document.getElementById("numbers");
+    <button id="placeBetBtn" class="w-full bg-green-500 hover:bg-green-400 text-black text-2xl font-black py-4 rounded-2xl">PLACE BET</button>
+  </div>
 
-    // ---------- Global Bets for Auto ----------
-    async function loadAllBetsForAuto(){
-      const { data: bets=[] } = await supabase.from("bets").select("*").eq("status","pending");
-      window.allBetData = bets;
+</section>
+
+<!-- SCRIPT -->
+<script type="module">
+
+import { supabase } from "./supabase.js";
+
+const { data:{ session } } = await supabase.auth.getSession();
+if(!session){ window.location.href="index.html"; }
+const userId = session.user.id;
+
+// ELEMENTS
+const balanceText = document.getElementById("balanceText");
+const selectedDiv = document.getElementById("selected");
+const coinsInput = document.getElementById("coins");
+const winText = document.getElementById("win");
+const numbersDiv = document.getElementById("numbers");
+const todayWinner = document.getElementById("todayWinner");
+
+// ---------------------
+// UTILITY FUNCTIONS
+// ---------------------
+
+// Load balance
+async function loadLatestBalance(){
+  const { data, error } = await supabase.from("users").select("balance").eq("id", userId).single();
+  if(error) return console.log(error);
+  balanceText.innerText = Number(data?.balance||0) + " Coins";
+}
+
+// Generate numbers grid
+for(let i=0;i<100;i++){
+  const num = i.toString().padStart(2,"0");
+  const btn = document.createElement("button");
+  btn.innerText = num;
+  btn.className="bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
+  btn.onclick = ()=> selectedDiv.innerText = num;
+  numbersDiv.appendChild(btn);
+}
+
+// Update potential win
+function updatePotentialWin(){
+  const coins = Number(coinsInput.value||0);
+  winText.innerText = coins*90;
+}
+coinsInput.addEventListener("input", updatePotentialWin);
+updatePotentialWin();
+
+// Load all pending bets globally for auto-number logic
+window.allBetData = [];
+async function loadAllBetsForAuto(){
+  const { data: bets=[] } = await supabase.from("bets").select("*").eq("status","pending");
+  window.allBetData = bets;
+}
+await loadAllBetsForAuto();
+
+// STEP 1: calculate totals per number
+function getNumberTotals(){
+  const totals = {};
+  for(let i=0;i<100;i++){ totals[i.toString().padStart(2,"0")] = 0; }
+  window.allBetData.forEach(bet => { if(bet.status==="pending"){ totals[bet.selected_number.toString().padStart(2,"0")] += Number(bet.coins||0); }});
+  return totals;
+}
+
+// STEP 2: decide auto number
+function getAutoNumber(){
+  const totals = getNumberTotals();
+  const unbetNumbers = Object.keys(totals).filter(n => totals[n]===0);
+  if(unbetNumbers.length>0){ return unbetNumbers[Math.floor(Math.random()*unbetNumbers.length)]; }
+  return Object.keys(totals).reduce((minNum,n)=>totals[n]<totals[minNum]?n:minNum,Object.keys(totals)[0]);
+}
+
+// Countdown + auto announcement
+function updateTimer(){
+  const now=new Date();
+  const target=new Date();
+  target.setHours(9,15,0);
+  if(now>target){ target.setDate(target.getDate()+1); }
+  const diff=target-now;
+  const hrs=Math.floor(diff/1000/60/60);
+  const mins=Math.floor(diff/1000/60)%60;
+  const secs=Math.floor(diff/1000)%60;
+  document.getElementById("timer").innerText=`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+
+  if(diff<=0){
+    if(!window.hasAnnouncedToday){
+      window.hasAnnouncedToday=true;
+      const numberToAnnounce=getAutoNumber();
+      todayWinner.innerText=numberToAnnounce;
+      alert(`Automatic Announcement: ${numberToAnnounce}`);
+      // Optional: save to DB
+      supabase.from("results").insert([{winning_number:numberToAnnounce, created_at:new Date().toISOString()}]);
     }
-    await loadAllBetsForAuto();
+  } else {
+    window.hasAnnouncedToday=false;
+  }
+}
+updateTimer();
+setInterval(updateTimer,1000);
 
-    // ---------- Number Grid ----------
-    for(let i=0;i<100;i++){
-      const num = i.toString().padStart(2,"0");
-      const btn = document.createElement("button");
-      btn.innerText = num;
-      btn.className = "bg-[#111827] border border-gray-700 rounded-2xl p-4 text-xl font-black hover:bg-green-500 hover:text-black transition";
-      btn.onclick = () => selectedDiv.innerText = num;
-      numbersDiv.appendChild(btn);
-    }
+// ---------------------
+// PLACE BET LOGIC
+// ---------------------
+document.getElementById("placeBetBtn").addEventListener("click", async()=>{
+  const number = selectedDiv.innerText;
+  const coins = Number(coinsInput.value||0);
+  if(coins<=0){ alert("Enter valid coins"); return; }
 
-    // ---------- Potential Win ----------
-    function updatePotentialWin(){
-      const coins = Number(coinsInput.value || 0);
-      winText.innerText = coins * 90;
-    }
-    coinsInput.addEventListener("input", updatePotentialWin);
-    updatePotentialWin();
+  // Get current balance
+  const { data:userData, error:userError } = await supabase.from("users").select("balance").eq("id", userId).single();
+  if(userError){ alert(userError.message); return; }
+  const currentBalance = Number(userData.balance||0);
+  if(coins>currentBalance){ alert(`Insufficient balance (${currentBalance})`); return; }
 
-    // ---------- Step 1 & 2: Auto Number Logic ----------
-    function getNumberTotals(){
-      const totals = {};
-      for(let i=0;i<100;i++) totals[i.toString().padStart(2,"0")] = 0;
-      const allBets = window.allBetData || [];
-      allBets.forEach(bet => {
-        if(bet.status === "pending") totals[bet.selected_number.toString().padStart(2,"0")] += Number(bet.coins || 0);
-      });
-      return totals;
-    }
+  const newBalance = currentBalance-coins;
+  // Save bet
+  await supabase.from("bets").insert([{ user_id:userId, selected_number:number, coins:coins, potential_win:coins*90, status:"pending", created_at:new Date().toISOString() }]);
+  // Update balance
+  await supabase.from("users").update({ balance:newBalance }).eq("id", userId);
+  await supabase.from("balance_ledger").insert([{ user_id:userId, change_type:"bet", amount:coins, balance_after:newBalance, created_at:new Date().toISOString() }]);
+  balanceText.innerText=newBalance+" Coins";
+  coinsInput.value=""; updatePotentialWin();
+  alert("Bet placed successfully!");
+  // Reload bets
+  await loadAllBetsForAuto();
+});
 
-    function getAutoNumber(){
-      const totals = getNumberTotals();
-      const unbetNumbers = Object.keys(totals).filter(n => totals[n] === 0);
-      if(unbetNumbers.length > 0) return unbetNumbers[Math.floor(Math.random()*unbetNumbers.length)];
-      return Object.keys(totals).reduce((minNum, n) => totals[n] < totals[minNum] ? n : minNum, Object.keys(totals)[0]);
-    }
+// LOGOUT
+window.logout=async()=>{ await supabase.auth.signOut(); window.location.href="index.html"; }
 
-    // ---------- Step 3 & 4: Timer & Auto Announcement ----------
-    function updateTimer(){
-      const now = new Date();
-      const target = new Date();
-      target.setHours(9,15,0);
-      if(now > target) target.setDate(target.getDate()+1);
-      const diff = target - now;
+// OPEN REPORTS
+window.openReports=()=>{ window.location.href="reports.html"; }
 
-      const hrs = Math.floor(diff/1000/60/60);
-      const mins = Math.floor(diff/1000/60)%60;
-      const secs = Math.floor(diff/1000)%60;
-      document.getElementById("timer").innerText = `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+// LOAD BALANCE INIT
+loadLatestBalance();
 
-      if(diff <= 0){
-        if(!window.hasAnnouncedToday){
-          window.hasAnnouncedToday = true;
-          const numberToAnnounce = getAutoNumber();
-          document.getElementById("todayWinner").innerText = numberToAnnounce;
-          alert(`Automatic Announcement: ${numberToAnnounce}`);
-          supabase.from("results").insert([{ winning_number: numberToAnnounce, created_at: new Date().toISOString() }]);
-        }
-      } else {
-        window.hasAnnouncedToday = false;
-      }
-    }
+</script>
 
-    updateTimer();
-    setInterval(updateTimer, 1000);
-
-    // ---------- Load User Balance ----------
-    async function loadLatestBalance(){
-      const { data, error } = await supabase.from("users").select("balance").eq("id", userId).single();
-      if(error) return console.log(error);
-      balanceText.innerText = Number(data?.balance || 0) + " Coins";
-    }
-    await loadLatestBalance();
-
-    // ---------- Place Bet ----------
-    document.getElementById("placeBetBtn").addEventListener("click", async () => {
-      const number = selectedDiv.innerText;
-      const coins = Number(coinsInput.value.trim() || 0);
-      if(coins <= 0) return alert("Enter valid coins");
-
-      const { data: userData } = await supabase.from("users").select("balance").eq("id", userId).single();
-      if(coins > userData.balance) return alert("Insufficient Balance");
-
-      const newBalance = userData.balance - coins;
-
-      await supabase.from("bets").insert([{ user_id: userId, selected_number: number, coins: coins, potential_win: coins*90, status: "pending", created_at: new Date().toISOString() }]);
-      await supabase.from("users").update({ balance: newBalance }).eq("id", userId);
-      await supabase.from("balance_ledger").insert([{ user_id: userId, change_type:"bet", amount:coins, balance_after:newBalance, created_at:new Date().toISOString() }]);
-
-      balanceText.innerText = newBalance + " Coins";
-      coinsInput.value = "";
-      updatePotentialWin();
-      alert("Bet placed successfully!");
-    });
-
-    // ---------- Logout & Reports ----------
-    window.logout = async () => { await supabase.auth.signOut(); window.location.href = "index.html"; }
-    window.openReports = () => { window.location.href = "reports.html"; }
-
-  </script>
-
-  <!-- WhatsApp Button -->
-  <a href="https://wa.me/918607079707?text=Hello%20I%20want%20to%20play" target="_blank" class="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-5 rounded-full shadow-lg flex items-center space-x-2">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6">
-    <span>Quick/Deposit/Withdrawal</span>
-  </a>
+<!-- WhatsApp Button -->
+<a href="https://wa.me/918607079707?text=Hello%20I%20want%20to%20play" target="_blank"
+   class="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-5 rounded-full shadow-lg flex items-center space-x-2">
+   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6">
+   <span>Quick/Deposit/Withdrawal</span>
+</a>
 
 </body>
 </html>
