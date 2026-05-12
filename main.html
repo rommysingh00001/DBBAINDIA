@@ -515,6 +515,28 @@ if(coins > currentBalance){
       const target =
         new Date();
 
+      // --- RESET PREVIOUS HIGHLIGHT FOR NEXT DAY ---
+  if (diff > 0 && winnerAnnounced === false) {
+    document.querySelectorAll('#numbers button').forEach(btn => {
+      btn.classList.remove('bg-yellow-400', 'text-black', 'animate-pulse', 'shadow-[0_0_20px_rgba(255,255,0,0.7)]');
+    });
+  }
+
+  // Continue with timer display
+  const hrs = Math.floor(diff / 1000 / 60 / 60);
+  const mins = Math.floor(diff / 1000 / 60) % 60;
+  const secs = Math.floor(diff / 1000) % 60;
+
+  document.getElementById("timer").innerText =
+    `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+
+  // Announce winner when countdown hits 0
+  if (diff <= 0 && !winnerAnnounced) {
+    winnerAnnounced = true;
+    announceTodayWinner();
+  }
+}
+
       target.setHours(9,15,0);
 
       if(now > target){
@@ -542,7 +564,146 @@ if(coins > currentBalance){
 
     updateTimer();
 
+ let winnerAnnounced = false;
+
+async function updateTimer() {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(9, 15, 0); // Daily draw at 09:15 AM
+
+  if (now >= target) target.setDate(target.getDate() + 1);
+
+  const diff = target - now;
+
+  const hrs = Math.floor(diff / 1000 / 60 / 60);
+  const mins = Math.floor(diff / 1000 / 60) % 60;
+  const secs = Math.floor(diff / 1000) % 60;
+
+  document.getElementById("timer").innerText =
+    `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+
+  // Announce winner when countdown hits 0
+  if (diff <= 0 && !winnerAnnounced) {
+    winnerAnnounced = true;
+    await announceTodayWinner();
+  }
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+
+async function announceTodayWinner() {
+  try {
+    // Fetch all bets for today (all users)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const { data: bets } = await supabase
+      .from("bets")
+      .select("*")
+      .gte("created_at", todayStart.toISOString())
+      .lte("created_at", todayEnd.toISOString());
+
+    // Map number -> total coins
+    const numberMap = {};
+    for (let i = 0; i < 100; i++) {
+      numberMap[i.toString().padStart(2,"0")] = 0;
+    }
+
+    bets.forEach(bet => {
+      const num = bet.selected_number;
+      numberMap[num] += bet.coins;
+    });
+
+    let winnerNumber;
+
+    // Rule 1: numbers with no bets
+    const noBetsNumbers = Object.keys(numberMap).filter(num => numberMap[num] === 0);
+
+    if (noBetsNumbers.length > 0) {
+      winnerNumber = noBetsNumbers[Math.floor(Math.random() * noBetsNumbers.length)];
+    } else {
+      // Rule 2: number with minimum total coins
+      winnerNumber = Object.entries(numberMap).reduce((minNum, [num, totalCoins]) => {
+        if (totalCoins < numberMap[minNum]) return num;
+        return minNum;
+      }, Object.keys(numberMap)[0]);
+    }
+
+    // Save winner in results table
+    await supabase.from("results").insert([{
+      winning_number: winnerNumber,
+      created_at: new Date().toISOString()
+    }]);
+
+    // UI update for local page
+    document.getElementById("todayWinner").innerText = winnerNumber;
+    alert(`Today's Winner is: ${winnerNumber} 🎉`);
+
+    // Reset for next day
+    winnerAnnounced = false;
+    updateTimer();
+
+  } catch (error) {
+    console.error("Error announcing winner:", error);
+  }
+}
+
+    // Highlight the winning number in the grid
+function highlightWinningNumber(winnerNumber) {
+  const buttons = document.querySelectorAll('#numbers button');
+
+  buttons.forEach(btn => {
+    if (btn.innerText === winnerNumber) {
+      // Highlight winning number
+      btn.classList.add('bg-yellow-400', 'text-black', 'animate-pulse', 'shadow-[0_0_20px_rgba(255,255,0,0.7)]');
+    } else {
+      // Reset other numbers
+      btn.classList.remove('bg-yellow-400', 'text-black', 'animate-pulse', 'shadow-[0_0_20px_rgba(255,255,0,0.7)]');
+    }
+  });
+}
+    // Highlight winner in the number grid
+highlightWinningNumber(winnerNumber);
+
+// Optional: Scroll the grid to the winning number
+document.querySelector(`#numbers button:nth-child(${parseInt(winnerNumber)+1})`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+// ===============================
+// REALTIME UPDATES FOR ALL USERS
+// ===============================
+
+supabase
+  .channel("public:results")
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
+      schema: "public",
+      table: "results"
+    },
+    payload => {
+      const newWinner = String(payload.new.winning_number).padStart(2,"0");
+
+      // Update Today Winner
+      document.getElementById("todayWinner").innerText = newWinner;
+
+      // Reload Last 10 Winners
+      loadRecentResults();
+
+      // Reload History Grid if any filters applied
+      if (document.getElementById("fromDate").value && document.getElementById("toDate").value) {
+        loadHistory();
+      }
+    }
+  )
+  .subscribe();
+
     setInterval(updateTimer,1000);
+    
 
     // TODAY WINNER
     async function loadTodayWinner(){
