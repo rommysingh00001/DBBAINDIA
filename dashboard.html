@@ -181,6 +181,14 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
     id="selectedNumberText"
     class="text-4xl font-black text-pink-400 mb-5">
 
+      <p id="minCoinNumber" class="text-gray-400 mb-1">
+  Min Bet Number : -- (₹0)
+</p>
+
+<p id="maxCoinNumber" class="text-gray-400 mb-6">
+  Max Bet Number : -- (₹0)
+</p>
+
     Selected Number : --
 
   </h2>
@@ -395,7 +403,42 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
 </div>
 
 <script type="module">
+function updateMinMaxBetNumbers(){
+  const pendingBets = allBetData.filter(bet => bet.status === "pending");
 
+  // Initialize totals per number
+  const totals = {};
+  for(let i=0; i<=99; i++){
+    totals[i.toString().padStart(2,"0")] = 0;
+  }
+
+  pendingBets.forEach(bet => {
+    const key = bet.selected_number.toString().padStart(2,"0");
+    totals[key] += Number(bet.coins || 0);
+  });
+
+  // Find min and max numbers
+  let minNum = null, minCoin = Infinity;
+  let maxNum = null, maxCoin = -Infinity;
+
+  Object.keys(totals).forEach(num => {
+    const coin = totals[num];
+    if(coin > 0 && coin < minCoin){
+      minCoin = coin;
+      minNum = num;
+    }
+    if(coin > maxCoin){
+      maxCoin = coin;
+      maxNum = num;
+    }
+  });
+
+  // Update DOM
+  document.getElementById("minCoinNumber").innerText =
+    `Min Bet Number : ${minNum || "--"} (₹${minCoin === Infinity ? 0 : minCoin})`;
+  document.getElementById("maxCoinNumber").innerText =
+    `Max Bet Number : ${maxNum || "--"} (₹${maxCoin === -Infinity ? 0 : maxCoin})`;
+}
   function formatIST(dateString){
 
   return new Date(dateString)
@@ -1160,17 +1203,17 @@ window.announceSelectedResult = async function(){
 
 }
 // INIT
-window.onload = async ()=>{
+window.onload = async () => {
+  await loadUsers();          // Users section
+  await loadAllBetData();     // Load all bets
+  await loadPendingNumberGrid(); // Number grid
 
-  await loadUsers();
+  // ---------------- Step 3a: update min/max numbers ----------------
+  updateMinMaxBetNumbers();    
 
-  await loadAllBetData();
-
-  await loadPendingNumberGrid();
-
-await loadPNLReport();
-
-}
+  await loadPNLReport();      // Load P&L
+};
+    
 </script>
 </body>
 </html>
