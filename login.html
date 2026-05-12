@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="logo.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
 </head>
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
@@ -105,13 +106,31 @@
           email = phoneUser.email;
         }
 
-        // LOGIN
-        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-        if(loginError){
-          alert("Wrong password!");
-          resetLink.classList.remove("hidden"); // show reset password
-          return;
-        }
+       // FETCH USER FROM TABLE
+const { data: user, error: userError } = await supabase
+  .from("users")
+  .select("*")
+  .eq("email", email)
+  .maybeSingle();
+
+if(userError || !user){
+  alert("User not found!");
+  return;
+}
+
+// COMPARE PASSWORD USING BCRYPT
+const valid = bcrypt.compareSync(password, user.password); // user.password = hashed password from DB
+
+if(!valid){
+  alert("Wrong password!");
+  resetLink.classList.remove("hidden");
+  return;
+}
+
+// LOGIN SUCCESS
+localStorage.setItem("dbba_user", JSON.stringify(user));
+alert("Login Successful");
+window.location.href = "main.html";
 
         // GET SESSION
         const { data: { session } } = await supabase.auth.getSession();
