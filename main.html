@@ -574,110 +574,47 @@ if(coins > currentBalance){
     loadTodayWinner();
 
     // RECENT RESULTS
-    async function loadRecentResults(){
+    async function loadTodayWinner().then(() => loadRecentResults());(){
 
-      const { data:results } =
-        await supabase
-        .from("results")
-        .select("*")
-        .order("created_at",{ascending:false})
-        .limit(10);
-
-      const resultsGrid =
-        document.getElementById("resultsGrid");
-
-      resultsGrid.innerHTML = "";
-
-      results.forEach(r => {
-
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "bg-gray-900 rounded-2xl p-4 text-center";
-
-        div.innerHTML = `
-          <h2 class="text-3xl font-black text-yellow-400">
-            ${String(r.winning_number).padStart(2,"0")}
-          </h2>
-
-          <p class="text-gray-400 text-sm">
-            ${new Date(r.created_at).toLocaleDateString(
-  "en-IN",
-  {
-    timeZone:"Asia/Kolkata",
-    day:"2-digit",
-    month:"short",
-    year:"numeric"
-  }
-)}
-          </p>
-        `;
-
-        resultsGrid.appendChild(div);
-
-      });
-
-    }
-
-    loadRecentResults();
-
-// HISTORY FILTER
-window.loadHistory = async function(){
-
-  const fromDate =
-    document.getElementById("fromDate").value;
-
-  const toDate =
-    document.getElementById("toDate").value;
-
-  if(!fromDate || !toDate){
-    alert("Select both dates");
-    return;
-  }
-
-  const { data } = await supabase
+  const { data:results } =
+    await supabase
     .from("results")
     .select("*")
-    .gte("created_at", fromDate)
-    .lte("created_at", toDate + "T23:59:59")
-    .order("created_at",{ascending:false});
+    .order("created_at",{ascending:false})
+    .limit(10);
 
-  const historyGrid =
-    document.getElementById("historyGrid");
+  const resultsGrid =
+    document.getElementById("resultsGrid");
 
-  historyGrid.innerHTML = "";
+  resultsGrid.innerHTML = "";
 
+  // Get today's winner
+  const todayWinner = document.getElementById("todayWinner").innerText;
 
+  // Filter out today's winner
+  const filteredResults = results.filter(r =>
+    String(r.winning_number).padStart(2,"0") !== todayWinner
+  );
 
-  if(!data || data.length===0){
-
-    historyGrid.innerHTML = `
-  <div class="text-red-400 font-bold col-span-full text-center">
-    No history found
-  </div>
-`;
-
-    return;
-  }
-
-  data.forEach(r => {
+  // Render filtered results
+  filteredResults.forEach(r => {
 
     const div =
       document.createElement("div");
 
     div.className =
-      "bg-gray-900 rounded-2xl p-4 text-center border border-gray-800";
+      "bg-gray-900 rounded-2xl p-4 text-center";
 
     div.innerHTML = `
       <h2 class="text-3xl font-black text-yellow-400">
         ${String(r.winning_number).padStart(2,"0")}
       </h2>
 
-      <p class="text-gray-400 text-sm mt-2">
+      <p class="text-gray-400 text-sm">
         ${new Date(r.created_at).toLocaleDateString(
           "en-IN",
           {
+            timeZone:"Asia/Kolkata",
             day:"2-digit",
             month:"short",
             year:"numeric"
@@ -686,7 +623,7 @@ window.loadHistory = async function(){
       </p>
     `;
 
-    historyGrid.appendChild(div);
+    resultsGrid.appendChild(div);
 
   });
 
