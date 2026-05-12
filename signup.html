@@ -91,11 +91,11 @@
       }
 
       // CHECK EXISTING USER
-      const { data: existingUser } =
-        await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email);
+      const { data: existingUser, error: checkError } =
+  await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email);
 
       if(existingUser && existingUser.length > 0){
         alert("User already exists");
