@@ -1060,15 +1060,15 @@ window.loadPNLReport = async function(fromDate=null, toDate=null){
   `;
 }  // SELECT NUMBER
 window.selectWinningNumber = function(number){
-
+  // Save selected number
   selectedWinningNumber = number;
 
-  document.getElementById(
-    "selectedNumberText"
-  ).innerText =
-    "Selected Number : " + number;
+  // Update DOM text
+  document.getElementById("selectedNumberText").innerText = "Selected Number : " + number;
 
-}
+  // Add-on: dynamically update P&L
+  loadPNLReport();
+};
 
 // ANNOUNCE SELECTED RESULT
 window.announceSelectedResult = async function(){
