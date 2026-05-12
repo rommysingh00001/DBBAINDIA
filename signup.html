@@ -142,7 +142,7 @@
 
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
 
   <script type="module">
 
@@ -299,23 +299,21 @@
         const {
           error: profileError
         } =
-          await supabase
-            .from("users")
-            .insert([
-              {
+          // Hash the password before storing
+const hashedPassword = bcrypt.hashSync(password, 10);
 
-                id: user.id,
-
-                full_name: fullName,
-
-                email,
-
-                phone,
-
-                balance: 0
-
-              }
-            ]);
+await supabase
+  .from("users")
+  .insert([
+    {
+      id: user.id,
+      full_name: fullName,
+      email,
+      phone,
+      balance: 0,
+      password: hashedPassword // store hashed password
+    }
+  ]);
 
         if(profileError){
 
