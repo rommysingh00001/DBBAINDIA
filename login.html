@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" href="logo.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
 </head>
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
@@ -35,9 +34,9 @@
     />
 
     <!-- RESET PASSWORD LINK (hidden by default) -->
-    <a id="resetPasswordLink" href="javascript:void(0)" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
-  Reset Password
-</a>
+    <a id="resetPasswordLink" href="reset-password.html" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
+      Reset Password
+    </a>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
@@ -106,31 +105,13 @@
           email = phoneUser.email;
         }
 
-       // FETCH USER FROM TABLE
-const { data: user, error: userError } = await supabase
-  .from("users")
-  .select("*")
-  .eq("email", email)
-  .maybeSingle();
-
-if(userError || !user){
-  alert("User not found!");
-  return;
-}
-
-// COMPARE PASSWORD USING BCRYPT
-const valid = bcrypt.compareSync(password, user.password); // user.password = hashed password from DB
-
-if(!valid){
-  alert("Wrong password!");
-  resetLink.classList.remove("hidden");
-  return;
-}
-
-// LOGIN SUCCESS
-localStorage.setItem("dbba_user", JSON.stringify(user));
-alert("Login Successful");
-window.location.href = "main.html";
+        // LOGIN
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+        if(loginError){
+          alert("Wrong password!");
+          resetLink.classList.remove("hidden"); // show reset password
+          return;
+        }
 
         // GET SESSION
         const { data: { session } } = await supabase.auth.getSession();
@@ -166,42 +147,6 @@ window.location.href = "main.html";
     document.addEventListener("keydown", function(event){
       if(event.key === "Enter") login();
     });
-    async function sendResetEmail() {
-  const input = document.getElementById("loginInput").value.trim();
-  if (!input) {
-    alert("Enter your email or phone first");
-    return;
-  }
-
-  // If user enters phone, get email first
-  let email = input;
-  if (!input.includes("@")) {
-    const { data: phoneUser } = await supabase
-      .from("users")
-      .select("email")
-      .eq("phone", input)
-      .maybeSingle();
-    if (!phoneUser) {
-      alert("Phone number not found");
-      return;
-    }
-    email = phoneUser.email;
-  }
-
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "https://dbbaindia.vercel.app/reset-password.html", // change to your real URL
-  });
-
-  if (error) {
-    alert("Error sending reset email: " + error.message);
-    return;
-  }
-
-  alert("Password reset email sent! Check your inbox.");
-}
-    // LINK CLICK LISTENER
-  const resetLink = document.getElementById("resetPasswordLink");
-  resetLink.addEventListener("click", sendResetEmail);
 
   </script>
 
