@@ -692,6 +692,12 @@ if(coins > currentBalance){
     )
     .subscribe();
 
+    supabase.channel('winner-update')
+  .on('postgres_changes', { event:'INSERT', schema:'public', table:'results' },
+      payload => loadTodayWinner().then(()=>loadRecentResults())
+  )
+  .subscribe();
+
     // LOGOUT
     window.logout = async function(){
 
@@ -707,10 +713,14 @@ if(coins > currentBalance){
       window.location.href =
         "reports.html";
     }
-    loadTodayWinner().then(() => loadRecentResults());
+    
 
     // INITIAL LOAD
-    loadLatestBalance();
+loadLatestBalance();
+
+// Load today winner first, then recent results
+loadTodayWinner().then(() => loadRecentResults());
+    
 
   </script>
   <!-- WhatsApp Button -->
