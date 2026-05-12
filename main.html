@@ -574,7 +574,7 @@ if(coins > currentBalance){
     loadTodayWinner();
 
     // RECENT RESULTS
-    async function loadTodayWinner().then(() => loadRecentResults());(){
+    async function loadRecentResults(){
 
   const { data:results } =
     await supabase
@@ -666,6 +666,7 @@ if(coins > currentBalance){
       window.location.href =
         "reports.html";
     }
+    loadTodayWinner().then(() => loadRecentResults());
 
     // INITIAL LOAD
     loadLatestBalance();
