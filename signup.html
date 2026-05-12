@@ -266,22 +266,22 @@
           data,
           error
         } =
-          await supabase.auth
-            .signUp({
-
-              email,
-
-              password
-
-            });
+          await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    data: {
+      full_name: fullName
+    }
+  }
+});
 
         if(error){
 
           throw error;
         }
 
-        const user =
-          data.user;
+        const user = data?.user || data?.session?.user;
 
         if(!user){
 
