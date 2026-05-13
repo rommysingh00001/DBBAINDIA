@@ -1113,95 +1113,69 @@ window.selectWinningNumber = function(number){
   loadPNLReport();
 };
 
-// ANNOUNCE SELECTED RESULT
-window.announceSelectedResult = async function(){
-
+// ANNOUNCE SELECTED RESULT - FIXED FOR ALL USERS
+window.announceSelectedResult = async function() {
   if(!selectedWinningNumber){
-
     alert("Select Number First");
     return;
   }
 
+  // Save the result in results table
   await supabase
-  .from("results")
-  .insert([{
-    winning_number:selectedWinningNumber,
-    created_at:new Date().toISOString()
-  }]);
+    .from("results")
+    .insert([{
+      winning_number: selectedWinningNumber,
+      created_at: new Date().toISOString()
+    }]);
 
-  const { data:bets=[] } =
-    await supabase
+  // Fetch all pending bets
+  const { data: bets = [] } = await supabase
     .from("bets")
     .select("*")
-    .eq("status","pending");
+    .eq("status", "pending");
 
+  // Loop over each bet and update status + balance if win
   for(const bet of bets){
+    const isWin = bet.selected_number === selectedWinningNumber;
+    let newBalance = 0;
 
-    if(
-      bet.selected_number ===
-      selectedWinningNumber
-    ){
-
-      const { data:user } =
-        await supabase
+    if(isWin){
+      // Fetch user balance
+      const { data: user } = await supabase
         .from("users")
         .select("*")
-        .eq("id",bet.user_id)
+        .eq("id", bet.user_id)
         .single();
 
-      const currentBalance =
-        Number(user.balance) || 0;
+      const currentBalance = Number(user.balance) || 0;
+      newBalance = currentBalance + Number(bet.potential_win || 0);
 
-      const newBalance =
-        currentBalance +
-        Number(bet.potential_win);
-
+      // Update user balance
       await supabase
-      .from("users")
-      .update({
-        balance:newBalance
-      })
-      .eq("id",bet.user_id);
-
-      await supabase
-      .from("bets")
-      .update({
-        status:"win"
-      })
-      .eq("id",bet.id);
-
-    } else {
-
-      await supabase
-      .from("bets")
-      .update({
-        status:"lose"
-      })
-      .eq("id",bet.id);
-
+        .from("users")
+        .update({ balance: newBalance })
+        .eq("id", bet.user_id);
     }
 
+    // Update bet status
+    await supabase
+      .from("bets")
+      .update({ status: isWin ? "win" : "lose" })
+      .eq("id", bet.id);
   }
 
-  alert(
-    "Result Announced : " +
-    selectedWinningNumber
-  );
+  // Reload all frontend data to reflect the settled bets
+  alert("Result Announced: " + selectedWinningNumber);
 
   selectedWinningNumber = null;
+  document.getElementById("selectedNumberText").innerText = "Selected Number : --";
 
-  document.getElementById(
-    "selectedNumberText"
-  ).innerText =
-    "Selected Number : --";
-
+  // Refresh number grid, P&L, and all bets table
   await loadPendingNumberGrid();
-
   await loadPNLReport();
-
   await loadAllBetData();
-
-}
+};
+    
 // INIT
 window.onload = async () => {
   await loadUsers();          // Users section
