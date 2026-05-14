@@ -189,22 +189,30 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
   id="selectedNumberText"
   class="text-4xl font-black text-pink-400 mb-5">
   Selected Number : --
+<div class="mt-8 text-center">
+
+<p id="minCoinNumber" class="text-gray-400 mb-1">
+  Min Bet Number : -- (₹0)
+</p>
+
+<p id="maxCoinNumber" class="text-gray-400 mb-6">
+  Max Bet Number : -- (₹0)
+</p>
+
+<h2
+  id="selectedNumberText"
+  class="text-4xl font-black text-pink-400 mb-5">
+    
+  Selected Number : --
 </h2>
 
-    Selected Number : --
+<button
+  onclick="announceSelectedResult()"
+  class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl">
 
-  </h2>
+  ANNOUNCE RESULT
 
-  <button
-    onclick="announceSelectedResult()"
-    class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl">
-
-    ANNOUNCE RESULT
-
-  </button>
-
-</div>
-
+</button>
 
 </div>
 
@@ -1005,6 +1013,9 @@ window.loadPendingNumberGrid = async function(){
     const amount = totals[number];
 
     grid.innerHTML += `
+
+    // ADD THIS
+  updateMinMaxBetNumbers();
 
       <div
       onclick="selectWinningNumber('${number}')"
