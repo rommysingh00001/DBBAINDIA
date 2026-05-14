@@ -1113,27 +1113,174 @@ window.selectWinningNumber = function(number){
   loadPNLReport();
 };
 
+    // AUTO SELECT WINNING NUMBER
+async function autoSelectWinningNumber(){
+
+  const { data:bets=[] } =
+    await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  const totals = {};
+
+  // Initialize all numbers
+  for(let i=0;i<=99;i++){
+
+    const key =
+      i.toString().padStart(2,"0");
+
+    totals[key] = 0;
+  }
+
+  // Calculate total bet per number
+  bets.forEach(bet=>{
+
+    const number =
+      String(bet.selected_number || "")
+      .padStart(2,"0");
+
+    totals[number] +=
+      Number(bet.coins || 0);
+
+  });
+
+  // Find zero-bet numbers
+  const zeroBetNumbers =
+    Object.keys(totals)
+    .filter(num => totals[num] === 0);
+
+  // RULE 1
+  if(zeroBetNumbers.length > 0){
+
+    const randomIndex =
+      Math.floor(
+        Math.random() * zeroBetNumbers.length
+      );
+
+    return zeroBetNumbers[randomIndex];
+  }
+
+  // RULE 2
+  let minNumber = null;
+  let minAmount = Infinity;
+
+  Object.keys(totals).forEach(num=>{
+
+    if(totals[num] < minAmount){
+
+      minAmount = totals[num];
+      minNumber = num;
+    }
+
+  });
+
+  return minNumber;
+}
+
 // ANNOUNCE SELECTED RESULT - FIXED FOR ALL USERS
 window.announceSelectedResult = async function() {
-  if(!selectedWinningNumber){
-    alert("Select Number First");
+
+  // Prevent double processing
+  if(window.resultProcessing){
     return;
   }
 
-  // Save the result in results table
-  await supabase
-    .from("results")
-    .insert([{
-      winning_number: selectedWinningNumber,
-      created_at: new Date().toISOString()
-    }]);
+  window.resultProcessing = true;
 
-  // Fetch all pending bets
-  const { data: bets = [] } = await supabase
-    .from("bets")
-    .select("*")
-    .eq("status", "pending");
+  try{
 
+    if(!selectedWinningNumber){
+      alert("Select Number First");
+      return;
+    }
+
+    // Save result
+    await supabase
+      .from("results")
+      .insert([{
+        winning_number:selectedWinningNumber,
+        created_at:new Date().toISOString()
+      }]);
+
+    // Fetch pending bets
+    const { data:bets=[] } =
+      await supabase
+      .from("bets")
+      .select("*")
+      .eq("status","pending");
+
+    // Process all bets
+    for(const bet of bets){
+
+      const isWin =
+        bet.selected_number === selectedWinningNumber;
+
+      if(isWin){
+
+        const { data:user } =
+          await supabase
+          .from("users")
+          .select("*")
+          .eq("id",bet.user_id)
+          .single();
+
+        const currentBalance =
+          Number(user.balance) || 0;
+
+        const newBalance =
+          currentBalance +
+          Number(bet.potential_win || 0);
+
+        await supabase
+          .from("users")
+          .update({
+            balance:newBalance
+          })
+          .eq("id",bet.user_id);
+      }
+
+      // Update bet status
+      await supabase
+        .from("bets")
+        .update({
+          status:isWin ? "win" : "lose"
+        })
+        .eq("id",bet.id);
+    }
+
+    alert(
+      "Result Announced : " +
+      selectedWinningNumber
+    );
+
+    selectedWinningNumber = null;
+
+    document.getElementById(
+      "selectedNumberText"
+    ).innerText =
+      "Selected Number : --";
+
+    await loadPendingNumberGrid();
+    await loadPNLReport();
+    await loadAllBetData();
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Announcement Failed");
+
+  }finally{
+
+    // Unlock after processing
+    setTimeout(()=>{
+
+      window.resultProcessing = false;
+
+    },5000);
+  }
+};
   // Loop over each bet and update status + balance if win
   for(const bet of bets){
     const isWin = bet.selected_number === selectedWinningNumber;
@@ -1178,6 +1325,52 @@ window.announceSelectedResult = async function() {
     
 // INIT
 window.onload = async () => {
+
+    // AUTO RESULT TIMER
+setInterval(async ()=>{
+
+  const now =
+    new Date().toLocaleString(
+      "en-US",
+      {
+        timeZone:"Asia/Kolkata"
+      }
+    );
+
+  const current =
+    new Date(now);
+
+  const hours =
+    current.getHours();
+
+  const minutes =
+    current.getMinutes();
+
+  // 9:15 AM IST
+  if(hours === 9 && minutes === 15){
+
+    // Prevent duplicate announce
+    if(window.resultProcessing) return;
+
+    window.resultProcessing = true;
+
+    // Auto choose winner
+    selectedWinningNumber =
+      await autoSelectWinningNumber();
+
+    // Announce result
+    await announceSelectedResult();
+
+    // Reset after 60 sec
+    setTimeout(()=>{
+
+      window.resultProcessing = false;
+
+    },60000);
+  }
+
+},10000);
+    
   await loadUsers();          // Users section
   await loadAllBetData();     // Load all bets
   await loadPendingNumberGrid(); // Number grid
