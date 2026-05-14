@@ -177,17 +177,19 @@ class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
 
 <div class="mt-8 text-center">
 
-  <h2
-    id="selectedNumberText"
-    class="text-4xl font-black text-pink-400 mb-5">
-
-      <p id="minCoinNumber" class="text-gray-400 mb-1">
+<p id="minCoinNumber" class="text-gray-400 mb-1">
   Min Bet Number : -- (₹0)
 </p>
 
 <p id="maxCoinNumber" class="text-gray-400 mb-6">
   Max Bet Number : -- (₹0)
 </p>
+
+<h2
+  id="selectedNumberText"
+  class="text-4xl font-black text-pink-400 mb-5">
+  Selected Number : --
+</h2>
 
     Selected Number : --
 
@@ -1281,48 +1283,7 @@ window.announceSelectedResult = async function() {
     },5000);
   }
 };
-  // Loop over each bet and update status + balance if win
-  for(const bet of bets){
-    const isWin = bet.selected_number === selectedWinningNumber;
-    let newBalance = 0;
-
-    if(isWin){
-      // Fetch user balance
-      const { data: user } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", bet.user_id)
-        .single();
-
-      const currentBalance = Number(user.balance) || 0;
-      newBalance = currentBalance + Number(bet.potential_win || 0);
-
-      // Update user balance
-      await supabase
-        .from("users")
-        .update({ balance: newBalance })
-        .eq("id", bet.user_id);
-    }
-
-    // Update bet status
-    await supabase
-      .from("bets")
-      .update({ status: isWin ? "win" : "lose" })
-      .eq("id", bet.id);
-  }
-
-  // Reload all frontend data to reflect the settled bets
-  alert("Result Announced: " + selectedWinningNumber);
-
-  selectedWinningNumber = null;
-  document.getElementById("selectedNumberText").innerText = "Selected Number : --";
-
-  // Refresh number grid, P&L, and all bets table
-  await loadPendingNumberGrid();
-  await loadPNLReport();
-  await loadAllBetData();
-};
-    
+ 
 // INIT
 window.onload = async () => {
 
