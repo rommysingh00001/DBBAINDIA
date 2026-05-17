@@ -33,10 +33,28 @@
       class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
     />
 
-    <!-- RESET PASSWORD LINK (hidden by default) -->
-    <a id="resetPasswordLink" href="reset-password.html" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
-      Reset Password
-    </a>
+    <!-- RESET PASSWORD SECTION (Initially Hidden) -->
+<div id="resetPasswordSection" class="hidden mt-4 text-center">
+  <p class="text-gray-400 mb-2">Enter New Password</p>
+  <input
+    id="newPassword"
+    type="password"
+    placeholder="New Password"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
+  />
+  <input
+    id="confirmPassword"
+    type="password"
+    placeholder="Confirm New Password"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
+  />
+  <button
+    id="updatePasswordBtn"
+    class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mt-2"
+  >
+    Update Password
+  </button>
+</div>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
@@ -147,6 +165,67 @@
     document.addEventListener("keydown", function(event){
       if(event.key === "Enter") login();
     });
+
+    // PASSWORD RESET FLOW
+const resetLink = document.getElementById("resetPasswordLink");
+const resetSection = document.getElementById("resetPasswordSection");
+const updateBtn = document.getElementById("updatePasswordBtn");
+
+resetLink.addEventListener("click", async function(e){
+  e.preventDefault();
+  resetSection.classList.remove("hidden");
+});
+
+// UPDATE PASSWORD FUNCTION
+updateBtn.addEventListener("click", async function(){
+  const newPass = document.getElementById("newPassword").value.trim();
+  const confirmPass = document.getElementById("confirmPassword").value.trim();
+  const loginInput = document.getElementById("loginInput").value.trim();
+  
+  if(!newPass || !confirmPass){
+    alert("Please fill both fields");
+    return;
+  }
+  if(newPass !== confirmPass){
+    alert("Passwords do not match");
+    return;
+  }
+
+  try {
+    // Identify user email (supporting phone too)
+    let email = loginInput;
+    if(!loginInput.includes("@")){
+      const { data: phoneUser } = await supabase
+        .from("users")
+        .select("email")
+        .eq("phone", loginInput)
+        .maybeSingle();
+      if(!phoneUser){
+        alert("Phone number not found");
+        return;
+      }
+      email = phoneUser.email;
+    }
+
+    // Send password reset
+    const { data, error } = await supabase.auth.updateUser({ email, password: newPass });
+    
+    if(error){
+      alert("Error updating password: " + error.message);
+      return;
+    }
+
+    alert("Password updated successfully! Please login with new password.");
+    resetSection.classList.add("hidden");
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+  } catch(err){
+    console.error(err);
+    alert(err.message);
+  }
+});
 
   </script>
 
