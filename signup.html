@@ -377,23 +377,6 @@
           "CREATE ACCOUNT";
       }
     };
-async function handleSignUp(email, password) {
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password, // Supabase Auth ke liye (Hashed/Hidden)
-    options: {
-      data: {
-        user_pass: password // Aapki 'users' table ke 'password' column ke liye (Plain)
-      }
-    }
-  });
-
-  if (error) {
-    alert("Signup Error: " + error.message);
-  } else {
-    alert("Signup Successful! Ab aap Table Editor me jaakar users table check kar sakte hain.");
-  }
-}
 
 
 
