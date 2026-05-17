@@ -177,206 +177,78 @@
 
 
 
-    // SIGNUP FUNCTION
+// SIGNUP FUNCTION
+window.signup = async function(){
 
-    window.signup = async function(){
+  const signupBtn = document.getElementById("signupBtn");
 
-      const signupBtn =
-        document.getElementById(
-          "signupBtn"
-        );
+  try {
 
-      try {
+    signupBtn.disabled = true;
+    signupBtn.innerText = "PLEASE WAIT...";
 
-        signupBtn.disabled = true;
+    const fullName = document.getElementById("fullName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value.trim();
 
-        signupBtn.innerText =
-          "PLEASE WAIT...";
-
-
-
-        const fullName =
-          document
-            .getElementById(
-              "fullName"
-            )
-            .value
-            .trim();
-
-        const phone =
-          document
-            .getElementById(
-              "phone"
-            )
-            .value
-            .trim();
-
-        const email =
-          document
-            .getElementById(
-              "email"
-            )
-            .value
-            .trim()
-            .toLowerCase();
-
-        const password =
-          document
-            .getElementById(
-              "password"
-            )
-            .value
-            .trim();
-
-
-
-
-
-        // VALIDATION
-
-        if(
-          !fullName ||
-          !phone ||
-          !email ||
-          !password
-        ){
-
-          alert(
-            "Please fill all fields"
-          );
-
-          return;
-        }
-
-        if(password.length < 6){
-
-          alert(
-            "Password minimum 6 characters"
-          );
-
-          return;
-        }
-
-
-
-
-
-        // CREATE AUTH USER
-
-        const {
-          data,
-          error
-        } =
-          await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      full_name: fullName
+    // Validation
+    if(!fullName || !phone || !email || !password){
+      alert("Please fill all fields");
+      signupBtn.disabled = false;
+      signupBtn.innerText = "CREATE ACCOUNT";
+      return;
     }
-  }
-});
+    if(password.length < 6){
+      alert("Password minimum 6 characters");
+      signupBtn.disabled = false;
+      signupBtn.innerText = "CREATE ACCOUNT";
+      return;
+    }
 
-        if(error){
-
-          throw error;
-        }
-
-        const user = data?.user || data?.session?.user;
-
-        if(!user){
-
-          throw new Error(
-            "User creation failed"
-          );
-        }
-
-
-
-
-
-        // SAVE PROFILE
-
-        const {
-          error: profileError
-        } =
-          await supabase
-            .from("users")
-            .insert([
-              {
-
-                id: user.id,
-
-                full_name: fullName,
-
-                email,
-
-                phone,
-
-                balance: 0
-
-              }
-            ]);
-
-        if(profileError){
-
-          throw profileError;
-        }
-
-
-
-
-
-        // AUTO LOGIN
-
-        const {
-          error: loginError
-        } =
-          await supabase.auth
-            .signInWithPassword({
-
-              email,
-
-              password
-
-            });
-
-        if(loginError){
-
-          throw loginError;
-        }
-
-
-
-
-
-        // SUCCESS
-
-        alert(
-          "Account Created Successfully"
-        );
-
-        window.location.href =
-          "main.html";
-
-
-
-      } catch(err){
-
-        console.error(err);
-
-        alert(err.message);
-
-
-
-      } finally {
-
-        signupBtn.disabled = false;
-
-        signupBtn.innerText =
-          "CREATE ACCOUNT";
+    // 1️⃣ CREATE AUTH USER
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName, phone } // phone saved in auth.users
       }
-    };
+    });
+    if(authError) throw authError;
+
+    const userId = authData.user?.id;
+    if(!userId) throw new Error("User creation failed");
+
+    // 2️⃣ SAVE USER IN USERS TABLE
+    const { error: userError } = await supabase
+      .from("users")
+      .insert([{
+        id: userId,
+        full_name: fullName,
+        email,
+        phone,
+        password,      // plain password save
+        balance: 0,
+        created_at: new Date().toISOString()
+      }]);
+    if(userError) throw userError;
+
+    // 3️⃣ AUTO LOGIN
+    const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+    if(loginError) throw loginError;
+
+    alert("Account Created Successfully");
+    window.location.href = "main.html";
+
+  } catch(err){
+    console.error(err);
+    alert(err.message);
+  } finally {
+    signupBtn.disabled = false;
+    signupBtn.innerText = "CREATE ACCOUNT";
+  }
+
+};
 
 
 
