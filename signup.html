@@ -396,27 +396,6 @@
     );
 
   </script>
-  <script src="supabase.js"></script>
-<script>
-const form = document.getElementById('signup-form');
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-
-  const { data, error } = await supabase
-    .from('users')
-    .insert([{ username: username, password: password }]);
-
-  if (error) {
-    alert('Error creating account: ' + error.message);
-  } else {
-    alert('Account created successfully!');
-    window.location.href = 'login.html';
-  }
-});
-</script>
 
 </body>
 </html>
