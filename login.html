@@ -4,8 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - DBBA INDIA</title>
-    <link rel="icon" type="image/png" href="logo.png">
-
+  <link rel="icon" type="image/png" href="logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
@@ -19,6 +18,7 @@
 
     <p class="text-center text-gray-400 mb-6">Login To Continue</p>
 
+    <!-- LOGIN INPUTS -->
     <input
       id="loginInput"
       type="text"
@@ -33,28 +33,33 @@
       class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
     />
 
-    <!-- RESET PASSWORD SECTION (Initially Hidden) -->
-<div id="resetPasswordSection" class="hidden mt-4 text-center">
-  <p class="text-gray-400 mb-2">Enter New Password</p>
-  <input
-    id="newPassword"
-    type="password"
-    placeholder="New Password"
-    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
-  />
-  <input
-    id="confirmPassword"
-    type="password"
-    placeholder="Confirm New Password"
-    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
-  />
-  <button
-    id="updatePasswordBtn"
-    class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mt-2"
-  >
-    Update Password
-  </button>
-</div>
+    <!-- RESET PASSWORD LINK (hidden by default) -->
+    <a id="resetPasswordLink" href="#" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
+      Reset Password
+    </a>
+
+    <!-- RESET PASSWORD SECTION (hidden initially) -->
+    <div id="resetPasswordSection" class="hidden mt-4 text-center">
+      <p class="text-gray-400 mb-2">Enter New Password</p>
+      <input
+        id="newPassword"
+        type="password"
+        placeholder="New Password"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
+      />
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirm New Password"
+        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
+      />
+      <button
+        id="updatePasswordBtn"
+        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mt-2"
+      >
+        Update & Login
+      </button>
+    </div>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
@@ -84,7 +89,7 @@
     const { data: { session } } = await supabase.auth.getSession();
     if(session) window.location.href = "main.html";
 
-    // SHOW PASSWORD
+    // SHOW PASSWORD TOGGLE
     document.getElementById("showPassword").addEventListener("change", function(){
       const passInput = document.getElementById("loginPassword");
       passInput.type = this.checked ? "text" : "password";
@@ -94,7 +99,10 @@
     async function login(){
       const loginBtn = document.getElementById("loginBtn");
       const resetLink = document.getElementById("resetPasswordLink");
-      resetLink.classList.add("hidden"); // hide link at start
+      const resetSection = document.getElementById("resetPasswordSection");
+      resetLink.classList.add("hidden");
+      resetSection.classList.add("hidden");
+
       try {
         loginBtn.disabled = true;
         loginBtn.innerText = "PLEASE WAIT...";
@@ -123,7 +131,7 @@
           email = phoneUser.email;
         }
 
-        // LOGIN
+        // LOGIN ATTEMPT
         const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
         if(loginError){
           alert("Wrong password!");
@@ -131,11 +139,10 @@
           return;
         }
 
-        // GET SESSION
+        // SESSION AND PROFILE
         const { data: { session } } = await supabase.auth.getSession();
         if(!session) throw new Error("Session not created");
 
-        // GET USER PROFILE
         const { data: userData, error: userError } = await supabase
           .from("users")
           .select("*")
@@ -166,66 +173,82 @@
       if(event.key === "Enter") login();
     });
 
-    // PASSWORD RESET FLOW
-const resetLink = document.getElementById("resetPasswordLink");
-const resetSection = document.getElementById("resetPasswordSection");
-const updateBtn = document.getElementById("updatePasswordBtn");
+    // PASSWORD RESET FLOW WITH AUTO-LOGIN
+    const resetLink = document.getElementById("resetPasswordLink");
+    const resetSection = document.getElementById("resetPasswordSection");
+    const updateBtn = document.getElementById("updatePasswordBtn");
 
-resetLink.addEventListener("click", async function(e){
-  e.preventDefault();
-  resetSection.classList.remove("hidden");
-});
+    resetLink.addEventListener("click", function(e){
+      e.preventDefault();
+      resetSection.classList.remove("hidden");
+    });
 
-// UPDATE PASSWORD FUNCTION
-updateBtn.addEventListener("click", async function(){
-  const newPass = document.getElementById("newPassword").value.trim();
-  const confirmPass = document.getElementById("confirmPassword").value.trim();
-  const loginInput = document.getElementById("loginInput").value.trim();
-  
-  if(!newPass || !confirmPass){
-    alert("Please fill both fields");
-    return;
-  }
-  if(newPass !== confirmPass){
-    alert("Passwords do not match");
-    return;
-  }
+    updateBtn.addEventListener("click", async function(){
+      const newPass = document.getElementById("newPassword").value.trim();
+      const confirmPass = document.getElementById("confirmPassword").value.trim();
+      const loginInput = document.getElementById("loginInput").value.trim();
 
-  try {
-    // Identify user email (supporting phone too)
-    let email = loginInput;
-    if(!loginInput.includes("@")){
-      const { data: phoneUser } = await supabase
-        .from("users")
-        .select("email")
-        .eq("phone", loginInput)
-        .maybeSingle();
-      if(!phoneUser){
-        alert("Phone number not found");
+      if(!newPass || !confirmPass){
+        alert("Please fill both fields");
         return;
       }
-      email = phoneUser.email;
-    }
+      if(newPass !== confirmPass){
+        alert("Passwords do not match");
+        return;
+      }
 
-    // Send password reset
-    const { data, error } = await supabase.auth.updateUser({ email, password: newPass });
-    
-    if(error){
-      alert("Error updating password: " + error.message);
-      return;
-    }
+      try {
+        // Identify user email
+        let email = loginInput;
+        if(!loginInput.includes("@")){
+          const { data: phoneUser } = await supabase
+            .from("users")
+            .select("email")
+            .eq("phone", loginInput)
+            .maybeSingle();
+          if(!phoneUser){
+            alert("Phone number not found");
+            return;
+          }
+          email = phoneUser.email;
+        }
 
-    alert("Password updated successfully! Please login with new password.");
-    resetSection.classList.add("hidden");
-    document.getElementById("loginPassword").value = "";
-    document.getElementById("newPassword").value = "";
-    document.getElementById("confirmPassword").value = "";
+        // UPDATE PASSWORD
+        const { data, error } = await supabase.auth.updateUser({ password: newPass });
+        if(error){
+          alert("Error updating password: " + error.message);
+          return;
+        }
 
-  } catch(err){
-    console.error(err);
-    alert(err.message);
-  }
-});
+        // AUTO-LOGIN AFTER RESET
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password: newPass });
+        if(loginError){
+          alert("Login failed after password update: " + loginError.message);
+          return;
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if(!session) throw new Error("Session not created");
+
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+        if(userError || !userData){
+          await supabase.auth.signOut();
+          throw new Error("User profile missing");
+        }
+
+        localStorage.setItem("dbba_user", JSON.stringify(userData));
+        alert("Password updated and login successful!");
+        window.location.href = "main.html";
+
+      } catch(err){
+        console.error(err);
+        alert(err.message);
+      }
+    });
 
   </script>
 
