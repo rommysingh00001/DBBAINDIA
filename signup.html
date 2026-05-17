@@ -2,188 +2,50 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8"/>
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signup - DBBA INDIA</title>
   <link rel="icon" type="image/png" href="logo.png">
-
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
-  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
+  <h2 class="text-4xl font-black text-center mb-2">
+    <span class="text-yellow-400">DBBA</span>
+    <span class="text-green-400">INDIA</span>
+  </h2>
+  <p class="text-center text-gray-400 mb-6">Create New Account</p>
 
-    <!-- LOGO -->
+  <input id="fullName" type="text" placeholder="Full Name" class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+  <input id="phone" type="text" placeholder="Phone Number" class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+  <input id="email" type="email" placeholder="Email Address" class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"/>
+  <input id="password" type="password" placeholder="Password" class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-3 outline-none"/>
 
-    <h2 class="text-4xl font-black text-center mb-2">
-
-      <span class="text-yellow-400">
-        DBBA
-      </span>
-
-      <span class="text-green-400">
-        INDIA
-      </span>
-
-    </h2>
-
-    <p class="text-center text-gray-400 mb-6">
-      Create New Account
-    </p>
-
-
-
-
-
-    <!-- FULL NAME -->
-
-    <input
-      id="fullName"
-      type="text"
-      placeholder="Full Name"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"
-    />
-
-
-
-
-
-    <!-- PHONE -->
-
-    <input
-      id="phone"
-      type="text"
-      placeholder="Phone Number"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"
-    />
-
-
-
-
-
-    <!-- EMAIL -->
-
-    <input
-      id="email"
-      type="email"
-      placeholder="Email Address"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"
-    />
-
-
-
-
-
-    <!-- PASSWORD -->
-
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-3 outline-none"
-    />
-
-
-
-
-
-    <!-- SHOW PASSWORD -->
-
-    <div class="flex items-center gap-2 mb-6">
-
-      <input
-        type="checkbox"
-        id="showPassword"
-      />
-
-      <label
-        for="showPassword"
-        class="text-sm text-gray-400 cursor-pointer"
-      >
-        Show Password
-      </label>
-
-    </div>
-
-
-
-
-
-    <!-- SIGNUP BUTTON -->
-
-    <button
-      id="signupBtn"
-      onclick="signup()"
-      class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4 transition"
-    >
-      CREATE ACCOUNT
-    </button>
-
-
-
-
-
-    <!-- LOGIN LINK -->
-
-    <a
-      href="login.html"
-      class="block text-center text-yellow-400 font-bold"
-    >
-      Already Have Account? Login
-    </a>
-
+  <div class="flex items-center gap-2 mb-6">
+    <input type="checkbox" id="showPassword"/>
+    <label for="showPassword" class="text-sm text-gray-400 cursor-pointer">Show Password</label>
   </div>
 
+  <button id="signupBtn" onclick="signup()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mb-4 transition">CREATE ACCOUNT</button>
 
+  <a href="login.html" class="block text-center text-yellow-400 font-bold">Already Have Account? Login</a>
+</div>
 
+<script type="module">
+import { supabase } from "./supabase.js";
 
-
-  <script type="module">
-
-    import {
-      supabase
-    } from "./supabase.js";
-
-
-
-    // SHOW PASSWORD
-
-    document
-      .getElementById("showPassword")
-      .addEventListener(
-        "change",
-        function(){
-
-          const passInput =
-            document.getElementById(
-              "password"
-            );
-
-          passInput.type =
-            this.checked
-              ? "text"
-              : "password";
-        }
-      );
-
-
-
-
+// Show password toggle
+document.getElementById("showPassword").addEventListener("change", function() {
+  document.getElementById("password").type = this.checked ? "text" : "password";
+});
 
 // SIGNUP FUNCTION
-window.signup = async function(){
-
+window.signup = async function() {
   const signupBtn = document.getElementById("signupBtn");
 
   try {
-
     signupBtn.disabled = true;
     signupBtn.innerText = "PLEASE WAIT...";
 
@@ -195,76 +57,56 @@ window.signup = async function(){
     // Validation
     if(!fullName || !phone || !email || !password){
       alert("Please fill all fields");
-      signupBtn.disabled = false;
-      signupBtn.innerText = "CREATE ACCOUNT";
       return;
     }
     if(password.length < 6){
       alert("Password minimum 6 characters");
-      signupBtn.disabled = false;
-      signupBtn.innerText = "CREATE ACCOUNT";
       return;
     }
 
     // CREATE AUTH USER
-const { data, error } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      full_name: fullName
-      // phone yaha mat bhejo, Auth me save nahi hota
-    }
-  }
-});
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: fullName, phone } }
+    });
+    if(authError) throw authError;
 
-// SAVE PROFILE (yahi table me phone save hoga)
-const { error: profileError } = await supabase
-  .from("users")
-  .insert([{
-    id: data.user.id,
-    full_name: fullName,
-    email,
-    phone,        // yahi phone save hoga
-    password,     // plain text, manual login ke liye
-    balance: 0
-  }]);
+    const user = authData?.user || authData?.session?.user;
+    if(!user) throw new Error("User creation failed");
 
-    // 3️⃣ AUTO LOGIN
+    // SAVE PROFILE IN USERS TABLE
+    const { error: profileError } = await supabase.from("users").insert([{
+      id: user.id,
+      full_name: fullName,
+      email,
+      phone,
+      password,       // optional: only for reference/testing
+      balance: 0
+    }]);
+    if(profileError) throw profileError;
+
+    // AUTO LOGIN
     const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
     if(loginError) throw loginError;
 
-    alert("Account Created Successfully");
+    alert("Account Created Successfully!");
     window.location.href = "main.html";
 
-  } catch(err){
+  } catch(err) {
     console.error(err);
     alert(err.message);
   } finally {
     signupBtn.disabled = false;
     signupBtn.innerText = "CREATE ACCOUNT";
   }
-
 };
 
-
-
-
-
-    // ENTER BUTTON SUPPORT
-
-    document.addEventListener(
-      "keydown",
-      function(event){
-
-        if(event.key === "Enter"){
-
-          signup();
-        }
-      }
-    );
-
-  </script>
+// ENTER KEY SUPPORT
+document.addEventListener("keydown", function(event){
+  if(event.key === "Enter") signup();
+});
+</script>
 
 </body>
 </html>
