@@ -149,6 +149,37 @@
     });
 
   </script>
+  <script src="supabase.js"></script>
+<script>
+const form = document.getElementById('login-form');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('username', username)
+    .single();
+
+  if (error || !data) {
+    alert('User not found');
+    return;
+  }
+
+  if (data.password !== password) {
+    if (confirm('Wrong password! Do you want to reset it?')) {
+      window.location.href = 'reset-password.html?user=' + encodeURIComponent(username);
+    }
+    return;
+  }
+
+  alert('Login successful!');
+  window.location.href = 'dashboard.html';
+});
+</script>
 
 </body>
 </html>
