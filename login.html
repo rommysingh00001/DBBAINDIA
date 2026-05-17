@@ -18,6 +18,7 @@
 
   <p class="text-center text-gray-400 mb-6">Login To Continue</p>
 
+  <!-- LOGIN INPUTS -->
   <input
     id="loginInput"
     type="text"
@@ -70,7 +71,7 @@ import { supabase } from "./supabase.js";
 const { data: { session } } = await supabase.auth.getSession();
 if(session) window.location.href = "main.html";
 
-// SHOW PASSWORD
+// SHOW PASSWORD TOGGLE
 document.getElementById("showPassword").addEventListener("change", function(){
   const passInput = document.getElementById("loginPassword");
   passInput.type = this.checked ? "text" : "password";
@@ -81,6 +82,8 @@ async function login(){
   const loginBtn = document.getElementById("loginBtn");
   const loginInput = document.getElementById("loginInput").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
+  const resetModal = document.getElementById("resetModal");
+
   if(!loginInput || !password){
     alert("Please fill all fields");
     return;
@@ -90,6 +93,7 @@ async function login(){
   loginBtn.innerText = "PLEASE WAIT...";
 
   try {
+    // PHONE → EMAIL RESOLVE
     let email = loginInput;
     if(!loginInput.includes("@")){
       const { data: phoneUser } = await supabase
@@ -97,20 +101,24 @@ async function login(){
         .select("email")
         .eq("phone", loginInput)
         .maybeSingle();
-      if(!phoneUser){
+      if(!phoneUser || !phoneUser.email){
         alert("Phone number not found");
         return;
       }
       email = phoneUser.email;
     }
 
+    // LOGIN ATTEMPT
     const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+
     if(loginError){
-      alert("Wrong password! You can reset it.");
-      document.getElementById("resetModal").classList.remove("hidden");
+      console.warn(loginError);
+      alert("Invalid login credentials! You can reset your password.");
+      resetModal.classList.remove("hidden"); // SHOW MODAL ON ANY LOGIN ERROR
       return;
     }
 
+    // LOGIN SUCCESS
     const { data: { session } } = await supabase.auth.getSession();
     const { data: userData, error: userError } = await supabase
       .from("users")
@@ -124,7 +132,7 @@ async function login(){
 
   } catch(err){
     console.error(err);
-    alert(err.message);
+    resetModal.classList.remove("hidden"); // SHOW MODAL ON UNEXPECTED ERROR
   } finally {
     loginBtn.disabled = false;
     loginBtn.innerText = "LOGIN";
@@ -155,14 +163,14 @@ sendResetBtn.addEventListener("click", async () => {
       .select("email")
       .eq("phone", input)
       .maybeSingle();
-    if(!phoneUser){
+    if(!phoneUser || !phoneUser.email){
       alert("Phone number not found");
       return;
     }
     email = phoneUser.email;
   }
 
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
   if(error){
     alert("Error sending reset email: " + error.message);
     return;
