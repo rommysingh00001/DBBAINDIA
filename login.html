@@ -1,256 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - DBBA INDIA</title>
-  <link rel="icon" type="image/png" href="logo.png">
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login - DBBA INDIA</title>
+<link rel="icon" type="image/png" href="logo.png">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
-  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
+<div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
 
-    <h2 class="text-4xl font-black text-center mb-2">
-      <span class="text-yellow-400">DBBA</span>
-      <span class="text-green-400">INDIA</span>
-    </h2>
+  <h2 class="text-4xl font-black text-center mb-2">
+    <span class="text-yellow-400">DBBA</span>
+    <span class="text-green-400">INDIA</span>
+  </h2>
 
-    <p class="text-center text-gray-400 mb-6">Login To Continue</p>
+  <p class="text-center text-gray-400 mb-6">Login To Continue</p>
 
-    <!-- LOGIN INPUTS -->
-    <input
-      id="loginInput"
-      type="text"
-      placeholder="Email or Phone Number"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"
-    />
+  <input
+    id="loginInput"
+    type="text"
+    placeholder="Email or Phone Number"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"
+  />
 
-    <input
-      id="loginPassword"
-      type="password"
-      placeholder="Password"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
-    />
+  <input
+    id="loginPassword"
+    type="password"
+    placeholder="Password"
+    class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
+  />
 
-    <!-- RESET PASSWORD LINK (hidden by default) -->
-    <a id="resetPasswordLink" href="#" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
-      Reset Password
-    </a>
-
-    <!-- RESET PASSWORD SECTION (hidden initially) -->
-    <div id="resetPasswordSection" class="hidden mt-4 text-center">
-      <p class="text-gray-400 mb-2">Enter New Password</p>
-      <input
-        id="newPassword"
-        type="password"
-        placeholder="New Password"
-        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
-      />
-      <input
-        id="confirmPassword"
-        type="password"
-        placeholder="Confirm New Password"
-        class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
-      />
-      <button
-        id="updatePasswordBtn"
-        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl mt-2"
-      >
-        Update & Login
-      </button>
-    </div>
-
-    <!-- SHOW PASSWORD -->
-    <div class="flex items-center gap-2 mb-6">
-      <input type="checkbox" id="showPassword"/>
-      <label for="showPassword" class="text-sm text-gray-400 cursor-pointer">Show Password</label>
-    </div>
-
-    <!-- LOGIN BUTTON -->
-    <button
-      id="loginBtn"
-      class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4 transition"
-    >
-      LOGIN
-    </button>
-
-    <!-- SIGNUP -->
-    <a href="signup.html" class="block text-center text-green-400 font-bold mb-4">
-      Create New Account
-    </a>
-
+  <!-- SHOW PASSWORD -->
+  <div class="flex items-center gap-2 mb-6">
+    <input type="checkbox" id="showPassword"/>
+    <label for="showPassword" class="text-sm text-gray-400 cursor-pointer">Show Password</label>
   </div>
 
-  <script type="module">
-    import { supabase } from "./supabase.js";
+  <!-- LOGIN BUTTON -->
+  <button
+    id="loginBtn"
+    class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 rounded-2xl mb-4 transition"
+  >
+    LOGIN
+  </button>
 
-    // AUTO LOGIN CHECK
-    const { data: { session } } = await supabase.auth.getSession();
-    if(session) window.location.href = "main.html";
+  <!-- SIGNUP -->
+  <a href="signup.html" class="block text-center text-green-400 font-bold mb-4">
+    Create New Account
+  </a>
 
-    // SHOW PASSWORD TOGGLE
-    document.getElementById("showPassword").addEventListener("change", function(){
-      const passInput = document.getElementById("loginPassword");
-      passInput.type = this.checked ? "text" : "password";
-    });
+</div>
 
-    // LOGIN FUNCTION
-    async function login(){
-      const loginBtn = document.getElementById("loginBtn");
-      const resetLink = document.getElementById("resetPasswordLink");
-      const resetSection = document.getElementById("resetPasswordSection");
-      resetLink.classList.add("hidden");
-      resetSection.classList.add("hidden");
+<!-- RESET PASSWORD MODAL -->
+<div id="resetModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+  <div class="bg-gray-900 p-6 rounded-2xl w-full max-w-sm text-center">
+    <h3 class="text-xl font-bold mb-4 text-yellow-400">Reset Password</h3>
+    <p class="text-gray-400 mb-4">We will send a password reset email to your account.</p>
+    <button id="sendResetBtn" class="w-full bg-green-500 hover:bg-green-400 py-3 rounded-2xl font-bold text-black">Send Reset Email</button>
+    <button id="closeModalBtn" class="w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-2xl font-bold text-white mt-2">Cancel</button>
+  </div>
+</div>
 
-      try {
-        loginBtn.disabled = true;
-        loginBtn.innerText = "PLEASE WAIT...";
+<script type="module">
+import { supabase } from "./supabase.js";
 
-        const input = document.getElementById("loginInput").value.trim();
-        const password = document.getElementById("loginPassword").value.trim();
+// AUTO LOGIN CHECK
+const { data: { session } } = await supabase.auth.getSession();
+if(session) window.location.href = "main.html";
 
-        if(!input || !password){
-          alert("Please fill all fields");
-          return;
-        }
+// SHOW PASSWORD
+document.getElementById("showPassword").addEventListener("change", function(){
+  const passInput = document.getElementById("loginPassword");
+  passInput.type = this.checked ? "text" : "password";
+});
 
-        let email = input;
+// LOGIN FUNCTION
+async function login(){
+  const loginBtn = document.getElementById("loginBtn");
+  const loginInput = document.getElementById("loginInput").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  if(!loginInput || !password){
+    alert("Please fill all fields");
+    return;
+  }
 
-        // PHONE LOGIN SUPPORT
-        if(!input.includes("@")){
-          const { data: phoneUser } = await supabase
-            .from("users")
-            .select("email")
-            .eq("phone", input)
-            .maybeSingle();
-          if(!phoneUser){
-            alert("Phone number not found");
-            return;
-          }
-          email = phoneUser.email;
-        }
+  loginBtn.disabled = true;
+  loginBtn.innerText = "PLEASE WAIT...";
 
-        // LOGIN ATTEMPT
-        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-        if(loginError){
-          alert("Wrong password!");
-          resetLink.classList.remove("hidden"); // show reset password
-          return;
-        }
-
-        // SESSION AND PROFILE
-        const { data: { session } } = await supabase.auth.getSession();
-        if(!session) throw new Error("Session not created");
-
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-        if(userError || !userData){
-          await supabase.auth.signOut();
-          throw new Error("User profile missing");
-        }
-
-        localStorage.setItem("dbba_user", JSON.stringify(userData));
-        alert("Login Successful");
-        window.location.href = "main.html";
-
-      } catch(err){
-        console.error(err);
-        alert(err.message);
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.innerText = "LOGIN";
+  try {
+    let email = loginInput;
+    if(!loginInput.includes("@")){
+      const { data: phoneUser } = await supabase
+        .from("users")
+        .select("email")
+        .eq("phone", loginInput)
+        .maybeSingle();
+      if(!phoneUser){
+        alert("Phone number not found");
+        return;
       }
+      email = phoneUser.email;
     }
 
-    document.getElementById("loginBtn").addEventListener("click", login);
+    const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+    if(loginError){
+      alert("Wrong password! You can reset it.");
+      document.getElementById("resetModal").classList.remove("hidden");
+      return;
+    }
 
-    // ENTER KEY LOGIN
-    document.addEventListener("keydown", function(event){
-      if(event.key === "Enter") login();
-    });
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+    if(userError || !userData) throw new Error("User profile missing");
 
-    // PASSWORD RESET FLOW WITH AUTO-LOGIN
-    const resetLink = document.getElementById("resetPasswordLink");
-    const resetSection = document.getElementById("resetPasswordSection");
-    const updateBtn = document.getElementById("updatePasswordBtn");
+    localStorage.setItem("dbba_user", JSON.stringify(userData));
+    window.location.href = "main.html";
 
-    resetLink.addEventListener("click", function(e){
-      e.preventDefault();
-      resetSection.classList.remove("hidden");
-    });
+  } catch(err){
+    console.error(err);
+    alert(err.message);
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.innerText = "LOGIN";
+  }
+}
 
-    updateBtn.addEventListener("click", async function(){
-      const newPass = document.getElementById("newPassword").value.trim();
-      const confirmPass = document.getElementById("confirmPassword").value.trim();
-      const loginInput = document.getElementById("loginInput").value.trim();
+document.getElementById("loginBtn").addEventListener("click", login);
+document.addEventListener("keydown", function(event){
+  if(event.key === "Enter") login();
+});
 
-      if(!newPass || !confirmPass){
-        alert("Please fill both fields");
-        return;
-      }
-      if(newPass !== confirmPass){
-        alert("Passwords do not match");
-        return;
-      }
+// RESET PASSWORD MODAL LOGIC
+const resetModal = document.getElementById("resetModal");
+const sendResetBtn = document.getElementById("sendResetBtn");
+const closeModalBtn = document.getElementById("closeModalBtn");
 
-      try {
-        // Identify user email
-        let email = loginInput;
-        if(!loginInput.includes("@")){
-          const { data: phoneUser } = await supabase
-            .from("users")
-            .select("email")
-            .eq("phone", loginInput)
-            .maybeSingle();
-          if(!phoneUser){
-            alert("Phone number not found");
-            return;
-          }
-          email = phoneUser.email;
-        }
+sendResetBtn.addEventListener("click", async () => {
+  const input = document.getElementById("loginInput").value.trim();
+  if(!input){
+    alert("Please enter your email or phone first");
+    return;
+  }
 
-        // UPDATE PASSWORD
-        const { data, error } = await supabase.auth.updateUser({ password: newPass });
-        if(error){
-          alert("Error updating password: " + error.message);
-          return;
-        }
+  let email = input;
+  if(!input.includes("@")){
+    const { data: phoneUser } = await supabase
+      .from("users")
+      .select("email")
+      .eq("phone", input)
+      .maybeSingle();
+    if(!phoneUser){
+      alert("Phone number not found");
+      return;
+    }
+    email = phoneUser.email;
+  }
 
-        // AUTO-LOGIN AFTER RESET
-        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password: newPass });
-        if(loginError){
-          alert("Login failed after password update: " + loginError.message);
-          return;
-        }
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+  if(error){
+    alert("Error sending reset email: " + error.message);
+    return;
+  }
 
-        const { data: { session } } = await supabase.auth.getSession();
-        if(!session) throw new Error("Session not created");
+  alert("Password reset email sent! Check your inbox.");
+  resetModal.classList.add("hidden");
+});
 
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-        if(userError || !userData){
-          await supabase.auth.signOut();
-          throw new Error("User profile missing");
-        }
-
-        localStorage.setItem("dbba_user", JSON.stringify(userData));
-        alert("Password updated and login successful!");
-        window.location.href = "main.html";
-
-      } catch(err){
-        console.error(err);
-        alert(err.message);
-      }
-    });
-
-  </script>
+closeModalBtn.addEventListener("click", () => resetModal.classList.add("hidden"));
+</script>
 
 </body>
 </html>
