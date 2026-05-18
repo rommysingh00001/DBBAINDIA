@@ -184,11 +184,13 @@ const { error: profileError } = await supabase
     {
       id: user.id,
       balance: 0
-      // NOTE: Do NOT insert full_name, email, or phone here!
-      // The trigger on public.users will automatically fill them from auth.users
+      // The trigger on public.users automatically fills full_name, email, and phone
     }
   ]);
 
+if(profileError){
+  throw profileError;
+}
 
 
 
