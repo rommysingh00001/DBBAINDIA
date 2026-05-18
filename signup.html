@@ -177,56 +177,17 @@
 
 
 
-    // SIGNUP FUNCTION
-
-    window.signup = async function(){
-
-      const signupBtn =
-        document.getElementById(
-          "signupBtn"
-        );
-
-      try {
-
-        signupBtn.disabled = true;
-
-        signupBtn.innerText =
-          "PLEASE WAIT...";
-
-
-
-        const fullName =
-          document
-            .getElementById(
-              "fullName"
-            )
-            .value
-            .trim();
-
-        const phone =
-          document
-            .getElementById(
-              "phone"
-            )
-            .value
-            .trim();
-
-        const email =
-          document
-            .getElementById(
-              "email"
-            )
-            .value
-            .trim()
-            .toLowerCase();
-
-        const password =
-          document
-            .getElementById(
-              "password"
-            )
-            .value
-            .trim();
+    // SAVE PROFILE (PATCHED FOR TRIGGER)
+const { error: profileError } = await supabase
+  .from("users")
+  .insert([
+    {
+      id: user.id,
+      balance: 0
+      // NOTE: Do NOT insert full_name, email, or phone here!
+      // The trigger on public.users will automatically fill them from auth.users
+    }
+  ]);
 
 
 
