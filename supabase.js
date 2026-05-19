@@ -7,10 +7,10 @@ import {
 // =========================
 
 const supabaseUrl =
-  "https://meqzyznfpiqitdrxsxax.supabase.co";
+  "https://ooqbjzhgezkdxwhmxlxp.supabase.co";
 
 const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcXp5em5mcGlxaXRkcnhzeGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxODQxNTgsImV4cCI6MjA5Mzc2MDE1OH0.IU0Q_EE3-6ozwhxJN5VVMWTDS00hYGbHm751yH2c47c";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcWJqemhnZXprZHh3aG14bHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxOTQ4MzcsImV4cCI6MjA5NDc3MDgzN30.5zAmVsS9FImD_BfJ8S6eSuX3rBVhuNYfjaPbUjOV-rE";
 
 // =========================
 // CREATE CLIENT
