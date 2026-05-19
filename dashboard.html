@@ -1,432 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel - DBBA INDIA</title>
-  <link rel="icon" type="image/png" href="logo.png">
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard - DBBA INDIA</title>
+<link rel="icon" type="image/png" href="logo.png">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-[#050816] text-white p-6">
 
-  <!-- HEADER -->
-  <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
-    <h1 class="text-5xl font-black">
-      <span class="text-yellow-400">ADMIN</span>
-      <span class="text-green-400">PANEL</span>
-    </h1>
+<!-- HEADER -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+  <h1 class="text-5xl font-black"><span class="text-yellow-400">ADMIN</span> <span class="text-green-400">DASHBOARD</span></h1>
+  <div class="flex gap-4 flex-wrap">
+    <button onclick="scrollToUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black transition">Manage Users</button>
+    <button onclick="scrollToReports()" class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-black transition">Daily Reports</button>
+    <button onclick="scrollToExposure()" class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black transition">Live Exposure</button>
+    <button onclick="scrollToPNL()" class="bg-orange-500 hover:bg-orange-400 text-black px-5 py-3 rounded-2xl font-black transition">PNL Analytics</button>
+    <button onclick="logoutAdmin()" class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-2xl font-black transition">Logout</button>
+  </div>
+</div>
 
-    <div class="flex gap-4 flex-wrap">
-      <button onclick="scrollToUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black transition">Manage Users</button>
-      <button onclick="scrollToReports()" class="bg-blue-500 hover:bg-blue-400 text-black px-5 py-3 rounded-2xl font-black transition">Daily Reports</button>
-      <button onclick="scrollToExposure()" class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black transition">Live Exposure</button>
-      <button onclick="scrollToPNL()" class="bg-orange-500 hover:bg-orange-400 text-black px-5 py-3 rounded-2xl font-black transition">PNL Analytics</button>
-      <button onclick="logoutAdmin()" class="bg-red-500 hover:bg-red-400 text-white px-5 py-3 rounded-2xl font-black transition">Logout</button>
-    </div>
+<!-- TOP STATS -->
+<div class="grid md:grid-cols-4 gap-5 mb-8">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+    <p class="text-gray-400 mb-2">Total Users</p>
+    <h2 id="totalUsersCard" class="text-5xl font-black text-green-400">0</h2>
+  </div>
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+    <p class="text-gray-400 mb-2">Total Bets</p>
+    <h2 id="totalBetsCard" class="text-5xl font-black text-yellow-400">0</h2>
+  </div>
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+    <p class="text-gray-400 mb-2">Pending Bets</p>
+    <h2 id="pendingBetsCard" class="text-5xl font-black text-pink-400">0</h2>
+  </div>
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+    <p class="text-gray-400 mb-2">Total Coins</p>
+    <h2 id="totalCoinsCard" class="text-5xl font-black text-blue-400">0</h2>
+  </div>
+</div>
+
+<!-- USERS SECTION -->
+<div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+    <h2 class="text-3xl font-black text-green-400">Manage Users</h2>
+    <button onclick="loadUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">Refresh Users</button>
   </div>
 
-  <!-- TOP STATS -->
-  <div class="grid md:grid-cols-4 gap-5 mb-8">
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-      <p class="text-gray-400 mb-2">Total Users</p>
-      <h2 id="totalUsersCard" class="text-5xl font-black text-green-400">0</h2>
-    </div>
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-      <p class="text-gray-400 mb-2">Total Bets</p>
-      <h2 id="totalBetsCard" class="text-5xl font-black text-yellow-400">0</h2>
-    </div>
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-      <p class="text-gray-400 mb-2">Pending Bets</p>
-      <h2 id="pendingBetsCard" class="text-5xl font-black text-pink-400">0</h2>
-    </div>
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-      <p class="text-gray-400 mb-2">Total Coins</p>
-      <h2 id="totalCoinsCard" class="text-5xl font-black text-blue-400">0</h2>
-    </div>
+  <!-- FILTERS -->
+  <div class="grid md:grid-cols-4 gap-4 mb-6">
+    <input type="text" id="userNameFilter" placeholder="Search Name" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    <input type="text" id="userEmailFilter" placeholder="Search Email" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    <input type="text" id="userPhoneFilter" placeholder="Search Phone" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
+    <input type="number" id="userBalanceFilter" placeholder="Minimum Balance" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
   </div>
 
-  <!-- USERS SECTION -->
-  <div id="usersSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
-    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-      <h2 class="text-3xl font-black text-green-400">Manage Users</h2>
-      <button onclick="loadUsers()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-3 rounded-2xl font-black">Refresh Users</button>
-    </div>
-
-    <!-- FILTERS -->
-    <div class="grid md:grid-cols-4 gap-4 mb-6">
-      <input type="text" id="userNameFilter" placeholder="Search Name" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      <input type="text" id="userEmailFilter" placeholder="Search Email" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      <input type="text" id="userPhoneFilter" placeholder="Search Phone" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-      <input type="number" id="userBalanceFilter" placeholder="Minimum Balance" class="bg-black border border-gray-700 rounded-2xl p-4 outline-none"/>
-    </div>
-
-    <div class="flex gap-4 mb-6">
-      <button onclick="applyUserFilters()" class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-3 rounded-2xl">Apply Filters</button>
-      <button onclick="clearUserFilters()" class="bg-red-500 hover:bg-red-400 text-white font-black px-5 py-3 rounded-2xl">Clear Filters</button>
-    </div>
-
-    <!-- USERS TABLE -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-700">
-        <thead>
-          <tr>
-            <th class="px-4 py-4 text-left text-gray-400">#</th>
-            <th class="px-4 py-4 text-left text-gray-400">Name</th>
-            <th class="px-4 py-4 text-left text-gray-400">Email</th>
-            <th class="px-4 py-4 text-left text-gray-400">Phone</th>
-            <th class="px-4 py-4 text-left text-gray-400">Balance</th>
-            <th class="px-4 py-4 text-left text-gray-400">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="usersList" class="divide-y divide-gray-700"></tbody>
-      </table>
-    </div>
+  <div class="flex gap-4 mb-6">
+    <button onclick="applyUserFilters()" class="bg-green-500 hover:bg-green-400 text-black font-black px-5 py-3 rounded-2xl">Apply Filters</button>
+    <button onclick="clearUserFilters()" class="bg-red-500 hover:bg-red-400 text-white font-black px-5 py-3 rounded-2xl">Clear Filters</button>
   </div>
 
-  <!-- NUMBER GRID SECTION -->
-  <div id="numberGridSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
-    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-      <h2 class="text-3xl font-black text-pink-400">Live Number Exposure</h2>
-      <div class="flex gap-3 flex-wrap">
-        <button onclick="loadPendingNumberGrid()" class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black">Refresh Grid</button>
-        <button onclick="autoSelectLowestBet()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">Auto Lowest Number</button>
-      </div>
-    </div>
-    <div id="numberGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4"></div>
-    <div class="mt-8 text-center">
-      <p id="minCoinNumber" class="text-gray-400 text-xl mb-2">Min Bet Number : --</p>
-      <p id="maxCoinNumber" class="text-gray-400 text-xl mb-5">Max Bet Number : --</p>
-      <h2 id="selectedNumberText" class="text-5xl font-black text-pink-400 mb-6">Selected Number : --</h2>
-      <button onclick="announceSelectedResult()" class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl transition">ANNOUNCE RESULT</button>
-    </div>
-  </div>
-
-    <!-- SCRIPT SECTION -->
-  <script type="module">
-    import { supabase } from "./supabase.js";
-
-    let allUsersData = [];
-    let allBetData = [];
-    let selectedWinningNumber = null;
-
-    /* =========================
-       USER MANAGEMENT FUNCTIONS
-    ========================== */
-
-    async function loadUsers(){
-      const { data, error } = await supabase.from("users").select("*").order("created_at", { ascending:false });
-      if(error){
-        console.error(error);
-        alert(error.message);
-        return;
-      }
-      allUsersData = data || [];
-      document.getElementById("totalUsersCard").innerText = allUsersData.length;
-      renderUsers(allUsersData);
-    }
-
-    function renderUsers(users){
-      const usersList = document.getElementById("usersList");
-      usersList.innerHTML = "";
-      users.forEach((user,index)=>{
-        usersList.innerHTML += `
-          <tr>
-            <td class="px-4 py-4">${index+1}</td>
-            <td class="px-4 py-4">${user.full_name || "-"}</td>
-            <td class="px-4 py-4">${user.email || "-"}</td>
-            <td class="px-4 py-4">${user.phone || "-"}</td>
-            <td class="px-4 py-4 text-yellow-400 font-black" id="balance-${user.id}">${user.balance || 0}</td>
-            <td class="px-4 py-4">
-              <div class="flex flex-col gap-3">
-                <div class="flex gap-2">
-                  <input type="number" id="credit-${user.id}" placeholder="Credit" class="bg-black border border-green-500 rounded-xl p-2 w-28"/>
-                  <button onclick="creditBalance('${user.id}')" class="bg-green-500 hover:bg-green-400 text-black px-4 rounded-xl font-bold">Credit</button>
-                </div>
-                <div class="flex gap-2">
-                  <input type="number" id="debit-${user.id}" placeholder="Debit" class="bg-black border border-red-500 rounded-xl p-2 w-28"/>
-                  <button onclick="debitBalance('${user.id}')" class="bg-red-500 hover:bg-red-400 text-white px-4 rounded-xl font-bold">Debit</button>
-                </div>
-              </div>
-            </td>
-          </tr>`;
-      });
-    }
-
-    window.applyUserFilters = function(){
-      const name = document.getElementById("userNameFilter").value.toLowerCase();
-      const email = document.getElementById("userEmailFilter").value.toLowerCase();
-      const phone = document.getElementById("userPhoneFilter").value.toLowerCase();
-      const minBalance = Number(document.getElementById("userBalanceFilter").value) || 0;
-      const filtered = allUsersData.filter(user=>{
-        return (!name || (user.full_name||"").toLowerCase().includes(name)) &&
-               (!email || (user.email||"").toLowerCase().includes(email)) &&
-               (!phone || (user.phone||"").toLowerCase().includes(phone)) &&
-               ((Number(user.balance)||0) >= minBalance);
-      });
-      renderUsers(filtered);
-    };
-
-    window.clearUserFilters = function(){
-      document.getElementById("userNameFilter").value = "";
-      document.getElementById("userEmailFilter").value = "";
-      document.getElementById("userPhoneFilter").value = "";
-      document.getElementById("userBalanceFilter").value = "";
-      renderUsers(allUsersData);
-    };
-
-    window.creditBalance = async function(userId){
-      const amount = Number(document.getElementById(`credit-${userId}`).value);
-      if(amount <= 0){ alert("Enter valid amount"); return; }
-      const { data:user } = await supabase.from("users").select("*").eq("id",userId).single();
-      const newBalance = (Number(user.balance)||0) + amount;
-      await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
-      document.getElementById(`balance-${userId}`).innerText = newBalance;
-      alert("Balance Credited");
-    };
-
-    window.debitBalance = async function(userId){
-      const amount = Number(document.getElementById(`debit-${userId}`).value);
-      if(amount <= 0){ alert("Enter valid amount"); return; }
-      const { data:user } = await supabase.from("users").select("*").eq("id",userId).single();
-      const current = Number(user.balance)||0;
-      if(amount > current){ alert("Insufficient Balance"); return; }
-      const newBalance = current - amount;
-      await supabase.from("users").update({ balance:newBalance }).eq("id",userId);
-      document.getElementById(`balance-${userId}`).innerText = newBalance;
-      alert("Balance Debited");
-    };
-
-    /* =========================
-       LOAD BET DATA AND NUMBER GRID
-    ========================== */
-
-    async function loadAllBetData(){
-      const { data=[] } = await supabase.from("bets").select(`
-        *,
-        users(
-          full_name,
-          email
-        )
-      `).order("created_at",{ ascending:false });
-      allBetData = data;
-      document.getElementById("totalBetsCard").innerText = data.length;
-      document.getElementById("pendingBetsCard").innerText = data.filter(x=>x.status==="pending").length;
-      document.getElementById("totalCoinsCard").innerText = data.reduce((a,b)=>a+Number(b.coins||0),0);
-      renderFilteredData(data);
-      updateMinMaxBetNumbers();
-      loadPendingNumberGrid();
-    }
-
-    async function loadPendingNumberGrid(){
-      const { data:bets=[] } = await supabase.from("bets").select("*").eq("status","pending");
-      const totals = {};
-      for(let i=0;i<=99;i++){ totals[i.toString().padStart(2,"0")] = 0; }
-      bets.forEach(bet=>{
-        const num = String(bet.selected_number).padStart(2,"0");
-        totals[num] += Number(bet.coins||0);
-      });
-
-      const grid = document.getElementById("numberGrid");
-      grid.innerHTML = "";
-      Object.keys(totals).forEach(number=>{
-        const amount = totals[number];
-        grid.innerHTML += `
-          <div onclick="selectWinningNumber('${number}')" class="bg-black border border-gray-700 rounded-2xl p-4 text-center cursor-pointer hover:border-pink-500 transition">
-            <h2 class="text-3xl font-black text-yellow-400 mb-2">${number}</h2>
-            <p class="text-gray-500 text-sm mb-1">Total Bet</p>
-            <p class="text-2xl font-black ${amount>0?"text-green-400":"text-gray-600"}">₹${amount}</p>
-          </div>`;
-      });
-    }
-
-    function selectWinningNumber(number){
-      selectedWinningNumber = number;
-      document.getElementById("selectedNumberText").innerText = `Selected Number : ${number}`;
-    }
-
-    function autoSelectLowestBet(){
-      const cards = [...document.querySelectorAll("#numberGrid div")];
-      let min = Infinity;
-      let selected = null;
-      cards.forEach(card=>{
-        const amount = Number(card.innerText.replace(/[^0-9]/g,"").slice(2))||0;
-        const number = card.querySelector("h2").innerText;
-        if(amount < min){ min = amount; selected = number; }
-      });
-      if(selected) selectWinningNumber(selected);
-    }
-
-        /* =========================
-       ANNOUNCE RESULT FUNCTION (ALL 3 CASES)
-    ========================== */
-
-    async function announceSelectedResult(){
-      const bets = allBetData.filter(b=>b.status==="pending");
-
-      if(bets.length===0){
-        alert("No pending bets to announce");
-        return;
-      }
-
-      // Initialize totals for each number
-      const totals = {};
-      for(let i=0;i<=99;i++){
-        totals[i.toString().padStart(2,"0")] = 0;
-      }
-      bets.forEach(bet=>{
-        const num = String(bet.selected_number).padStart(2,"0");
-        totals[num] += Number(bet.coins||0);
-      });
-
-      // Find numbers with zero bets
-      const zeroBetNumbers = Object.keys(totals).filter(k=>totals[k]===0);
-      let winningNumber;
-
-      if(zeroBetNumbers.length===1){
-        // Case 1: only one number with zero bet
-        winningNumber = zeroBetNumbers[0];
-      } else if(zeroBetNumbers.length>1){
-        // Case 2: multiple numbers with zero bet, pick random
-        winningNumber = zeroBetNumbers[Math.floor(Math.random()*zeroBetNumbers.length)];
-      } else {
-        // Case 3: all numbers have bets, pick the number with minimum coins
-        winningNumber = Object.keys(totals).reduce((a,b)=>totals[a]<totals[b]?a:b);
-      }
-
-      selectedWinningNumber = winningNumber;
-      document.getElementById("selectedNumberText").innerText = `Selected Number : ${winningNumber}`;
-      alert(`Result Announced : ${winningNumber}`);
-
-      // Optional: Update bet table to mark winning bets
-      // (Implementation depends on your schema, skipped for brevity)
-    }
-
-    /* =========================
-       AUTO ANNOUNCE EVERY HOUR
-    ========================== */
-
-    function scheduleHourlyAnnouncement(){
-      const now = new Date();
-      const nextHour = new Date();
-      nextHour.setMinutes(0,0,0);
-      if(now>=nextHour) nextHour.setHours(nextHour.getHours()+1);
-      const msToNextHour = nextHour - now;
-
-      setTimeout(async function(){
-        await announceSelectedResult();
-        scheduleHourlyAnnouncement(); // repeat for next hour
-      }, msToNextHour);
-    }
-
-    scheduleHourlyAnnouncement(); // start scheduler
-
-    /* =========================
-       MIN/MAX BET NUMBERS
-    ========================== */
-
-    function updateMinMaxBetNumbers(){
-      const totals = {};
-      for(let i=0;i<=99;i++){ totals[i.toString().padStart(2,"0")] = 0; }
-      allBetData.filter(b=>b.status==="pending").forEach(b=>{
-        const num = String(b.selected_number).padStart(2,"0");
-        totals[num] += Number(b.coins||0);
-      });
-
-      let minNum="--", minCoin=Infinity, maxNum="--", maxCoin=-Infinity;
-      Object.keys(totals).forEach(num=>{
-        const val = totals[num];
-        if(val<minCoin){ minCoin=val; minNum=num; }
-        if(val>maxCoin){ maxCoin=val; maxNum=num; }
-      });
-
-      document.getElementById("minCoinNumber").innerText = `Min Bet Number : ${minNum} (₹${minCoin})`;
-      document.getElementById("maxCoinNumber").innerText = `Max Bet Number : ${maxNum} (₹${maxCoin})`;
-    }
-
-    /* =========================
-       PNL ANALYTICS
-    ========================== */
-
-    function loadPNLReport(){
-      const bets = allBetData;
-      const totalCollection = bets.reduce((a,b)=>a+Number(b.coins||0),0);
-      const totalPayout = bets.filter(b=>b.status==="win").reduce((a,b)=>a+Number(b.potential_win||0),0);
-      const profit = totalCollection - totalPayout;
-
-      document.getElementById("pnlTableBody").innerHTML = `
+  <!-- USERS TABLE -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-700">
+      <thead>
         <tr>
-          <td class="px-4 py-4">All</td>
-          <td class="px-4 py-4">All</td>
-          <td class="px-4 py-4 text-green-400 font-black">₹${totalCollection}</td>
-          <td class="px-4 py-4 text-yellow-400 font-black">₹${totalPayout}</td>
-          <td class="px-4 py-4 font-black ${profit>=0?"text-green-400":"text-red-400"}">₹${profit}</td>
+          <th class="px-4 py-4 text-left text-gray-400">#</th>
+          <th class="px-4 py-4 text-left text-gray-400">Name</th>
+          <th class="px-4 py-4 text-left text-gray-400">Email</th>
+          <th class="px-4 py-4 text-left text-gray-400">Phone</th>
+          <th class="px-4 py-4 text-left text-gray-400">Balance</th>
+          <th class="px-4 py-4 text-left text-gray-400">Actions</th>
         </tr>
-      `;
-    }
+      </thead>
+      <tbody id="usersList" class="divide-y divide-gray-700"></tbody>
+    </table>
+  </div>
+</div>
 
-    /* =========================
-       DAILY REPORTS
-    ========================== */
+<!-- NUMBER GRID -->
+<div id="numberGridSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 mb-8">
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+    <h2 class="text-3xl font-black text-pink-400">Live Number Exposure</h2>
+    <div class="flex gap-3 flex-wrap">
+      <button onclick="loadPendingNumberGrid()" class="bg-pink-500 hover:bg-pink-400 text-black px-5 py-3 rounded-2xl font-black">Refresh Grid</button>
+      <button onclick="autoSelectLowestBet()" class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">Auto Lowest Number</button>
+    </div>
+  </div>
+  <div id="numberGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4"></div>
+  <div class="mt-8 text-center">
+    <p id="minCoinNumber" class="text-gray-400 text-xl mb-2">Min Bet Number : --</p>
+    <p id="maxCoinNumber" class="text-gray-400 text-xl mb-5">Max Bet Number : --</p>
+    <h2 id="selectedNumberText" class="text-5xl font-black text-pink-400 mb-6">Selected Number : --</h2>
+    <button onclick="announceSelectedResult()" class="bg-pink-500 hover:bg-pink-400 text-black text-2xl font-black px-12 py-5 rounded-3xl transition">ANNOUNCE RESULT</button>
+  </div>
+</div>
 
-    function renderFilteredData(data){
-      const table = document.getElementById("userBetReportTable");
-      table.innerHTML = "";
-      let totalCoins=0, totalWins=0;
+<script type="module">
+import { supabase } from "./supabase.js";
 
-      data.forEach(bet=>{
-        totalCoins += Number(bet.coins||0);
-        if(bet.status==="win") totalWins++;
+let allUsersData = [];
+let allBetData = [];
+let selectedWinningNumber = null;
 
-        table.innerHTML += `
-          <tr>
-            <td class="px-4 py-4">${bet.users?.full_name||"-"}</td>
-            <td class="px-4 py-4">${bet.users?.email||"-"}</td>
-            <td class="px-4 py-4 text-yellow-400 font-black">${bet.selected_number}</td>
-            <td class="px-4 py-4">${bet.coins}</td>
-            <td class="px-4 py-4">
-              <span class="${bet.status==="win"?"text-green-400":bet.status==="lose"?"text-red-400":"text-yellow-400"} font-black">${bet.status}</span>
-            </td>
-            <td class="px-4 py-4">${formatDate(bet.created_at)}</td>
-          </tr>`;
-      });
+// SCROLL FUNCTIONS
+window.scrollToUsers = ()=>document.getElementById("usersSection").scrollIntoView({behavior:"smooth"});
+window.scrollToReports = ()=>document.getElementById("reportsSection").scrollIntoView({behavior:"smooth"});
+window.scrollToExposure = ()=>document.getElementById("numberGridSection").scrollIntoView({behavior:"smooth"});
+window.scrollToPNL = ()=>document.getElementById("pnlSection").scrollIntoView({behavior:"smooth"});
 
-      document.getElementById("totalBets").innerText = data.length;
-      document.getElementById("totalCoins").innerText = totalCoins;
-      document.getElementById("winningBets").innerText = totalWins;
-    }
+// DATE FORMATTER
+function formatDate(date){ return new Date(date).toLocaleString("en-IN",{timeZone:"Asia/Kolkata", day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"}); }
 
-    window.applyFilters = function(){
-      const user = document.getElementById("filterUser").value.toLowerCase();
-      const email = document.getElementById("filterEmail").value.toLowerCase();
-      const number = document.getElementById("filterNumber").value.toLowerCase();
-      const status = document.getElementById("filterStatus").value.toLowerCase();
-      const filtered = allBetData.filter(bet=>{
-        return (!user || (bet.users?.full_name||"").toLowerCase().includes(user)) &&
-               (!email || (bet.users?.email||"").toLowerCase().includes(email)) &&
-               (!number || (bet.selected_number||"").toLowerCase().includes(number)) &&
-               (!status || bet.status===status);
-      });
-      renderFilteredData(filtered);
-    };
+  /* =========================
+   USER BALANCE FUNCTIONS
+========================= */
 
-    window.clearFilters = function(){
-      document.getElementById("filterUser").value="";
-      document.getElementById("filterEmail").value="";
-      document.getElementById("filterNumber").value="";
-      document.getElementById("filterStatus").value="";
-      document.getElementById("filterDate").value="";
-      renderFilteredData(allBetData);
-    };
+window.creditBalance = async function(userId){
+  const amount = Number(document.getElementById(`credit-${userId}`).value);
+  if(amount <= 0){ alert("Enter valid amount"); return; }
+  
+  const { data:user } = await supabase.from("users").select("*").eq("id", userId).single();
+  const newBalance = (Number(user.balance)||0) + amount;
+  
+  await supabase.from("users").update({ balance:newBalance }).eq("id", userId);
+  document.getElementById(`balance-${userId}`).innerText = newBalance;
+  alert("Balance Credited");
+};
 
-    /* =========================
-       INITIAL LOAD
-    ========================== */
+window.debitBalance = async function(userId){
+  const amount = Number(document.getElementById(`debit-${userId}`).value);
+  if(amount <= 0){ alert("Enter valid amount"); return; }
+  
+  const { data:user } = await supabase.from("users").select("*").eq("id", userId).single();
+  const current = Number(user.balance)||0;
+  if(amount > current){ alert("Insufficient Balance"); return; }
+  
+  const newBalance = current - amount;
+  await supabase.from("users").update({ balance:newBalance }).eq("id", userId);
+  document.getElementById(`balance-${userId}`).innerText = newBalance;
+  alert("Balance Debited");
+};
 
-    window.onload = async function(){
-      await loadUsers();
-      await loadAllBetData();
-      loadPNLReport();
-    };
-  </script>
+/* =========================
+   LOAD ALL BET DATA
+========================= */
+
+async function loadAllBetData(){
+  const { data=[] } = await supabase.from("bets").select(`*, users(full_name, email)`).order("created_at",{ascending:false});
+  allBetData = data;
+
+  document.getElementById("totalBetsCard").innerText = data.length;
+  document.getElementById("pendingBetsCard").innerText = data.filter(x=>x.status==="pending").length;
+  document.getElementById("totalCoinsCard").innerText = data.reduce((a,b)=>a+Number(b.coins||0),0);
+
+  renderFilteredData(data);
+  updateMinMaxBetNumbers();
+}
+
+/* =========================
+   RENDER FILTERED REPORT
+========================= */
+
+function renderFilteredData(data){
+  const table = document.getElementById("userBetReportTable");
+  table.innerHTML = "";
+  let totalCoins = 0, totalWins = 0;
+
+  data.forEach(bet=>{
+    totalCoins += Number(bet.coins||0);
+    if(bet.status==="win") totalWins++;
+
+    table.innerHTML += `
+      <tr>
+        <td class="px-4 py-4">${bet.users?.full_name || "-"}</td>
+        <td class="px-4 py-4">${bet.users?.email || "-"}</td>
+        <td class="px-4 py-4 text-yellow-400 font-black">${bet.selected_number}</td>
+        <td class="px-4 py-4">${bet.coins}</td>
+        <td class="px-4 py-4">
+          <span class="${bet.status==="win"?"text-green-400":bet.status==="lose"?"text-red-400":"text-yellow-400"} font-black">
+            ${bet.status}
+          </span>
+        </td>
+        <td class="px-4 py-4">${formatDate(bet.created_at)}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("totalBets").innerText = data.length;
+  document.getElementById("totalCoins").innerText = totalCoins;
+  document.getElementById("winningBets").innerText = totalWins;
+}
+
+/* =========================
+   NUMBER GRID & MIN/MAX
+========================= */
+
+window.loadPendingNumberGrid = async function(){
+  const { data:bets=[] } = await supabase.from("bets").select("*").eq("status","pending");
+
+  const totals = {};
+  for(let i=0;i<=99;i++){ totals[i.toString().padStart(2,"0")] = 0; }
+  bets.forEach(bet=>{ const num=String(bet.selected_number).padStart(2,"0"); totals[num]+=Number(bet.coins||0); });
+
+  const grid = document.getElementById("numberGrid");
+  grid.innerHTML = "";
+  Object.keys(totals).forEach(number=>{
+    const amount = totals[number];
+    grid.innerHTML += `
+      <div onclick="selectWinningNumber('${number}')" class="bg-black border border-gray-700 rounded-2xl p-4 text-center cursor-pointer hover:border-pink-500 transition">
+        <h2 class="text-3xl font-black text-yellow-400 mb-2">${number}</h2>
+        <p class="text-gray-500 text-sm mb-1">Total Bet</p>
+        <p class="text-2xl font-black ${amount>0?"text-green-400":"text-gray-600"}">₹${amount}</p>
+      </div>
+    `;
+  });
+
+  updateMinMaxBetNumbers();
+};
+
+function updateMinMaxBetNumbers(){
+  const totals = {};
+  for(let i=0;i<=99;i++){ totals[i.toString().padStart(2,"0")] = 0; }
+  allBetData.filter(x=>x.status==="pending").forEach(bet=>{ const key=String(bet.selected_number).padStart(2,"0"); totals[key]+=Number(bet.coins||0); });
+
+  let minNum="--", minCoin=Infinity, maxNum="--", maxCoin=-Infinity;
+  Object.keys(totals).forEach(num=>{
+    const val = totals[num];
+    if(val < minCoin){ minCoin=val; minNum=num; }
+    if(val > maxCoin){ maxCoin=val; maxNum=num; }
+  });
+
+  document.getElementById("minCoinNumber").innerText = `Min Bet Number : ${minNum} (₹${minCoin})`;
+  document.getElementById("maxCoinNumber").innerText = `Max Bet Number : ${maxNum} (₹${maxCoin})`;
+}
+
+window.selectWinningNumber = function(number){
+  selectedWinningNumber = number;
+  document.getElementById("selectedNumberText").innerText = `Selected Number : ${number}`;
+};
+
+/* =========================
+   AUTO ANNOUNCE RESULT
+========================= */
+
+window.announceSelectedResult = async function(){
+  // Step 1: collect pending bets
+  const { data:bets=[] } = await supabase.from("bets").select("*").eq("status","pending");
+
+  if(bets.length===0){ alert("No pending bets to announce"); return; }
+
+  const totals={};
+  for(let i=0;i<=99;i++){ totals[i.toString().padStart(2,"0")]=0; }
+  bets.forEach(bet=>{ const num=String(bet.selected_number).padStart(2,"0"); totals[num]+=Number(bet.coins||0); });
+
+  // CASE 1 & 2: find numbers with 0 bets
+  const zeroBetNumbers = Object.keys(totals).filter(n=>totals[n]===0);
+  if(zeroBetNumbers.length>0){
+    const selected = zeroBetNumbers.length===1 ? zeroBetNumbers[0] : zeroBetNumbers[Math.floor(Math.random()*zeroBetNumbers.length)];
+    selectedWinningNumber=selected;
+    alert(`Auto Result Announced (Zero Bet) : ${selectedWinningNumber}`);
+    return;
+  }
+
+  // CASE 3: all numbers have bets -> select min coins
+  const minBetNumber = Object.keys(totals).reduce((a,b)=>totals[a]<totals[b]?a:b);
+  selectedWinningNumber=minBetNumber;
+  alert(`Auto Result Announced (Min Coins) : ${selectedWinningNumber}`);
+};
+
+// Auto-run every hour at minute 0
+setInterval(()=>{
+  const now = new Date();
+  if(now.getMinutes()===0){ announceSelectedResult(); }
+}, 60000); // check every minute
+
+  /* =========================
+   PNL ANALYTICS
+========================= */
+
+window.loadPNLReport = async function(){
+  const bets = allBetData;
+  const totalCollection = bets.reduce((a,b)=>a+Number(b.coins||0),0);
+  const totalPayout = bets.filter(x=>x.status==="win").reduce((a,b)=>a+Number(b.potential_win||0),0);
+  const profit = totalCollection - totalPayout;
+
+  document.getElementById("pnlTableBody").innerHTML = `
+    <tr>
+      <td class="px-4 py-4">All</td>
+      <td class="px-4 py-4">All</td>
+      <td class="px-4 py-4 text-green-400 font-black">₹${totalCollection}</td>
+      <td class="px-4 py-4 text-yellow-400 font-black">₹${totalPayout}</td>
+      <td class="px-4 py-4 font-black ${profit>=0?"text-green-400":"text-red-400"}">₹${profit}</td>
+    </tr>
+  `;
+};
+
+/* =========================
+   REPORTS WITH FILTERS
+========================= */
+
+window.applyFilters = function(){
+  const user = document.getElementById("filterUser").value.toLowerCase();
+  const email = document.getElementById("filterEmail").value.toLowerCase();
+  const number = document.getElementById("filterNumber").value.toLowerCase();
+  const status = document.getElementById("filterStatus").value.toLowerCase();
+  const date = document.getElementById("filterDate").value;
+
+  const filtered = allBetData.filter(bet=>{
+    let match = true;
+    if(user && !(bet.users?.full_name||"").toLowerCase().includes(user)) match=false;
+    if(email && !(bet.users?.email||"").toLowerCase().includes(email)) match=false;
+    if(number && !(bet.selected_number||"").toString().toLowerCase().includes(number)) match=false;
+    if(status && bet.status!==status) match=false;
+    if(date && (new Date(bet.created_at).toISOString().slice(0,10)!==date)) match=false;
+    return match;
+  });
+
+  renderFilteredData(filtered);
+};
+
+window.clearFilters = function(){
+  document.getElementById("filterUser").value="";
+  document.getElementById("filterEmail").value="";
+  document.getElementById("filterNumber").value="";
+  document.getElementById("filterStatus").value="";
+  document.getElementById("filterDate").value="";
+  renderFilteredData(allBetData);
+};
+
+/* =========================
+   LOGOUT FUNCTION
+========================= */
+
+window.logoutAdmin = async function(){
+  await supabase.auth.signOut();
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.href="login.html";
+};
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+window.onload = async function(){
+  await loadUsers();
+  await loadAllBetData();
+  await loadPendingNumberGrid();
+  await loadPNLReport();
+};
+</script>
+
+</body>
+</html>
