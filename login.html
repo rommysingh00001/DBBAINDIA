@@ -34,9 +34,13 @@
     />
 
     <!-- RESET PASSWORD LINK (hidden by default) -->
-    <a id="resetPasswordLink" href="reset-password.html" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
-      Reset Password
-    </a>
+    <a
+  id="resetPasswordLink"
+  href="#"
+  class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden"
+>
+  Forgot Password?
+</a>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
@@ -142,6 +146,59 @@
     }
 
     document.getElementById("loginBtn").addEventListener("click", login);
+
+    // RESET PASSWORD
+document
+  .getElementById("resetPasswordLink")
+  .addEventListener("click", async function(e){
+
+    e.preventDefault();
+
+    const input =
+      document.getElementById("loginInput").value.trim();
+
+    if(!input){
+      alert("Please enter your email first");
+      return;
+    }
+
+    let email = input;
+
+    // IF USER ENTERS PHONE NUMBER
+    if(!input.includes("@")){
+
+      const { data: phoneUser } = await supabase
+        .from("users")
+        .select("email")
+        .eq("phone", input)
+        .maybeSingle();
+
+      if(!phoneUser){
+        alert("Phone number not found");
+        return;
+      }
+
+      email = phoneUser.email;
+    }
+
+    // SEND RESET EMAIL
+    const { error } =
+      await supabase.auth.resetPasswordForEmail(email, {
+
+        redirectTo:
+          window.location.origin + "/reset-password.html"
+      });
+
+    if(error){
+
+      alert(error.message);
+
+    } else {
+
+      alert("Password reset link sent to your email");
+    }
+
+});
 
     // ENTER KEY LOGIN
     document.addEventListener("keydown", function(event){
