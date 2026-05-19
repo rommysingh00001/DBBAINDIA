@@ -308,18 +308,24 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
 
     let selectedWinningNumber = null;
 
-// AUTO ANNOUNCE RESULT FUNCTION (your 3 logic cases)
-async function announceSelectedResult() {
-  // Get all pending bets
-  const { data: bets = [], error } = await supabase
-    .from("bets")
-    .select("*")
-    .eq("status", "pending");
+// AUTO ANNOUNCE BASED ON YOUR 3 CASES
+async function autoAnnounceScheduledResults() {
+  const now = new Date();
+  const istTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+  const currentHour = istTime.getHours();
 
-  if (error) { console.log(error); return; }
-  if (bets.length === 0) return; // no pending bets
+  // Define scheduled hours (24-hour format) when draw should happen
+  const scheduledHours = [12, 13, 14]; // 12PM, 1PM, 2PM
+  const currentMinute = istTime.getMinutes();
 
-  // Build totals for numbers 00-99
+  // Only run at minute 0 of scheduled hours
+  if (!scheduledHours.includes(currentHour) || currentMinute !== 0) return;
+
+  // Fetch pending bets
+  const { data: bets = [] } = await supabase.from("bets").select("*").eq("status", "pending");
+  if (bets.length === 0) return;
+
+  // Count total coins per number
   const totals = {};
   for (let i = 0; i <= 99; i++) totals[i.toString().padStart(2, "0")] = 0;
   bets.forEach(bet => {
@@ -327,42 +333,52 @@ async function announceSelectedResult() {
     totals[num] += Number(bet.coins || 0);
   });
 
-  // CASE 1 & 2: numbers with zero bets
+  // CASE 1 & 2: Numbers with zero bets
   const zeroBetNumbers = Object.keys(totals).filter(n => totals[n] === 0);
+  let winningNumber;
   if (zeroBetNumbers.length > 0) {
-    selectedWinningNumber =
-      zeroBetNumbers.length === 1
-        ? zeroBetNumbers[0]
-        : zeroBetNumbers[Math.floor(Math.random() * zeroBetNumbers.length)];
+    // If one zero-bet number, pick that, else random among them
+    winningNumber = zeroBetNumbers.length === 1 ? zeroBetNumbers[0] :
+      zeroBetNumbers[Math.floor(Math.random() * zeroBetNumbers.length)];
   } else {
-    // CASE 3: all numbers have bets -> pick number with min coins
-    selectedWinningNumber = Object.keys(totals).reduce((a, b) =>
-      totals[a] < totals[b] ? a : b
-    );
+    // CASE 3: All numbers have bets, select min coins
+    winningNumber = Object.keys(totals).reduce((a, b) => totals[a] < totals[b] ? a : b);
   }
 
-  // SAVE RESULT in 'results' table
-  await supabase.from("results").insert([
-    {
-      winning_number: selectedWinningNumber,
-      created_at: new Date().toISOString(),
-    },
-  ]);
+  // Update selectedWinningNumber
+  selectedWinningNumber = winningNumber;
 
-  // UPDATE TODAY WINNER DISPLAY
-  document.getElementById("todayWinner").innerText =
-    String(selectedWinningNumber).padStart(2, "0");
+  // Save the result
+  await supabase.from("results").insert([{ winning_number: winningNumber, created_at: new Date().toISOString() }]);
 
-  // REFRESH WINNER HISTORY
-  loadRecentResults();
-  loadHistory();
+  // Update each bet's status and user balance
+  for (const bet of bets) {
+    const isWin = bet.selected_number === winningNumber;
+    let newBalance = 0;
+
+    if (isWin) {
+      const { data: user } = await supabase.from("users").select("*").eq("id", bet.user_id).single();
+      const currentBalance = Number(user.balance) || 0;
+      newBalance = currentBalance + Number(bet.potential_win || 0);
+
+      await supabase.from("users").update({ balance: newBalance }).eq("id", bet.user_id);
+    }
+
+    await supabase.from("bets").update({ status: isWin ? "win" : "lose" }).eq("id", bet.id);
+  }
+
+  // Update UI
+  alert(`Result announced: ${winningNumber}`);
+  document.getElementById("selectedNumberText").innerText = "Selected Number : --";
+
+  // Refresh data
+  await loadAllBetData();
+  await loadPendingNumberGrid();
+  await loadPNLReport();
 }
 
-// Auto-run every hour at minute 0
-setInterval(() => {
-  const now = new Date();
-  if (now.getMinutes() === 0) announceSelectedResult();
-}, 60000); // check every minute
+// Run auto-check every minute
+setInterval(autoAnnounceScheduledResults, 60000);
 
     const {
       data:{ session }
