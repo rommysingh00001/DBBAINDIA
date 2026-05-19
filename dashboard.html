@@ -31,15 +31,7 @@
 
       Manage Users
 
-    </button>
-
-    <button
-      onclick="scrollToAnnounce()"
-      class="bg-yellow-400 hover:bg-yellow-300 text-black px-5 py-3 rounded-2xl font-black">
-
-      Announce Winner
-
-    </button>
+    
 
     <button
       onclick="scrollToReports()"
@@ -480,10 +472,6 @@ window.scrollToUsers = () => {
   .scrollIntoView({behavior:"smooth"});
 }
 
-window.scrollToAnnounce = () => {
-  document.getElementById("numberGridSection")
-  .scrollIntoView({behavior:"smooth"});
-}
 
 
 window.scrollToReports = () => {
@@ -1101,85 +1089,183 @@ window.loadPNLReport = async function(fromDate=null, toDate=null){
       </td>
     </tr>
   `;
-}  // SELECT NUMBER
-window.selectWinningNumber = function(number){
-  // Save selected number
-  selectedWinningNumber = number;
+}  
+    // AUTO RESULT SYSTEM
+async function autoAnnounceWinner(){
 
-  // Update DOM text
-  document.getElementById("selectedNumberText").innerText = "Selected Number : " + number;
+  // INDIA TIME
+  const now =
+    new Date(
+      new Date().toLocaleString(
+        "en-US",
+        { timeZone: "Asia/Kolkata" }
+      )
+    );
 
-  // Add-on: dynamically update P&L
-  loadPNLReport();
-};
-
-// ANNOUNCE SELECTED RESULT - FIXED FOR ALL USERS
-window.announceSelectedResult = async function() {
-  if(!selectedWinningNumber){
-    alert("Select Number First");
+  // RUN ONLY AT EVERY HOUR :00
+  if(
+    now.getMinutes() !== 0 ||
+    now.getSeconds() !== 0
+  ){
     return;
   }
 
-  // Save the result in results table
+  // CHECK IF RESULT ALREADY ANNOUNCED THIS HOUR
+  const start =
+    new Date(now);
+
+  start.setMinutes(0);
+  start.setSeconds(0);
+
+  const end =
+    new Date(now);
+
+  end.setMinutes(59);
+  end.setSeconds(59);
+
+  const { data: existing } =
+    await supabase
+    .from("results")
+    .select("*")
+    .gte("created_at", start.toISOString())
+    .lte("created_at", end.toISOString());
+
+  if(existing.length > 0){
+    return;
+  }
+
+  // GET PENDING BETS
+  const { data:bets=[] } =
+    await supabase
+    .from("bets")
+    .select("*")
+    .eq("status","pending");
+
+  // TOTALS
+  const totals = {};
+
+  for(let i=0;i<=99;i++){
+
+    const num =
+      i.toString().padStart(2,"0");
+
+    totals[num] = 0;
+  }
+
+  bets.forEach(bet=>{
+
+    const num =
+      String(bet.selected_number)
+      .padStart(2,"0");
+
+    totals[num] +=
+      Number(bet.coins || 0);
+  });
+
+  // CASE 1
+  // NUMBERS WITH NO BET
+  const noBetNumbers =
+    Object.keys(totals)
+    .filter(num => totals[num] === 0);
+
+  let winner = null;
+
+  if(noBetNumbers.length > 0){
+
+    // RANDOM NO BET NUMBER
+    winner =
+      noBetNumbers[
+        Math.floor(
+          Math.random() *
+          noBetNumbers.length
+        )
+      ];
+
+  } else {
+
+    // CASE 2
+    // LOWEST BET NUMBER
+
+    let minCoins = Infinity;
+
+    Object.keys(totals).forEach(num=>{
+
+      if(totals[num] < minCoins){
+
+        minCoins = totals[num];
+
+        winner = num;
+      }
+    });
+  }
+
+  // SAVE RESULT
   await supabase
     .from("results")
     .insert([{
-      winning_number: selectedWinningNumber,
-      created_at: new Date().toISOString()
+      winning_number:winner,
+      created_at:new Date().toISOString()
     }]);
 
-  // Fetch all pending bets
-  const { data: bets = [] } = await supabase
-    .from("bets")
-    .select("*")
-    .eq("status", "pending");
-
-  // Loop over each bet and update status + balance if win
+  // UPDATE BETS
   for(const bet of bets){
-    const isWin = bet.selected_number === selectedWinningNumber;
-    let newBalance = 0;
+
+    const isWin =
+      String(bet.selected_number)
+      .padStart(2,"0") === winner;
 
     if(isWin){
-      // Fetch user balance
-      const { data: user } = await supabase
+
+      const { data:user } =
+        await supabase
         .from("users")
         .select("*")
         .eq("id", bet.user_id)
         .single();
 
-      const currentBalance = Number(user.balance) || 0;
-      newBalance = currentBalance + Number(bet.potential_win || 0);
+      const currentBalance =
+        Number(user.balance || 0);
 
-      // Update user balance
+      const newBalance =
+        currentBalance +
+        Number(bet.potential_win || 0);
+
+      // UPDATE BALANCE
       await supabase
         .from("users")
-        .update({ balance: newBalance })
+        .update({
+          balance:newBalance
+        })
         .eq("id", bet.user_id);
+
+      // LEDGER
+      await supabase
+        .from("balance_ledger")
+        .insert([{
+          user_id:bet.user_id,
+          change_type:"win",
+          amount:bet.potential_win,
+          balance_after:newBalance,
+          created_at:new Date().toISOString()
+        }]);
     }
 
-    // Update bet status
+    // UPDATE BET STATUS
     await supabase
       .from("bets")
-      .update({ status: isWin ? "win" : "lose" })
+      .update({
+        status:isWin ? "win" : "lose"
+      })
       .eq("id", bet.id);
   }
 
-  // Reload all frontend data to reflect the settled bets
-  alert("Result Announced: " + selectedWinningNumber);
-
-  selectedWinningNumber = null;
-  document.getElementById("selectedNumberText").innerText = "Selected Number : --";
-
-  // Refresh number grid, P&L, and all bets table
+  // RELOAD
   await loadPendingNumberGrid();
   await loadPNLReport();
   await loadAllBetData();
-};
-    
-// INIT
-window.onload = async () => {
-  await loadUsers();          // Users section
-  await loadAllBetData();     // Load all bets
+
+  console.log("Winner Announced:", winner);
+}
   await loadPendingNumberGrid(); // Number grid
 
   // ---------------- Step 3a: update min/max numbers ----------------
@@ -1187,6 +1273,8 @@ window.onload = async () => {
 
   await loadPNLReport();      // Load P&L
 };
+    // AUTO CHECK EVERY SECOND
+setInterval(autoAnnounceWinner,1000);
     
 </script>
 </body>
