@@ -307,13 +307,15 @@
     }
 
     // CREATE AUTH USER
-    const { data, error } =
-      await supabase.auth.signUp({
+    const response =
+await supabase.auth.signUp({
+  email,
+  password
+});
 
-        email,
-        password
+console.log(response);
 
-      });
+const { data, error } = response;
 
     if(error){
 
