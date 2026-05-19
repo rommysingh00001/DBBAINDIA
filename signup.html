@@ -299,45 +299,62 @@
     document.getElementById("password").value.trim();
 
   if(!fullName || !phone || !email || !password){
+
     alert("Fill all fields");
     return;
   }
 
   try {
 
-    // CREATE AUTH USER
+    const signupBtn =
+      document.getElementById("signupBtn");
+
+    signupBtn.disabled = true;
+    signupBtn.innerText = "PLEASE WAIT...";
+
+    // AUTH CREATE
     const { data, error } =
       await supabase.auth.signUp({
+
         email,
         password
+
       });
 
     if(error){
+
+      console.log(error);
       throw error;
     }
 
     const user = data.user;
 
-    // SAVE USER TABLE
-    const { error:insertError } =
+    if(!user){
+
+      throw new Error("User not created");
+    }
+
+    // INSERT USER
+    const { error: insertError } =
       await supabase
       .from("users")
-      .insert([
-        {
-          id:user.id,
-          full_name:fullName,
-          email:email,
-          phone:phone,
-          balance:0
-        }
-      ]);
+      .insert([{
+
+        id: user.id,
+        full_name: fullName,
+        email: email,
+        phone: phone,
+        balance: 0
+
+      }]);
 
     if(insertError){
+
       console.log(insertError);
       throw insertError;
     }
 
-    alert("Signup Success");
+    alert("Signup Successful");
 
     window.location.href = "login.html";
 
@@ -347,10 +364,12 @@
 
     alert(err.message);
 
-  }
+  } finally {
 
-};
-     
+    signupBtn.disabled = false;
+    signupBtn.innerText = "CREATE ACCOUNT";
+  }
+}
 
     // ENTER SUPPORT
     document.addEventListener(
