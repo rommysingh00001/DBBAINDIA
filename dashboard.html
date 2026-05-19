@@ -492,26 +492,29 @@ window.scrollToReports = () => {
 }
 
 // LOAD USERS
-async function loadUsers(){
+// LOAD USERS
+async function loadUsers() {
   try {
     const { data: users = [], error } = await supabase
       .from("users")
-      .select("id, full_name, email, phone, balance")
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching users:", error);
-      alert("Failed to load users. Check console.");
       return;
     }
 
+    console.log("Fetched users:", users); // ✅ Add this line to verify data
+
     allUsersData = users;
+
     renderUsers(users);
   } catch (err) {
-    console.error("Unexpected error:", err);
+    console.error("Exception fetching users:", err);
   }
 }
-
+    
 // RENDER USERS
 function renderUsers(users){
 
