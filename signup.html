@@ -284,250 +284,73 @@
     });
 
     // SIGNUP
-    window.signup = async function(){
+    window.signup = async function () {
 
-      const signupBtn =
-        document.getElementById("signupBtn");
+  const fullName =
+    document.getElementById("fullName").value.trim();
 
-      try{
+  const phone =
+    document.getElementById("phone").value.trim();
 
-        signupBtn.disabled = true;
+  const email =
+    document.getElementById("email").value.trim();
 
-        signupBtn.innerText =
-          "PLEASE WAIT...";
+  const password =
+    document.getElementById("password").value.trim();
 
-        const fullName =
-          document
-          .getElementById("fullName")
-          .value
-          .trim();
+  if(!fullName || !phone || !email || !password){
+    alert("Fill all fields");
+    return;
+  }
 
-        const phone =
-          document
-          .getElementById("phone")
-          .value
-          .trim();
+  try {
 
-        const email =
-          document
-          .getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
+    // CREATE AUTH USER
+    const { data, error } =
+      await supabase.auth.signUp({
+        email,
+        password
+      });
 
-        const password =
-          document
-          .getElementById("password")
-          .value
-          .trim();
+    if(error){
+      throw error;
+    }
 
-        const terms =
-          document
-          .getElementById("terms")
-          .checked;
+    const user = data.user;
 
-        // VALIDATION
-        if(
-          !fullName ||
-          !phone ||
-          !email ||
-          !password
-        ){
-
-          alert("Please fill all fields");
-
-          signupBtn.disabled = false;
-          signupBtn.innerText = "CREATE ACCOUNT";
-
-          return;
-        }
-
-        // PHONE VALIDATION
-        if(!/^[6-9]\d{9}$/.test(phone)){
-
-          alert("Enter valid 10 digit mobile number");
-
-          signupBtn.disabled = false;
-          signupBtn.innerText = "CREATE ACCOUNT";
-
-          return;
-        }
-
-        // EMAIL VALIDATION
-        if(
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          .test(email)
-        ){
-
-          alert("Invalid email address");
-
-          signupBtn.disabled = false;
-          signupBtn.innerText = "CREATE ACCOUNT";
-
-          return;
-        }
-
-        // PASSWORD VALIDATION
-        if(password.length < 6){
-
-          alert("Password minimum 6 characters");
-
-          signupBtn.disabled = false;
-          signupBtn.innerText = "CREATE ACCOUNT";
-
-          return;
-        }
-
-        // TERMS
-        if(!terms){
-
-          alert("Please accept Terms & Conditions");
-
-          signupBtn.disabled = false;
-          signupBtn.innerText = "CREATE ACCOUNT";
-
-          return;
-        }
-
-        // CHECK PHONE EXIST
-        const {
-          data:phoneExist
-        } = await supabase
-        .from("users")
-        .select("phone")
-        .eq("phone", phone);
-
-        if(phoneExist.length > 0){
-
-          alert("Phone number already registered");
-
-          signupBtn.disabled = false;
-          signupBtn.innerText = "CREATE ACCOUNT";
-
-          return;
-        }
-
-        // CREATE AUTH USER
-        const {
-          data,
-          error
-        } =
-        await supabase.auth.signUp({
-
-          email,
-          password,
-
-          options:{
-            data:{
-              full_name:fullName
-            }
-          }
-
-        });
-
-        if(error){
-
-          throw error;
-        }
-
-        const user =
-          data?.user ||
-          data?.session?.user;
-
-        if(!user){
-
-          throw new Error(
-            "User creation failed"
-          );
-        }
-
-        // SAVE USER
-        const {
-          error:profileError
-        } =
-        await supabase
-        .from("users")
-        .insert([{
-
+    // SAVE USER TABLE
+    const { error:insertError } =
+      await supabase
+      .from("users")
+      .insert([
+        {
           id:user.id,
-
           full_name:fullName,
-
-          email,
-
-          phone,
-
-          balance:0,
-
-          created_at:
-            new Date().toISOString()
-
-        }]);
-
-        if(profileError){
-
-          throw profileError;
+          email:email,
+          phone:phone,
+          balance:0
         }
+      ]);
 
-        // LEDGER ENTRY
-        await supabase
-        .from("balance_ledger")
-        .insert([{
+    if(insertError){
+      console.log(insertError);
+      throw insertError;
+    }
 
-          user_id:user.id,
+    alert("Signup Success");
 
-          change_type:"signup",
+    window.location.href = "login.html";
 
-          amount:0,
+  } catch(err){
 
-          balance_after:0,
+    console.log(err);
 
-          created_at:
-            new Date().toISOString()
+    alert(err.message);
 
-        }]);
+  }
 
-        // AUTO LOGIN
-        const {
-          error:loginError
-        } =
-        await supabase.auth
-        .signInWithPassword({
-
-          email,
-          password
-
-        });
-
-        if(loginError){
-
-          throw loginError;
-        }
-
-        // SUCCESS
-        alert(
-          "Account Created Successfully"
-        );
-
-        window.location.href =
-          "main.html";
-
-      } catch(err){
-
-        console.log(err);
-
-        alert(err.message);
-
-      } finally {
-
-        signupBtn.disabled = false;
-
-        signupBtn.innerText =
-          "CREATE ACCOUNT";
-
-      }
-
-    };
+}
+     
 
     // ENTER SUPPORT
     document.addEventListener(
