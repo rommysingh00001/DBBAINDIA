@@ -286,33 +286,27 @@
     // SIGNUP
     window.signup = async function () {
 
-  const fullName =
-    document.getElementById("fullName").value.trim();
-
-  const phone =
-    document.getElementById("phone").value.trim();
-
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value.trim();
-
-  if(!fullName || !phone || !email || !password){
-
-    alert("Fill all fields");
-    return;
-  }
-
   try {
 
-    const signupBtn =
-      document.getElementById("signupBtn");
+    const fullName =
+      document.getElementById("fullName").value.trim();
 
-    signupBtn.disabled = true;
-    signupBtn.innerText = "PLEASE WAIT...";
+    const phone =
+      document.getElementById("phone").value.trim();
 
-    // AUTH CREATE
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value.trim();
+
+    if(!fullName || !phone || !email || !password){
+
+      alert("Fill all fields");
+      return;
+    }
+
+    // CREATE AUTH USER
     const { data, error } =
       await supabase.auth.signUp({
 
@@ -324,17 +318,15 @@
     if(error){
 
       console.log(error);
-      throw error;
+      alert(error.message);
+      return;
     }
 
     const user = data.user;
 
-    if(!user){
+    console.log("USER:", user);
 
-      throw new Error("User not created");
-    }
-
-    // INSERT USER
+    // INSERT USER TABLE
     const { error: insertError } =
       await supabase
       .from("users")
@@ -351,10 +343,11 @@
     if(insertError){
 
       console.log(insertError);
-      throw insertError;
+      alert(insertError.message);
+      return;
     }
 
-    alert("Signup Successful");
+    alert("Signup Success");
 
     window.location.href = "login.html";
 
@@ -364,13 +357,9 @@
 
     alert(err.message);
 
-  } finally {
-
-    signupBtn.disabled = false;
-    signupBtn.innerText = "CREATE ACCOUNT";
   }
-}
 
+}
     // ENTER SUPPORT
     document.addEventListener(
       "keydown",
