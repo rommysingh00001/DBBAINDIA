@@ -598,18 +598,30 @@ function formatDate(date){
 
 async function loadUsers(){
 
-  const { data = [] } =
-    await supabase
+  const {
+    data,
+    error
+  } = await supabase
     .from("users")
-    .select("*")
-    .order("created_at",{ ascending:false });
+    .select("*");
 
-  allUsersData = data;
+  console.log(data);
+  console.log(error);
 
-  document.getElementById("totalUsersCard")
-  .innerText = data.length;
+  if(error){
 
-  renderUsers(data);
+    alert(error.message);
+
+    return;
+  }
+
+  allUsersData = data || [];
+
+  document.getElementById(
+    "totalUsersCard"
+  ).innerText = allUsersData.length;
+
+  renderUsers(allUsersData);
 }
 
 function renderUsers(users){
