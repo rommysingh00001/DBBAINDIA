@@ -306,6 +306,64 @@ class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
 
     import { supabase } from "./supabase.js";
 
+    let selectedWinningNumber = null;
+
+// AUTO ANNOUNCE RESULT FUNCTION (your 3 logic cases)
+async function announceSelectedResult() {
+  // Get all pending bets
+  const { data: bets = [], error } = await supabase
+    .from("bets")
+    .select("*")
+    .eq("status", "pending");
+
+  if (error) { console.log(error); return; }
+  if (bets.length === 0) return; // no pending bets
+
+  // Build totals for numbers 00-99
+  const totals = {};
+  for (let i = 0; i <= 99; i++) totals[i.toString().padStart(2, "0")] = 0;
+  bets.forEach(bet => {
+    const num = String(bet.selected_number).padStart(2, "0");
+    totals[num] += Number(bet.coins || 0);
+  });
+
+  // CASE 1 & 2: numbers with zero bets
+  const zeroBetNumbers = Object.keys(totals).filter(n => totals[n] === 0);
+  if (zeroBetNumbers.length > 0) {
+    selectedWinningNumber =
+      zeroBetNumbers.length === 1
+        ? zeroBetNumbers[0]
+        : zeroBetNumbers[Math.floor(Math.random() * zeroBetNumbers.length)];
+  } else {
+    // CASE 3: all numbers have bets -> pick number with min coins
+    selectedWinningNumber = Object.keys(totals).reduce((a, b) =>
+      totals[a] < totals[b] ? a : b
+    );
+  }
+
+  // SAVE RESULT in 'results' table
+  await supabase.from("results").insert([
+    {
+      winning_number: selectedWinningNumber,
+      created_at: new Date().toISOString(),
+    },
+  ]);
+
+  // UPDATE TODAY WINNER DISPLAY
+  document.getElementById("todayWinner").innerText =
+    String(selectedWinningNumber).padStart(2, "0");
+
+  // REFRESH WINNER HISTORY
+  loadRecentResults();
+  loadHistory();
+}
+
+// Auto-run every hour at minute 0
+setInterval(() => {
+  const now = new Date();
+  if (now.getMinutes() === 0) announceSelectedResult();
+}, 60000); // check every minute
+
     const {
       data:{ session }
     } = await supabase.auth.getSession();
@@ -605,123 +663,76 @@ setInterval(updateTimer,1000);
 
     loadTodayWinner();
 
-    // RECENT RESULTS
-    async function loadRecentResults(){
+    // Load last 10 winners
+async function loadRecentResults() {
+  const { data: results = [] } = await supabase
+    .from("results")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
 
-      const { data:results } =
-        await supabase
-        .from("results")
-        .select("*")
-        .order("created_at",{ascending:false})
-        .limit(10);
+  const resultsGrid = document.getElementById("resultsGrid");
+  resultsGrid.innerHTML = "";
 
-      const resultsGrid =
-        document.getElementById("resultsGrid");
+  results.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "bg-gray-900 rounded-2xl p-4 text-center";
+    div.innerHTML = `
+      <h2 class="text-3xl font-black text-yellow-400">
+        ${String(r.winning_number).padStart(2, "0")}
+      </h2>
+      <p class="text-gray-400 text-sm">
+        ${new Date(r.created_at).toLocaleDateString("en-IN", {
+          timeZone: "Asia/Kolkata",
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        })}
+      </p>
+    `;
+    resultsGrid.appendChild(div);
+  });
+}
 
-      resultsGrid.innerHTML = "";
+// Load filtered history
+async function loadHistory() {
+  const fromDate = document.getElementById("fromDate").value;
+  const toDate = document.getElementById("toDate").value;
 
-      results.forEach(r => {
+  if (!fromDate || !toDate) return;
 
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "bg-gray-900 rounded-2xl p-4 text-center";
-
-        div.innerHTML = `
-          <h2 class="text-3xl font-black text-yellow-400">
-            ${String(r.winning_number).padStart(2,"0")}
-          </h2>
-
-          <p class="text-gray-400 text-sm">
-            ${new Date(r.created_at).toLocaleDateString(
-  "en-IN",
-  {
-    timeZone:"Asia/Kolkata",
-    day:"2-digit",
-    month:"short",
-    year:"numeric"
-  }
-)}
-          </p>
-        `;
-
-        resultsGrid.appendChild(div);
-
-      });
-
-    }
-
-    loadRecentResults();
-
-// HISTORY FILTER
-window.loadHistory = async function(){
-
-  const fromDate =
-    document.getElementById("fromDate").value;
-
-  const toDate =
-    document.getElementById("toDate").value;
-
-  if(!fromDate || !toDate){
-    alert("Select both dates");
-    return;
-  }
-
-  const { data } = await supabase
+  const { data: history = [] } = await supabase
     .from("results")
     .select("*")
     .gte("created_at", fromDate)
     .lte("created_at", toDate + "T23:59:59")
-    .order("created_at",{ascending:false});
+    .order("created_at", { ascending: false });
 
-  const historyGrid =
-    document.getElementById("historyGrid");
-
+  const historyGrid = document.getElementById("historyGrid");
   historyGrid.innerHTML = "";
 
-
-
-  if(!data || data.length===0){
-
-    historyGrid.innerHTML = `
-  <div class="text-red-400 font-bold col-span-full text-center">
-    No history found
-  </div>
-`;
-
+  if (!history.length) {
+    historyGrid.innerHTML = `<div class="text-red-400 font-bold col-span-full text-center">No history found</div>`;
     return;
   }
 
-  data.forEach(r => {
-
-    const div =
-      document.createElement("div");
-
-    div.className =
-      "bg-gray-900 rounded-2xl p-4 text-center border border-gray-800";
-
+  history.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "bg-gray-900 rounded-2xl p-4 text-center border border-gray-800";
     div.innerHTML = `
       <h2 class="text-3xl font-black text-yellow-400">
-        ${String(r.winning_number).padStart(2,"0")}
+        ${String(r.winning_number).padStart(2, "0")}
       </h2>
-
       <p class="text-gray-400 text-sm mt-2">
-        ${new Date(r.created_at).toLocaleDateString(
-          "en-IN",
-          {
-            day:"2-digit",
-            month:"short",
-            year:"numeric"
-          }
-        )}
+        ${new Date(r.created_at).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        })}
       </p>
     `;
-
     historyGrid.appendChild(div);
-
   });
-
 }
 
     // REALTIME BALANCE UPDATE
