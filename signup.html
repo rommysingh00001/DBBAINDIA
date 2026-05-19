@@ -350,19 +350,19 @@
         signupBtn.innerText =
           "PLEASE WAIT...";
 
-        // CREATE AUTH USER
-        const { data, error } =
+// CREATE AUTH USER
+const { data, error } =
   await supabase.auth.signUp({
 
     email,
+
     password,
 
     options: {
 
       data: {
 
-        full_name: fullName,
-        phone: phone
+        full_name: fullName
 
       }
 
@@ -370,13 +370,34 @@
 
   });
 
-        console.log(data);
+if(error){
+  throw error;
+}
 
-        if(error){
+const user = data.user;
 
-          throw error;
+if(!user){
+  throw new Error("User not created");
+}
 
-        }
+// INSERT INTO USERS TABLE
+const { error: insertError } =
+  await supabase
+  .from("users")
+  .upsert([
+    {
+      id: user.id,
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      balance: 0
+    }
+  ]);
+
+if(insertError){
+  console.log(insertError);
+  throw insertError;
+}
 
         // GET USER SAFELY
         const user =
