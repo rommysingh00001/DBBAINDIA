@@ -2,470 +2,184 @@
 <html lang="en">
 
 <head>
-
-  <meta charset="UTF-8"/>
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signup - DBBA INDIA</title>
-
-  <link
-    rel="icon"
-    type="image/png"
-    href="logo.png"
-  />
-
+  <link rel="icon" type="image/png" href="logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
-<body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5 overflow-hidden">
+<body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
   <!-- BACKGROUND -->
-  <div class="fixed inset-0 -z-10 overflow-hidden">
-
+  <div class="fixed inset-0 overflow-hidden -z-10">
     <div class="absolute top-0 left-0 w-96 h-96 bg-green-500/10 blur-3xl rounded-full"></div>
-
     <div class="absolute bottom-0 right-0 w-96 h-96 bg-yellow-500/10 blur-3xl rounded-full"></div>
-
   </div>
 
-  <!-- MAIN -->
+  <!-- SIGNUP CARD -->
   <div class="w-full max-w-md">
 
     <!-- LOGO -->
     <div class="text-center mb-8">
-
-      <img
-        src="logo.png"
-        alt="Logo"
-        class="w-32 h-32 object-contain mx-auto mb-4 drop-shadow-[0_0_30px_rgba(34,197,94,0.4)]"
-      />
-
+      <img src="logo.png" alt="Logo" class="w-28 h-28 object-contain mx-auto mb-4 drop-shadow-[0_0_25px_rgba(34,197,94,0.4)]" />
       <h1 class="text-5xl font-black">
-
-        <span class="text-yellow-400">
-          DBBA
-        </span>
-
-        <span class="text-green-400">
-          INDIA
-        </span>
-
+        <span class="text-yellow-400">DBBA</span>
+        <span class="text-green-400">INDIA</span>
       </h1>
-
-      <p class="text-gray-400 mt-3 text-lg">
-        Create Your Account
-      </p>
-
+      <p class="text-gray-400 mt-3 text-lg">Create Your Account</p>
     </div>
 
-    <!-- CARD -->
+    <!-- FORM -->
     <div class="bg-gray-900/90 backdrop-blur-xl border border-gray-800 rounded-[35px] p-8 shadow-2xl">
 
-      <!-- FULL NAME -->
+      <!-- Full Name -->
       <div class="mb-5">
-
-        <label class="block text-sm text-gray-400 mb-2">
-          Full Name
-        </label>
-
-        <input
-          id="fullName"
-          type="text"
-          placeholder="Enter Full Name"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none focus:border-green-500 transition"
-        />
-
+        <label class="block text-sm text-gray-400 mb-2">Full Name</label>
+        <input id="fullName" type="text" placeholder="Enter Full Name"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none focus:border-green-500 transition" />
       </div>
 
-      <!-- PHONE -->
+      <!-- Phone -->
       <div class="mb-5">
-
-        <label class="block text-sm text-gray-400 mb-2">
-          Phone Number
-        </label>
-
-        <input
-          id="phone"
-          type="tel"
-          maxlength="10"
-          placeholder="Enter Phone Number"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none focus:border-green-500 transition"
-        />
-
+        <label class="block text-sm text-gray-400 mb-2">Phone Number</label>
+        <input id="phone" type="tel" maxlength="10" placeholder="Enter Phone Number"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none focus:border-green-500 transition" />
       </div>
 
-      <!-- EMAIL -->
+      <!-- Email -->
       <div class="mb-5">
-
-        <label class="block text-sm text-gray-400 mb-2">
-          Email Address
-        </label>
-
-        <input
-          id="email"
-          type="email"
-          placeholder="Enter Email Address"
-          class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none focus:border-green-500 transition"
-        />
-
+        <label class="block text-sm text-gray-400 mb-2">Email Address</label>
+        <input id="email" type="email" placeholder="Enter Email Address"
+          class="w-full bg-black border border-gray-700 rounded-2xl p-4 outline-none focus:border-green-500 transition" />
       </div>
 
-      <!-- PASSWORD -->
+      <!-- Password -->
       <div class="mb-3">
-
-        <label class="block text-sm text-gray-400 mb-2">
-          Password
-        </label>
-
+        <label class="block text-sm text-gray-400 mb-2">Password</label>
         <div class="relative">
-
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter Password"
-            class="w-full bg-black border border-gray-700 rounded-2xl p-4 pr-14 outline-none focus:border-green-500 transition"
-          />
-
-          <button
-            type="button"
-            id="togglePassword"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-          >
-            👁️
-          </button>
-
+          <input id="password" type="password" placeholder="Enter Password"
+            class="w-full bg-black border border-gray-700 rounded-2xl p-4 pr-14 outline-none focus:border-green-500 transition" />
+          <button type="button" id="togglePassword"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">👁️</button>
         </div>
-
       </div>
 
-      <!-- PASSWORD STRENGTH -->
+      <!-- Password Strength -->
       <div class="mb-5">
-
         <div class="w-full h-2 bg-black rounded-full overflow-hidden">
-
-          <div
-            id="passwordStrength"
-            class="h-full w-0 transition-all duration-300"
-          ></div>
-
+          <div id="passwordStrength" class="h-full w-0 transition-all duration-300"></div>
         </div>
-
-        <p
-          id="passwordText"
-          class="text-xs text-gray-500 mt-2"
-        >
-          Password strength
-        </p>
-
+        <p id="passwordText" class="text-xs text-gray-500 mt-2">Password strength</p>
       </div>
 
-      <!-- TERMS -->
+      <!-- Terms -->
       <div class="flex items-start gap-3 mb-6">
-
-        <input
-          type="checkbox"
-          id="terms"
-          class="mt-1"
-        />
-
-        <label
-          for="terms"
-          class="text-sm text-gray-400 leading-6 cursor-pointer"
-        >
+        <input type="checkbox" id="terms" class="mt-1" />
+        <label for="terms" class="text-sm text-gray-400 leading-6 cursor-pointer">
           I agree to the Terms & Conditions and confirm that this platform uses virtual coins only.
         </label>
-
       </div>
 
-      <!-- BUTTON -->
-      <button
-        id="signupBtn"
-        onclick="signup()"
-        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl text-lg transition duration-300 shadow-lg"
-      >
+      <!-- Signup Button -->
+      <button id="signupBtn"
+        class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl text-lg transition duration-300 shadow-lg">
         CREATE ACCOUNT
       </button>
 
-      <!-- LOGIN -->
+      <!-- Login Link -->
       <div class="text-center mt-6">
-
-        <a
-          href="login.html"
-          class="text-yellow-400 font-bold hover:text-yellow-300 transition"
-        >
+        <a href="login.html" class="text-yellow-400 font-bold hover:text-yellow-300 transition">
           Already Have Account? Login
         </a>
-
       </div>
 
     </div>
-
   </div>
 
   <!-- SCRIPT -->
   <script type="module">
-
     import { supabase } from "./supabase.js";
 
-    /* PASSWORD TOGGLE */
-
-    const passwordInput =
-      document.getElementById("password");
-
-    document
-      .getElementById("togglePassword")
-      .addEventListener("click", () => {
-
-        passwordInput.type =
-          passwordInput.type === "password"
-          ? "text"
-          : "password";
-
-      });
-
-    /* PASSWORD STRENGTH */
-
-    passwordInput.addEventListener("input", () => {
-
-      const value =
-        passwordInput.value;
-
-      const bar =
-        document.getElementById("passwordStrength");
-
-      const text =
-        document.getElementById("passwordText");
-
-      let strength = 0;
-
-      if(value.length >= 6) strength++;
-      if(/[A-Z]/.test(value)) strength++;
-      if(/[0-9]/.test(value)) strength++;
-      if(/[^A-Za-z0-9]/.test(value)) strength++;
-
-      if(strength === 0){
-
-        bar.style.width = "0%";
-        bar.className = "h-full";
-        text.innerText = "Password strength";
-
-      }
-
-      if(strength === 1){
-
-        bar.style.width = "25%";
-        bar.className = "h-full bg-red-500";
-        text.innerText = "Weak Password";
-
-      }
-
-      if(strength === 2){
-
-        bar.style.width = "50%";
-        bar.className = "h-full bg-yellow-500";
-        text.innerText = "Medium Password";
-
-      }
-
-      if(strength === 3){
-
-        bar.style.width = "75%";
-        bar.className = "h-full bg-blue-500";
-        text.innerText = "Strong Password";
-
-      }
-
-      if(strength === 4){
-
-        bar.style.width = "100%";
-        bar.className = "h-full bg-green-500";
-        text.innerText = "Very Strong Password";
-
-      }
-
+    // Show/Hide Password
+    const passwordInput = document.getElementById("password");
+    document.getElementById("togglePassword").addEventListener("click", () => {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
     });
 
-    /* SIGNUP */
+    // Password Strength
+    passwordInput.addEventListener("input", () => {
+      const val = passwordInput.value;
+      const bar = document.getElementById("passwordStrength");
+      const text = document.getElementById("passwordText");
+      let strength = 0;
+      if(val.length >= 6) strength++;
+      if(/[A-Z]/.test(val)) strength++;
+      if(/[0-9]/.test(val)) strength++;
+      if(/[^A-Za-z0-9]/.test(val)) strength++;
+      switch(strength){
+        case 0: bar.style.width="0%"; text.innerText="Password strength"; break;
+        case 1: bar.style.width="25%"; bar.className="h-full bg-red-500"; text.innerText="Weak Password"; break;
+        case 2: bar.style.width="50%"; bar.className="h-full bg-yellow-500"; text.innerText="Medium Password"; break;
+        case 3: bar.style.width="75%"; bar.className="h-full bg-blue-500"; text.innerText="Strong Password"; break;
+        case 4: bar.style.width="100%"; bar.className="h-full bg-green-500"; text.innerText="Very Strong Password"; break;
+      }
+    });
 
-    window.signup = async function(){
+    // Signup Function
+    const signupBtn = document.getElementById("signupBtn");
+    async function signup(){
+      const fullName = document.getElementById("fullName").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const password = document.getElementById("password").value.trim();
+      const terms = document.getElementById("terms").checked;
 
-      const signupBtn =
-        document.getElementById("signupBtn");
+      if(!fullName || !phone || !email || !password){
+        alert("Please fill all fields"); return;
+      }
+      if(!terms){
+        alert("You must accept Terms & Conditions"); return;
+      }
+      if(password.length<6){
+        alert("Password must be at least 6 characters"); return;
+      }
 
-      try {
+      signupBtn.disabled = true;
+      signupBtn.innerText = "PLEASE WAIT...";
 
-        signupBtn.disabled = true;
+      try{
+        // Create Supabase Auth User
+        const { data, error } = await supabase.auth.signUp({
+          email, password,
+          options: { data: { full_name: fullName, phone } }
+        });
+        if(error) throw error;
+        const userId = data.user.id;
 
-        signupBtn.innerText =
-          "PLEASE WAIT...";
+        // Save in Users Table
+        const { error: insertError } = await supabase.from("users").insert([{
+          id: userId, full_name: fullName, email, phone, balance:0
+        }]);
+        if(insertError) throw insertError;
 
-        const fullName =
-          document
-            .getElementById("fullName")
-            .value
-            .trim();
+        alert("Account Created Successfully!");
+        window.location.href = "login.html";
 
-        const phone =
-          document
-            .getElementById("phone")
-            .value
-            .trim();
-
-        const email =
-          document
-            .getElementById("email")
-            .value
-            .trim()
-            .toLowerCase();
-
-        const password =
-          document
-            .getElementById("password")
-            .value
-            .trim();
-
-        const terms =
-          document
-            .getElementById("terms")
-            .checked;
-
-        /* VALIDATION */
-
-        if(
-          !fullName ||
-          !phone ||
-          !email ||
-          !password
-        ){
-
-          alert("Please fill all fields");
-
-          return;
-        }
-
-        if(phone.length !== 10){
-
-          alert("Enter valid 10 digit phone number");
-
-          return;
-        }
-
-        if(password.length < 6){
-
-          alert("Password minimum 6 characters");
-
-          return;
-        }
-
-        if(!terms){
-
-          alert("Please accept Terms & Conditions");
-
-          return;
-        }
-
-        /* CREATE AUTH USER */
-
-        const {
-          data,
-          error
-        } =
-          await supabase.auth.signUp({
-
-            email,
-
-            password,
-
-            options: {
-
-              data: {
-
-                full_name: fullName
-
-              }
-
-            }
-
-          });
-
-        if(error){
-
-          throw error;
-        }
-
-        const user = data.user;
-
-        if(!user){
-
-          throw new Error("User not created");
-        }
-
-        /* SAVE USER */
-
-        const {
-          error: insertError
-        } =
-          await supabase
-            .from("users")
-            .upsert([
-              {
-                id: user.id,
-                full_name: fullName,
-                email: email,
-                phone: phone,
-                balance: 0
-              }
-            ]);
-
-        if(insertError){
-
-          console.log(insertError);
-
-          throw insertError;
-        }
-
-        alert(
-          "Account Created Successfully"
-        );
-
-        window.location.href =
-          "login.html";
-
-      } catch(err){
-
-        console.log(err);
-
+      }catch(err){
+        console.error(err);
         alert(err.message);
-
-      } finally {
-
+      }finally{
         signupBtn.disabled = false;
-
-        signupBtn.innerText =
-          "CREATE ACCOUNT";
+        signupBtn.innerText = "CREATE ACCOUNT";
       }
+    }
 
-    };
+    signupBtn.addEventListener("click", signup);
 
-    /* ENTER KEY SUPPORT */
-
-    document.addEventListener(
-      "keydown",
-      function(event){
-
-        if(event.key === "Enter"){
-
-          signup();
-        }
-
-      }
-    );
+    // ENTER key support
+    document.addEventListener("keydown", e => { if(e.key==="Enter") signup(); });
 
   </script>
-
 </body>
 </html>
