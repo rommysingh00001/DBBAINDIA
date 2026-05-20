@@ -3,10 +3,10 @@ import {
 } from "https://esm.sh/@supabase/supabase-js@2";
 
 const supabaseUrl =
-  "https://ooqbjzhgezkdxwhmxlxp.supabase.co";
+  "https://qfzqojxaulnsfkueruma.supabase.co";
 
 const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcWJqemhnZXprZHh3aG14bHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxOTQ4MzcsImV4cCI6MjA5NDc3MDgzN30.5zAmVsS9FImD_BfJ8S6eSuX3rBVhuNYfjaPbUjOV-rE";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmenFvanhhdWxuc2ZrdWVydW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDU0NjQsImV4cCI6MjA5NDgyMTQ2NH0.ex916yESycJdbiw7bna7z_utLWjXxUEoWbXR9cx_QpI";
 
 export const supabase =
   createClient(
