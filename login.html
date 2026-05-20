@@ -1,111 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8"/>
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - DBBA INDIA</title>
-
-  <link
-    rel="icon"
-    type="image/png"
-    href="logo.png"
-  >
+    <link rel="icon" type="image/png" href="logo.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-
 <body class="bg-[#050816] text-white min-h-screen flex items-center justify-center p-5">
 
-  <!-- BACKGROUND -->
-  <div class="fixed inset-0 overflow-hidden -z-10">
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md">
 
-    <div class="absolute top-0 left-0 w-96 h-96 bg-green-500/10 blur-3xl rounded-full"></div>
+    <h2 class="text-4xl font-black text-center mb-2">
+      <span class="text-yellow-400">DBBA</span>
+      <span class="text-green-400">INDIA</span>
+    </h2>
 
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-yellow-500/10 blur-3xl rounded-full"></div>
+    <p class="text-center text-gray-400 mb-6">Login To Continue</p>
 
-  </div>
-
-  <!-- CARD -->
-  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 w-full max-w-md shadow-2xl">
-
-    <!-- LOGO -->
-    <div class="text-center mb-8">
-
-      <img
-        src="logo.png"
-        alt="Logo"
-        class="w-24 h-24 object-contain mx-auto mb-4"
-      />
-
-      <h2 class="text-5xl font-black">
-
-        <span class="text-yellow-400">
-          DBBA
-        </span>
-
-        <span class="text-green-400">
-          INDIA
-        </span>
-
-      </h2>
-
-      <p class="text-gray-400 mt-3">
-        Login To Continue
-      </p>
-
-    </div>
-
-    <!-- EMAIL / PHONE -->
     <input
       id="loginInput"
       type="text"
       placeholder="Email or Phone Number"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none focus:border-yellow-400 transition"
+      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-4 outline-none"
     />
 
-    <!-- PASSWORD -->
     <input
       id="loginPassword"
       type="password"
       placeholder="Password"
-      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none focus:border-yellow-400 transition"
+      class="w-full bg-black border border-gray-700 rounded-2xl p-4 mb-2 outline-none"
     />
 
-    <!-- FORGOT PASSWORD -->
-    <div class="text-right mb-4">
-
-      <a
-        id="resetPasswordLink"
-        href="#"
-        class="text-sm text-yellow-400 hover:text-yellow-300 hidden"
-      >
-        Forgot Password?
-      </a>
-
-    </div>
+    <!-- RESET PASSWORD LINK (hidden by default) -->
+    <a id="resetPasswordLink" href="reset-password.html" class="block text-blue-400 text-sm underline mt-2 mb-4 text-center hidden">
+      Reset Password
+    </a>
 
     <!-- SHOW PASSWORD -->
     <div class="flex items-center gap-2 mb-6">
-
-      <input
-        type="checkbox"
-        id="showPassword"
-      />
-
-      <label
-        for="showPassword"
-        class="text-sm text-gray-400 cursor-pointer"
-      >
-        Show Password
-      </label>
-
+      <input type="checkbox" id="showPassword"/>
+      <label for="showPassword" class="text-sm text-gray-400 cursor-pointer">Show Password</label>
     </div>
 
     <!-- LOGIN BUTTON -->
@@ -117,78 +53,39 @@
     </button>
 
     <!-- SIGNUP -->
-    <a
-      href="signup.html"
-      class="block text-center text-green-400 font-bold"
-    >
+    <a href="signup.html" class="block text-center text-green-400 font-bold mb-4">
       Create New Account
     </a>
 
   </div>
 
-  <!-- SCRIPT -->
   <script type="module">
-
     import { supabase } from "./supabase.js";
 
-    // AUTO LOGIN
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
-
-    if(session){
-
-      window.location.href = "main.html";
-    }
+    // AUTO LOGIN CHECK
+    const { data: { session } } = await supabase.auth.getSession();
+    if(session) window.location.href = "main.html";
 
     // SHOW PASSWORD
-    document
-      .getElementById("showPassword")
-      .addEventListener("change", function(){
-
-        const passInput =
-          document.getElementById("loginPassword");
-
-        passInput.type =
-          this.checked
-            ? "text"
-            : "password";
-      });
+    document.getElementById("showPassword").addEventListener("change", function(){
+      const passInput = document.getElementById("loginPassword");
+      passInput.type = this.checked ? "text" : "password";
+    });
 
     // LOGIN FUNCTION
     async function login(){
-
-      const loginBtn =
-        document.getElementById("loginBtn");
-
-      const resetLink =
-        document.getElementById("resetPasswordLink");
-
-      resetLink.classList.add("hidden");
-
+      const loginBtn = document.getElementById("loginBtn");
+      const resetLink = document.getElementById("resetPasswordLink");
+      resetLink.classList.add("hidden"); // hide link at start
       try {
-
         loginBtn.disabled = true;
+        loginBtn.innerText = "PLEASE WAIT...";
 
-        loginBtn.innerText =
-          "PLEASE WAIT...";
-
-        const input =
-          document
-            .getElementById("loginInput")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("loginPassword")
-            .value
-            .trim();
+        const input = document.getElementById("loginInput").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
 
         if(!input || !password){
-
           alert("Please fill all fields");
-
           return;
         }
 
@@ -196,183 +93,60 @@
 
         // PHONE LOGIN SUPPORT
         if(!input.includes("@")){
-
-          const {
-            data: phoneUser
-          } =
-            await supabase
-              .from("users")
-              .select("email")
-              .eq("phone", input)
-              .maybeSingle();
-
+          const { data: phoneUser } = await supabase
+            .from("users")
+            .select("email")
+            .eq("phone", input)
+            .maybeSingle();
           if(!phoneUser){
-
             alert("Phone number not found");
-
             return;
           }
-
           email = phoneUser.email;
         }
 
         // LOGIN
-        const {
-          error: loginError
-        } =
-          await supabase.auth.signInWithPassword({
-
-            email,
-            password
-
-          });
-
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
         if(loginError){
-
-          alert("Wrong password");
-
-          resetLink.classList.remove("hidden");
-
+          alert("Wrong password!");
+          resetLink.classList.remove("hidden"); // show reset password
           return;
         }
 
-        // SESSION
-        const {
-          data: { session }
-        } =
-          await supabase.auth.getSession();
+        // GET SESSION
+        const { data: { session } } = await supabase.auth.getSession();
+        if(!session) throw new Error("Session not created");
 
-        if(!session){
-
-          throw new Error("Session not created");
-        }
-
-        // USER DATA
-        const {
-          data: userData,
-          error: userError
-        } =
-          await supabase
-            .from("users")
-            .select("*")
-            .eq("id", session.user.id)
-            .single();
-
+        // GET USER PROFILE
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
         if(userError || !userData){
-
+          await supabase.auth.signOut();
           throw new Error("User profile missing");
         }
 
-        localStorage.setItem(
-          "dbba_user",
-          JSON.stringify(userData)
-        );
-
+        localStorage.setItem("dbba_user", JSON.stringify(userData));
         alert("Login Successful");
-
-        window.location.href =
-          "main.html";
+        window.location.href = "main.html";
 
       } catch(err){
-
-        console.log(err);
-
+        console.error(err);
         alert(err.message);
-
       } finally {
-
         loginBtn.disabled = false;
-
         loginBtn.innerText = "LOGIN";
       }
     }
 
-    // BUTTON LOGIN
-    document
-      .getElementById("loginBtn")
-      .addEventListener("click", login);
+    document.getElementById("loginBtn").addEventListener("click", login);
 
-    // ENTER LOGIN
-    document.addEventListener(
-      "keydown",
-      function(event){
-
-        if(event.key === "Enter"){
-
-          login();
-        }
-      }
-    );
-
-    // RESET PASSWORD
-    document
-      .getElementById("resetPasswordLink")
-      .addEventListener("click", async function(e){
-
-        e.preventDefault();
-
-        const input =
-          document
-            .getElementById("loginInput")
-            .value
-            .trim();
-
-        if(!input){
-
-          alert("Enter your email first");
-
-          return;
-        }
-
-        let email = input;
-
-        // PHONE SUPPORT
-        if(!input.includes("@")){
-
-          const {
-            data: phoneUser
-          } =
-            await supabase
-              .from("users")
-              .select("email")
-              .eq("phone", input)
-              .maybeSingle();
-
-          if(!phoneUser){
-
-            alert("Phone number not found");
-
-            return;
-          }
-
-          email = phoneUser.email;
-        }
-
-        // SEND RESET MAIL
-        const {
-          error
-        } =
-          await supabase.auth.resetPasswordForEmail(
-            email,
-            {
-              redirectTo:
-                window.location.origin +
-                "/reset-password.html"
-            }
-          );
-
-        if(error){
-
-          alert(error.message);
-
-        } else {
-
-          alert(
-            "Password reset link sent to your email"
-          );
-        }
-
-      });
+    // ENTER KEY LOGIN
+    document.addEventListener("keydown", function(event){
+      if(event.key === "Enter") login();
+    });
 
   </script>
 
